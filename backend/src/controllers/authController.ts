@@ -9,7 +9,15 @@ class AuthController {
     try {
       const { username, email, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
+
       const newUser = new userModel({ username, email, password: hashedPassword });
+
+      const refreshToken = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET, {
+        expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
+      });
+
+      newUser.refreshToken = [refreshToken];
+
       await newUser.save();
       res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -28,13 +36,13 @@ class AuthController {
 
       const accessToken = jwt.sign(
         { _id: user._id },
-        process.env.TOKEN_SECRET as string,
+        process.env.TOKEN_SECRET,
         { expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue }
       );
       
       const refreshToken = jwt.sign(
         { _id: user._id },  
-        process.env.TOKEN_SECRET as string,
+        process.env.TOKEN_SECRET,
         { expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue }
       );
 
@@ -50,7 +58,7 @@ class AuthController {
   async logout(req: Request, res: Response) {
     try {
       const { refreshToken } = req.body;
-      const user = await userModel.findOne({ refreshToken });
+      const user = await userModel.findOne({ refreshToken: { $in: [refreshToken] } });
 
       if (!user) return res.status(403).json({ error: 'Invalid refresh token' });
 
@@ -68,10 +76,10 @@ class AuthController {
       const { refreshToken } = req.body;
       if (!refreshToken) return res.status(403).json({ error: 'Refresh token required' });
 
-      jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string, async (err, user: any) => {
+      jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user: any) => {
         if (err) return res.status(403).json({ error: 'Invalid refresh token' });
 
-        const foundUser = await userModel.findOne({ _id: user._id, refreshToken });
+        const foundUser = await userModel.findOne({ _id: user._id, refreshToken: { $in: [refreshToken] } });
         if (!foundUser) return res.status(403).json({ error: 'Token does not match' });
 
         const newAccessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {

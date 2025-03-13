@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
-import { setupSwagger } from './swagger';
+import { setupSwagger } from './swagger/swagger';
 
 dotenv.config();
 
