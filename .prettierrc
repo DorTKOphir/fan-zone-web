@@ -3,10 +3,12 @@
     "trailingComma": "all",
     "singleQuote": true,
     "printWidth": 100,
-    "tabWidth": 8,
+    "proseWrap": "never",
+    "tabWidth": 4,
     "useTabs": true,
     "bracketSpacing": true,
     "arrowParens": "always",
     "endOfLine": "lf"
   }
+
   
