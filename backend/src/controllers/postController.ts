@@ -81,8 +81,8 @@ class PostController {
   }
 
   protected getUpdateFields(): string[] {
-    return ['content'];
-  }
+    return ['content', 'likes'];
+}
 }
 
 export default new PostController();
