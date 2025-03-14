@@ -8,7 +8,8 @@ class AuthController {
   async register(req: Request, res: Response) {
     try {
       const { username, email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       const newUser = new userModel({ username, email, password: hashedPassword });
 
@@ -27,8 +28,13 @@ class AuthController {
 
   async login(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
-      const user = await userModel.findOne({ email });
+      const { username, email, password } = req.body;
+      const user = await userModel.findOne({
+        $or: [
+          { email: email || "" },
+          { username: username || "" },
+        ],
+      })
 
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ error: 'Invalid credentials' });
