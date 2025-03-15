@@ -3,6 +3,7 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { format, isSameDay, parseISO } from "date-fns";
 import { Match } from "@/types/types";
 import { fetchMatches } from "@/apiCalls/FootballData";
+import MatchListItem from "./MatchListItem";
 
 const matches: Match[] = fetchMatches();
 
@@ -21,10 +22,6 @@ export default function MatchList() {
 
   return (
     <div className="max-w-5xl mx-auto mt-10 p-4 h-[80vh] flex flex-col">
-      <h1 className="text-3xl font-bold mb-4 text-center">
-        Upcoming Football Matches
-      </h1>
-
       <div className="flex justify-center mb-4">
         <input
           type="date"
@@ -46,24 +43,7 @@ export default function MatchList() {
         {sortedMatches.length > 0 ? (
           <div className="space-y-4">
             {sortedMatches.map((match) => (
-              <div
-                key={match.id}
-                className="flex justify-between items-center bg-gray-50 rounded-xl shadow-sm p-4 hover:bg-gray-100 transition"
-              >
-                <div className="space-y-1">
-                  <p className="font-semibold text-lg">
-                    {match.homeTeam} <span className="text-gray-500">vs</span>{" "}
-                    {match.awayTeam}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {format(new Date(match.date), "MMMM dd, yyyy - HH:mm")}
-                  </p>
-                  <p className="text-sm text-gray-400">{match.location}</p>
-                </div>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                  View Details
-                </button>
-              </div>
+              <MatchListItem match={match} />
             ))}
           </div>
         ) : (
