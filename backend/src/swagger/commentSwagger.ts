@@ -1,156 +1,191 @@
 /**
  * @swagger
- * components:
- *   schemas:
- *     Comment:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           example: "60a7c17b6c7d4c001f1a2a34"
- *         content:
- *           type: string
- *           example: "This is a comment."
- *         author:
- *           type: object
- *           properties:
- *             _id:
- *               type: string
- *               example: "60a7c17b6c7d4c001f1a2a35"
- *             username:
- *               type: string
- *               example: "JohnDoe"
- *         dateCreated:
- *           type: string
- *           format: date-time
- *           example: "2025-03-14T12:00:00Z"
- *
- *     CreateCommentRequest:
- *       type: object
- *       required:
- *         - content
- *       properties:
- *         content:
- *           type: string
- *           example: "This is a comment."
- *
- *     UpdateCommentRequest:
- *       type: object
- *       required:
- *         - content
- *       properties:
- *         content:
- *           type: string
- *           example: "Updated comment content."
- *
- *     DeleteCommentResponse:
- *       type: object
- *       properties:
- *         message:
- *           type: string
- *           example: "Comment deleted successfully."
+ * tags:
+ *   - name: Posts
+ *     description: Post Management Endpoints
  */
 
 /**
  * @swagger
- * /api/posts/{postId}/comments:
- *   post:
- *     summary: Create a comment on a post
- *     description: Adds a new comment to a post.
- *     security:
- *       - BearerAuth: []
+ * /posts/{id}:
+ *   get:
+ *     summary: Get a post by ID
+ *     tags:
+ *       - Posts
  *     parameters:
  *       - in: path
- *         name: postId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the post to add a comment to.
+ *         example: "641d15f1e8b1f9c6a9a2a5e9"
+ *         description: The ID of the post to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the post
+ *         content:
+ *           application/json:
+ *             example:
+ *               _id: "641d15f1e8b1f9c6a9a2a5e9"
+ *               content: "This is a sample post."
+ *               author: { _id: "641d134fe8b1f9c6a9a2a123", username: "john_doe" }
+ *               comments: [
+ *                 {
+ *                   _id: "641d164de8b1f9c6a9a2a7e8",
+ *                   content: "Great post!",
+ *                   author: { _id: "641d123fe8b1f9c6a9a1a111", username: "jane_doe" },
+ *                 }
+ *               ]
+ *               dateCreated: "2025-03-14T10:15:30.000Z"
+ *       404:
+ *         description: Post not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Post not found"
+ *       500:
+ *         description: Error fetching post
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error fetching post"
+ */
+
+/**
+ * @swagger
+ * /posts:
+ *   post:
+ *     summary: Create a new post
+ *     tags:
+ *       - Posts
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateCommentRequest'
+ *             type: object
+ *             properties:
+ *               author:
+ *                 type: string
+ *                 example: "641d134fe8b1f9c6a9a2a123"
+ *               content:
+ *                 type: string
+ *                 example: "This is a new post content."
  *     responses:
  *       201:
- *         description: Comment created successfully
+ *         description: Post created successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Comment'
+ *             example:
+ *               _id: "641d15f1e8b1f9c6a9a2a5e9"
+ *               author: "641d134fe8b1f9c6a9a2a123"
+ *               content: "This is a new post content."
+ *               comments: []
+ *               dateCreated: "2025-03-14T10:15:30.000Z"
  *       400:
- *         description: Invalid request data
+ *         description: Content is required
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Content is required"
  *       500:
- *         description: Error creating comment
+ *         description: Error creating post
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error creating post"
  */
 
 /**
  * @swagger
- * /api/comments/{commentId}:
+ * /posts/{id}:
  *   patch:
- *     summary: Update a comment
- *     description: Updates the content of an existing comment (only by the author).
- *     security:
- *       - BearerAuth: []
+ *     summary: Update a post by ID
+ *     tags:
+ *       - Posts
  *     parameters:
  *       - in: path
- *         name: commentId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the comment to update.
+ *         example: "641d15f1e8b1f9c6a9a2a5e9"
+ *         description: The ID of the post to update
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateCommentRequest'
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 example: "Updated post content."
+ *               likes:
+ *                 type: number
+ *                 example: 10
  *     responses:
  *       200:
- *         description: Comment updated successfully
+ *         description: Post updated successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Comment'
+ *             example:
+ *               _id: "641d15f1e8b1f9c6a9a2a5e9"
+ *               content: "Updated post content."
+ *               likes: 10
+ *               author: { _id: "641d134fe8b1f9c6a9a2a123", username: "john_doe" }
  *       400:
- *         description: Invalid request data
- *       403:
- *         description: Unauthorized (not the comment author)
+ *         description: No valid fields provided for update
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "No valid fields provided for update"
  *       404:
- *         description: Comment not found
+ *         description: Post not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Post not found"
  *       500:
- *         description: Error updating comment
+ *         description: Error updating post
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error updating post"
  */
 
 /**
  * @swagger
- * /api/comments/{commentId}:
+ * /posts/{id}:
  *   delete:
- *     summary: Delete a comment
- *     description: Deletes an existing comment (only by the author).
- *     security:
- *       - BearerAuth: []
+ *     summary: Delete a post by ID
+ *     tags:
+ *       - Posts
  *     parameters:
  *       - in: path
- *         name: commentId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the comment to delete.
+ *         example: "641d15f1e8b1f9c6a9a2a5e9"
+ *         description: The ID of the post to delete
  *     responses:
  *       200:
- *         description: Comment deleted successfully
+ *         description: Post deleted successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/DeleteCommentResponse'
- *       403:
- *         description: Unauthorized (not the comment author)
+ *             example:
+ *               message: "Post deleted successfully"
  *       404:
- *         description: Comment not found
+ *         description: Post not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Post not found"
  *       500:
- *         description: Error deleting comment
+ *         description: Error deleting post
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error deleting post"
  */
-
-export {};
