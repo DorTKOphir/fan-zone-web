@@ -36,7 +36,7 @@ export default function MatchList() {
 	);
 
 	return (
-		<div className="max-w-5xl mx-auto mt-10 p-4 h-[80vh] flex flex-col">
+		<div className="w-[60%] max-w-5xl mx-auto mt-10 p-4 h-[80vh] flex flex-col">
 			<div className="flex justify-center mb-4">
 				<input
 					type="date"
@@ -59,7 +59,7 @@ export default function MatchList() {
 			{error && <div className="text-center text-red-500 mt-10">{error}</div>}
 
 			{!loading && !error && (
-				<ScrollArea className="flex-1 rounded-lg border border-gray-200 shadow-inner p-4 bg-white">
+				<ScrollArea className="w-[100%] mx-auto flex-1 rounded-lg border border-gray-200 shadow-inner p-4 bg-white">
 					{sortedMatches.length > 0 ? (
 						<div className="space-y-4">
 							{sortedMatches.map((match) => (
