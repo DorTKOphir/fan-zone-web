@@ -1,4 +1,3 @@
-// src/components/AuthProvider.tsx
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
 	login as apiLogin,
@@ -6,11 +5,12 @@ import {
 	logout as apiLogout,
 } from '../services/auth';
 import { useNavigate } from 'react-router-dom';
+import User from '@/models/user';
 
 interface AuthContextType {
-	user: any;
+	user: User;
 	accessToken: string | null;
-	login: (email: string, password: string) => Promise<void>;
+	login: (username: string, password: string) => Promise<void>;
 	logout: () => void;
 }
 
@@ -45,14 +45,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		initializeAuth();
 	}, []);
 
-	const login = async (email: string, password: string) => {
-		const res = await apiLogin(email, password);
+	const login = async (username: string, password: string) => {
+		const res = await apiLogin(username, password);
 		if (res.accessToken && res.refreshToken) {
 			setAccessToken(res.accessToken);
-			setUser({ email });
+			setUser({ email: username });
 			localStorage.setItem('accessToken', res.accessToken);
 			localStorage.setItem('refreshToken', res.refreshToken);
-			localStorage.setItem('userEmail', email);
+			localStorage.setItem('username', username);
 			navigate('/dashboard');
 		}
 	};

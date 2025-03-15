@@ -29,13 +29,13 @@ api.interceptors.response.use(
     }
 );
 
-export const login = async (email: string, password: string) => {
-    const response = await api.post("/auth/login", { email, password });
+export const login = async (username: string, password: string) => {
+    const response = await api.post("/auth/login", { username, password });
     return response.data;
 };
 
-export const register = async (email: string, password: string) => {
-    const response = await api.post("/auth/register", { email, password });
+export const register = async (username: string, email: string, password: string) => {
+    const response = await api.post("/auth/register", { email, username, password });
     return response.data;
 };
 
@@ -63,6 +63,6 @@ export const refreshToken = async (): Promise<string | null> => {
 export const logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userEmail");
+    localStorage.removeItem("username");
     window.location.href = "/login"; // Redirect to login
 };
