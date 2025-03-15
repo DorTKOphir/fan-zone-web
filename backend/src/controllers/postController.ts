@@ -94,8 +94,26 @@ class PostController {
   }
 
   async getPostsByMatchId(req: Request, res: Response) {
-    res.status(501).json({ error: 'Function not implemented yet' });
-  }
+    try {
+        const { matchId } = req.params;
+        if (!matchId) {
+            return res.status(400).json({ message: "Match ID is required." });
+        }
+
+        const posts = await postModel.find({ matchId })
+            .populate("author", "_id username")
+            .populate({
+                path: "comments",
+                populate: { path: "author", select: "_id username" },
+            });
+
+        return res.status(200).json(posts);
+    } catch (error) {
+        console.error("Error fetching posts by matchId:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+  };
+
 
   protected getUpdateFields(): string[] {
     return ['content', 'likes'];
