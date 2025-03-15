@@ -45,10 +45,10 @@ class AuthController {
         process.env.TOKEN_SECRET,
         { expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue }
       );
-      
+
       const refreshToken = jwt.sign(
-        { _id: user._id },  
-        process.env.TOKEN_SECRET,
+        { _id: user._id },
+        process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue }
       );
 
@@ -57,6 +57,7 @@ class AuthController {
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (error) {
+      console.log(error)
       res.status(500).json({ error: 'Login failed' });
     }
   }
@@ -83,7 +84,10 @@ class AuthController {
       if (!refreshToken) return res.status(403).json({ error: 'Refresh token required' });
 
       jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user: any) => {
-        if (err) return res.status(403).json({ error: 'Invalid refresh token' });
+        if (err) {
+          console.log(err);
+          return res.status(403).json({ error: 'Invalid refresh token' });
+        }
 
         const foundUser = await userModel.findOne({ _id: user._id, refreshToken: { $in: [refreshToken] } });
         if (!foundUser) return res.status(403).json({ error: 'Token does not match' });
@@ -95,6 +99,7 @@ class AuthController {
         res.status(200).json({ accessToken: newAccessToken });
       });
     } catch (error) {
+      console.log(error)
       res.status(500).json({ error: 'Token refresh failed' });
     }
   }

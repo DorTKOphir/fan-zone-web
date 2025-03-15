@@ -6,8 +6,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 	return (
-		<AuthProvider>
-			<Router>
+		<Router>
+			<AuthProvider>
 				<Routes>
 					<Route element={<ProtectedRoute />}>
 						<Route path="/" element={<h1>Hello matches!</h1>} />
@@ -15,8 +15,8 @@ function App() {
 					<Route path="/sign-in" element={<SignIn />} />
 					<Route path="/sign-up" element={<SignUp />} />
 				</Routes>
-			</Router>
-		</AuthProvider>
+			</AuthProvider>
+		</Router>
 	);
 }
 
