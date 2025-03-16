@@ -10,7 +10,7 @@ const postMiddleware = async (req: Request, res: Response, next: NextFunction): 
       return;
     }
 
-    if (String(post.userId) !== String((req as any).user._id)) {
+    if (String(post.author) !== String((req as any).user._id)) {
       res.status(403).json({ error: 'Unauthorized: You are not the author of this post' });
       return;
     }

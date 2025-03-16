@@ -5,101 +5,116 @@ import userModel from '../models/userModel';
 import ms from 'ms';
 
 class AuthController {
-  async register(req: Request, res: Response) {
-    try {
-      const { username, email, password } = req.body;
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+	async register(req: Request, res: Response) {
+		try {
+			const { username, email, password } = req.body;
+			const salt = await bcrypt.genSalt(10);
+			const hashedPassword = await bcrypt.hash(password, salt);
 
-      const newUser = new userModel({ username, email, password: hashedPassword });
+			const newUser = new userModel({ username, email, password: hashedPassword });
 
-      const refreshToken = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET, {
-        expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
-      });
+			const refreshToken = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET, {
+				expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
+			});
 
-      newUser.refreshTokens = [refreshToken];
+			newUser.refreshTokens = [refreshToken];
 
-      await newUser.save();
-      res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Registration failed' });
-    }
-  }
+			await newUser.save();
 
-  async login(req: Request, res: Response) {
-    try {
-      const { username, email, password } = req.body;
-      const user = await userModel.findOne({
-        $or: [
-          { email: email || "" },
-          { username: username || "" },
-        ],
-      })
+			console.log('User registered successfully');
+			res.status(201).json({ message: 'User registered successfully' });
+		} catch (error) {
+			console.error('Registration failed');
+			res.status(500).json({ error: 'Registration failed' });
+		}
+	}
 
-      if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
+	async login(req: Request, res: Response) {
+		try {
+			const { username, email, password } = req.body;
+			const user = await userModel.findOne({
+				$or: [{ email: email || '' }, { username: username || '' }],
+			});
 
-      const accessToken = jwt.sign(
-        { _id: user._id },
-        process.env.TOKEN_SECRET,
-        { expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue }
-      );
+			if (!user || !(await bcrypt.compare(password, user.password))) {
+				console.error('Invalid credintials');
+				return res.status(401).json({ error: 'Invalid credentials' });
+			}
 
-      const refreshToken = jwt.sign(
-        { _id: user._id },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue }
-      );
+			const accessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+				expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
+			});
 
-      user.refreshTokens.push(refreshToken);
-      await user.save();
+			const refreshToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+				expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
+			});
 
-      res.status(200).json({ accessToken, refreshToken });
-    } catch (error) {
-      console.log(error)
-      res.status(500).json({ error: 'Login failed' });
-    }
-  }
+			user.refreshTokens.push(refreshToken);
+			await user.save();
 
-  async logout(req: Request, res: Response) {
-    try {
-      const { refreshToken } = req.body;
-      const user = await userModel.findOne({ refreshTokens: { $in: [refreshToken] } });
+			console.log('User logged in succesfully');
+			res.status(200).json({ accessToken, refreshToken });
+		} catch (error) {
+			console.error('Login failed');
+			res.status(500).json({ error: 'Login failed' });
+		}
+	}
 
-      if (!user) return res.status(403).json({ error: 'Invalid refresh token' });
+	async logout(req: Request, res: Response) {
+		try {
+			const { refreshToken } = req.body;
+			const user = await userModel.findOne({ refreshTokens: { $in: [refreshToken] } });
 
-      user.refreshTokens = user.refreshTokens.filter((token) => token !== refreshToken);
-      await user.save();
+			if (!user) {
+				console.error('Invalid refresh token');
+				return res.status(403).json({ error: 'Invalid refresh token' });
+			}
 
-      res.status(200).json({ message: 'Logout successful' });
-    } catch (error) {
-      res.status(500).json({ error: 'Logout failed' });
-    }
-  }
+			user.refreshTokens = user.refreshTokens.filter((token) => token !== refreshToken);
+			await user.save();
 
-  async refresh(req: Request, res: Response) {
-    try {
-      const { refreshToken } = req.body;
-      if (!refreshToken) return res.status(403).json({ error: 'Refresh token required' });
+			console.log('Logout succesful');
+			res.status(200).json({ message: 'Logout successful' });
+		} catch (error) {
+			console.error('Logout failed');
+			res.status(500).json({ error: 'Logout failed' });
+		}
+	}
 
-      jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err, user: any) => {
-        if (err) return res.status(403).json({ error: 'Invalid refresh token' });
+	async refresh(req: Request, res: Response) {
+		try {
+			const { refreshToken } = req.body;
+			if (!refreshToken) {
+				console.error('Refresh token required');
+				return res.status(403).json({ error: 'Refresh token required' });
+			}
 
-        const foundUser = await userModel.findOne({ _id: user._id, refreshTokens: { $in: [refreshToken] } });
-        if (!foundUser) return res.status(403).json({ error: 'Token does not match' });
+			jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err, user: any) => {
+				if (err) {
+          console.error('Token does not match');
+          return res.status(403).json({ error: 'Invalid refresh token' });
+				}
 
-        const newAccessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
-          expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
-        });
+				const foundUser = await userModel.findOne({
+					_id: user._id,
+					refreshTokens: { $in: [refreshToken] },
+				});
+				if (!foundUser) {
+					console.error('Token does not match');
+					return res.status(403).json({ error: 'Token does not match' });
+				}
 
-        res.status(200).json({ accessToken: newAccessToken });
-      });
-    } catch (error) {
-      console.log(error)
-      res.status(500).json({ error: 'Token refresh failed' });
-    }
-  }
+				const newAccessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+					expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
+				});
+
+				res.status(200).json({ accessToken: newAccessToken });
+			});
+		} catch (error) {
+			console.error('Token refresh failed');
+			res.status(500).json({ error: 'Token refresh failed' });
+		}
+	}
 }
 
 export default new AuthController();
