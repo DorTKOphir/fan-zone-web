@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /comments/{postId}:
+ * /api/comments/{postId}:
  *   post:
  *     summary: Create a new comment on a post
  *     tags:
@@ -59,7 +59,7 @@
 
 /**
  * @swagger
- * /comments/{commentId}:
+ * /api/comments/{commentId}:
  *   patch:
  *     summary: Update an existing comment
  *     tags:
@@ -110,7 +110,7 @@
 
 /**
  * @swagger
- * /comments/{commentId}:
+ * /api/comments/{commentId}:
  *   delete:
  *     summary: Delete a comment
  *     tags:

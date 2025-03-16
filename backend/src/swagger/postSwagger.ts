@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   get:
  *     summary: Get a post by ID
  *     tags:
@@ -53,7 +53,7 @@
 
 /**
  * @swagger
- * /posts:
+ * /api/posts:
  *   post:
  *     summary: Create a new post
  *     tags:
@@ -98,7 +98,7 @@
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   patch:
  *     summary: Update a post by ID
  *     tags:
@@ -156,7 +156,7 @@
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   delete:
  *     summary: Delete a post by ID
  *     tags:
@@ -190,9 +190,9 @@
  *               error: "Error deleting post"
  */
 
- /**
+/**
  * @swagger
- * /posts/match/{matchId}:
+ * /api/posts/match/{matchId}:
  *   get:
  *     summary: Get posts by matchId
  *     tags:
