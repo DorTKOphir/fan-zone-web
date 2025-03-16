@@ -15,7 +15,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/swagger/authSwagger.ts'],
+  apis: ['./src/swagger/*.ts'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
