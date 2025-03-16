@@ -1,194 +1,162 @@
 /**
  * @swagger
- * components:
- *   schemas:
- *     RegisterRequest:
- *       type: object
- *       required:
- *         - username
- *         - email
- *         - password
- *       properties:
- *         username:
- *           type: string
- *           example: "testuser"
- *         email:
- *           type: string
- *           example: "test@example.com"
- *         password:
- *           type: string
- *           example: "password123"
- *
- *     LoginRequest:
- *       type: object
- *       required:
- *         - email
- *         - password
- *       properties:
- *         email:
- *           type: string
- *           example: "test@example.com"
- *         password:
- *           type: string
- *           example: "password123"
- *
- *     LoginResponse:
- *       type: object
- *       properties:
- *         accessToken:
- *           type: string
- *           example: "some-access-token"
- *         refreshToken:
- *           type: string
- *           example: "some-refresh-token"
- *
- *     RefreshRequest:
- *       type: object
- *       required:
- *         - refreshToken
- *       properties:
- *         refreshToken:
- *           type: string
- *           example: "some-refresh-token"
- *
- *     LogoutRequest:
- *       type: object
- *       required:
- *         - refreshToken
- *       properties:
- *         refreshToken:
- *           type: string
- *           example: "some-refresh-token"
- *
- *     AuthErrorResponse:
- *       type: object
- *       properties:
- *         error:
- *           type: string
- *           example: "Invalid credentials"
+ * tags:
+ *   - name: Auth
+ *     description: Authentication Endpoints
  */
 
 /**
  * @swagger
- * /api/auth/register:
+ * /register:
  *   post:
  *     summary: Register a new user
- *     description: Creates a new user and returns a refresh token.
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/RegisterRequest'
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: johndoe
+ *               email:
+ *                 type: string
+ *                 example: johndoe@example.com
+ *               password:
+ *                 type: string
+ *                 example: securePassword123
  *     responses:
  *       201:
  *         description: User registered successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "User registered successfully"
- *                 refreshToken:
- *                   type: string
- *                   example: "some-refresh-token"
- *       400:
- *         description: Invalid input data
+ *             example:
+ *               message: "User registered successfully"
+ *       500:
+ *         description: Registration failed
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Registration failed"
  */
 
 /**
  * @swagger
- * /api/auth/login:
+ * /login:
  *   post:
  *     summary: Login a user
- *     description: Authenticates a user and returns access and refresh tokens.
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/LoginRequest'
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: johndoe
+ *               password:
+ *                 type: string
+ *                 example: securePassword123
  *     responses:
  *       200:
  *         description: Successfully logged in
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/LoginResponse'
+ *             example:
+ *               accessToken: "your_access_token_here"
+ *               refreshToken: "your_refresh_token_here"
  *       401:
  *         description: Invalid credentials
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthErrorResponse'
+ *             example:
+ *               error: "Invalid credentials"
+ *       500:
+ *         description: Login failed
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Login failed"
  */
 
 /**
  * @swagger
- * /api/auth/logout:
+ * /logout:
  *   post:
  *     summary: Logout a user
- *     description: Logs out a user by invalidating their refresh token.
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/LogoutRequest'
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: your_refresh_token_here
  *     responses:
  *       200:
  *         description: Logout successful
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Logout successful"
+ *             example:
+ *               message: "Logout successful"
  *       403:
  *         description: Invalid refresh token
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthErrorResponse'
- *       404:
- *         description: User not found
+ *             example:
+ *               error: "Invalid refresh token"
+ *       500:
+ *         description: Logout failed
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthErrorResponse'
+ *             example:
+ *               error: "Logout failed"
  */
 
 /**
  * @swagger
- * /api/auth/refresh:
+ * /refresh:
  *   post:
  *     summary: Refresh access token
- *     description: Generates a new access token using a refresh token.
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/RefreshRequest'
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: your_refresh_token_here
  *     responses:
  *       200:
- *         description: New access token generated
+ *         description: Access token refreshed successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 accessToken:
- *                   type: string
- *                   example: "some-new-access-token"
+ *             example:
+ *               accessToken: "your_new_access_token_here"
  *       403:
- *         description: Invalid or expired refresh token
+ *         description: Invalid or missing refresh token
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthErrorResponse'
+ *             example:
+ *               error: "Invalid refresh token"
+ *       500:
+ *         description: Token refresh failed
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Token refresh failed"
  */

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IUser {
   username: string;
@@ -8,7 +8,7 @@ export interface IUser {
   refreshTokens?: string[];
 }
 
-const userSchema = new mongoose.Schema<IUser>({
+const userSchema = new Schema<IUser>({
   username: {
     type: String,
     required: true,

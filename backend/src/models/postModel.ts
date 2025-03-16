@@ -4,7 +4,8 @@ export interface IPost extends Document {
   userId: mongoose.Types.ObjectId;
   dateCreated: Date;
   content: string;
-  likes: string[],
+  comments: mongoose.Schema.Types.ObjectId[];
+  likes: string[];
 }
 
 const postSchema = new Schema<IPost>(
@@ -12,6 +13,7 @@ const postSchema = new Schema<IPost>(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
     dateCreated: { type: Date, required: true, default: Date.now },
     content: { type: String, required: true },
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments", default: [] }],
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users', default: [] }]
   }
 );

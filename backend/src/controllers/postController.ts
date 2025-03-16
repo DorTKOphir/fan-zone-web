@@ -1,10 +1,18 @@
 import { Request, Response } from 'express';
 import postModel from '../models/postModel';
+import commentModel from '../models/commentModel';
 
 class PostController {
   async getById(req: Request, res: Response) {
     try {
-      const post = await postModel.findById(req.params.id).populate('author', 'username');
+      const post = await postModel
+        .findById(req.params.id)
+        .populate("author", "_id username")
+        .populate({
+          path: "comments",
+          populate: { path: "author", select: "_id username" },
+        });
+      
       if (!post) {
         return res.status(404).json({ error: 'Post not found' });
       }
@@ -23,6 +31,7 @@ class PostController {
 
       const newPost = new postModel({
         author,
+        comments: [],
         content,
         dateCreated: new Date(),
       });
@@ -52,7 +61,11 @@ class PostController {
         req.params.id,
         updateBody,
         { new: true }
-      );
+      ).populate("author", "_id username")
+       .populate({
+         path: "comments",
+         populate: { path: "author", select: "_id username" },
+       });
 
       if (!updatedPost) {
         return res.status(404).json({ error: 'Post not found' });
@@ -67,9 +80,13 @@ class PostController {
   async delete(req: Request, res: Response) {
     try {
       const deletedPost = await postModel.findByIdAndDelete(req.params.id);
+      
       if (!deletedPost) {
         return res.status(404).json({ error: 'Post not found' });
       }
+
+      await commentModel.deleteMany({ _id: { $in: deletedPost.comments } });
+
       res.status(200).json({ message: 'Post deleted successfully' });
     } catch (error) {
       res.status(500).json({ error: 'Error deleting post' });
