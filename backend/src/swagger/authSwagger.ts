@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /register:
+ * /auth/register:
  *   post:
  *     summary: Register a new user
  *     tags:
@@ -45,7 +45,7 @@
 
 /**
  * @swagger
- * /login:
+ * /auth/login:
  *   post:
  *     summary: Login a user
  *     tags:
@@ -87,7 +87,7 @@
 
 /**
  * @swagger
- * /logout:
+ * /auth/logout:
  *   post:
  *     summary: Logout a user
  *     tags:
@@ -125,7 +125,7 @@
 
 /**
  * @swagger
- * /refresh:
+ * /auth/refresh:
  *   post:
  *     summary: Refresh access token
  *     tags:

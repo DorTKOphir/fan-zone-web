@@ -5,7 +5,7 @@ import commentMiddleware from "../middlewares/commentMiddleware";
 
 const router = Router();
 
-router.post("/:postId/comments", authMiddleware, CommentController.create.bind(CommentController));
+router.post("/:postId", authMiddleware, CommentController.create.bind(CommentController));
 router.patch("/:commentId", authMiddleware, commentMiddleware, CommentController.update.bind(CommentController));
 router.delete("/:commentId", authMiddleware, commentMiddleware, CommentController.delete.bind(CommentController));
 
