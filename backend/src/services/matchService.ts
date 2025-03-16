@@ -3,10 +3,10 @@ import { MatchesResponse, MatchResponseData } from '../types/matchTypes';
 
 export const fetchMatches = async () => {
 	const response: AxiosResponse<MatchesResponse> = await axios.get(
-		`${process.env.MATCHE_API_BASE_URL}/v4/competitions/PL/matches`,
+		`${process.env.MATCHES_API_BASE_URL}/v4/competitions/PL/matches`,
 		{
 			headers: {
-				'X-Auth-Token': process.env.MATCHE_API_TOKEN,
+				'X-Auth-Token': process.env.MATCHES_API_TOKEN,
 			},
 			params: {
 				hours: 'hourly',
