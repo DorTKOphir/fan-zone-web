@@ -76,7 +76,7 @@ class AuthController {
       const { refreshToken } = req.body;
       if (!refreshToken) return res.status(403).json({ error: 'Refresh token required' });
 
-      jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user: any) => {
+      jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err, user: any) => {
         if (err) return res.status(403).json({ error: 'Invalid refresh token' });
 
         const foundUser = await userModel.findOne({ _id: user._id, refreshToken: { $in: [refreshToken] } });
