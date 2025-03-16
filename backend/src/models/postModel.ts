@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPost extends Document {
-  author: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   dateCreated: Date;
   content: string;
   likes: string[],
@@ -9,7 +9,7 @@ export interface IPost extends Document {
 
 const postSchema = new Schema<IPost>(
   {
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
     dateCreated: { type: Date, required: true, default: Date.now },
     content: { type: String, required: true },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users', default: [] }]
