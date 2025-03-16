@@ -112,7 +112,6 @@ class AuthController {
           expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
         });
 
-        console.log()
         res.status(200).json({ accessToken: newAccessToken });
       });
     } catch (error) {
