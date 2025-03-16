@@ -189,3 +189,57 @@
  *             example:
  *               error: "Error deleting post"
  */
+
+ /**
+ * @swagger
+ * /posts/match/{matchId}:
+ *   get:
+ *     summary: Get posts by matchId
+ *     tags:
+ *       - Posts
+ *     description: Retrieves all posts associated with a specific match ID, including author and comments.
+ *     parameters:
+ *       - in: path
+ *         name: matchId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "65a123e4b5c678f9d0a1b234"
+ *         description: The ID of the match to fetch posts for.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved posts for the given match ID.
+ *         content:
+ *           application/json:
+ *             example:
+ *               - _id: "641d15f1e8b1f9c6a9a2a5e9"
+ *                 matchId: "65a123e4b5c678f9d0a1b234"
+ *                 content: "What a great match!"
+ *                 author:
+ *                   _id: "641d134fe8b1f9c6a9a2a123"
+ *                   username: "john_doe"
+ *                 comments:
+ *                   - _id: "641d164de8b1f9c6a9a2a7e8"
+ *                     content: "I totally agree!"
+ *                     author:
+ *                       _id: "641d123fe8b1f9c6a9a1a111"
+ *                       username: "jane_smith"
+ *       400:
+ *         description: Missing match ID in request.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Match ID is required."
+ *       404:
+ *         description: No posts found for the given match ID.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "No posts found for this match ID."
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Server error."
+ */
