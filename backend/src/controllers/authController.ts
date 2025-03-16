@@ -17,7 +17,7 @@ class AuthController {
         expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
       });
 
-      newUser.refreshToken = [refreshToken];
+      newUser.refreshTokens = [refreshToken];
 
       await newUser.save();
       res.status(201).json({ message: 'User registered successfully' });
@@ -52,7 +52,7 @@ class AuthController {
         { expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue }
       );
 
-      user.refreshToken.push(refreshToken);
+      user.refreshTokens.push(refreshToken);
       await user.save();
 
       res.status(200).json({ accessToken, refreshToken });
@@ -64,11 +64,11 @@ class AuthController {
   async logout(req: Request, res: Response) {
     try {
       const { refreshToken } = req.body;
-      const user = await userModel.findOne({ refreshToken: { $in: [refreshToken] } });
+      const user = await userModel.findOne({ refreshTokens: { $in: [refreshToken] } });
 
       if (!user) return res.status(403).json({ error: 'Invalid refresh token' });
 
-      user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
+      user.refreshTokens = user.refreshTokens.filter((token) => token !== refreshToken);
       await user.save();
 
       res.status(200).json({ message: 'Logout successful' });
@@ -82,10 +82,10 @@ class AuthController {
       const { refreshToken } = req.body;
       if (!refreshToken) return res.status(403).json({ error: 'Refresh token required' });
 
-      jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user: any) => {
+      jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err, user: any) => {
         if (err) return res.status(403).json({ error: 'Invalid refresh token' });
 
-        const foundUser = await userModel.findOne({ _id: user._id, refreshToken: { $in: [refreshToken] } });
+        const foundUser = await userModel.findOne({ _id: user._id, refreshTokens: { $in: [refreshToken] } });
         if (!foundUser) return res.status(403).json({ error: 'Token does not match' });
 
         const newAccessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
