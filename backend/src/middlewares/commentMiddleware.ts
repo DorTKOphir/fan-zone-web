@@ -11,9 +11,7 @@ const commentMiddleware = async (req: Request, res: Response, next: NextFunction
       return;
     }
 
-    const authorId = comment.author instanceof Object ? comment.author._id : comment.author;
-
-    if (String(authorId) !== String((req as any).user._id)) {
+    if (String(comment.author) !== String((req as any).user._id)) {
       res.status(403).json({ error: "Unauthorized: You are not the author of this comment" });
       return;
     }
