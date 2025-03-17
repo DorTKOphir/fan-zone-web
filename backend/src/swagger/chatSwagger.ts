@@ -1,0 +1,118 @@
+/**
+ * @swagger
+ * tags:
+ * 
+ *   - name: Chat
+ *     description: Chat Management Endpoints
+ */
+
+/**
+ * @swagger
+ * /chat/send:
+ *   post:
+ *     summary: Send a message
+ *     tags:
+ *       - Chat
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               senderId:
+ *                 type: string
+ *                 example: "641d15f1e8b1f9c6a9a2a5e9"
+ *               receiverId:
+ *                 type: string
+ *                 example: "641d15f1e8b1f9c6a9a2a5ea"
+ *               content:
+ *                 type: string
+ *                 example: "Hello, how are you?"
+ *     responses:
+ *       201:
+ *         description: Message sent successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               messageId: "641d15f1e8b1f9c6a9a2a5eb"
+ *               senderId: "641d15f1e8b1f9c6a9a2a5e9"
+ *               receiverId: "641d15f1e8b1f9c6a9a2a5ea"
+ *               content: "Hello, how are you?"
+ *               timestamp: "2024-03-17T12:00:00Z"
+ *       400:
+ *         description: Bad request (missing fields or invalid data)
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /chat/history/{user1}/{user2}:
+ *   get:
+ *     summary: Retrieve chat history between two users
+ *     tags:
+ *       - Chat
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user1
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "641d15f1e8b1f9c6a9a2a5e9"
+ *       - in: path
+ *         name: user2
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "641d15f1e8b1f9c6a9a2a5ea"
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved chat history
+ *         content:
+ *           application/json:
+ *             example:
+ *               messages:
+ *                 - senderId: "641d15f1e8b1f9c6a9a2a5e9"
+ *                   receiverId: "641d15f1e8b1f9c6a9a2a5ea"
+ *                   content: "Hey!"
+ *                   timestamp: "2024-03-17T12:00:00Z"
+ *                 - senderId: "641d15f1e8b1f9c6a9a2a5ea"
+ *                   receiverId: "641d15f1e8b1f9c6a9a2a5e9"
+ *                   content: "Hello!"
+ *                   timestamp: "2024-03-17T12:05:00Z"
+ *       400:
+ *         description: Bad request (invalid user IDs)
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /chat/chats:
+ *   get:
+ *     summary: Retrieve all chats of a user
+ *     tags:
+ *       - Chat
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user chats
+ *         content:
+ *           application/json:
+ *             example:
+ *               chats:
+ *                 - userId: "641d15f1e8b1f9c6a9a2a5e9"
+ *                   lastMessage: "Hey, what's up?"
+ *                   lastMessageTimestamp: "2024-03-17T12:10:00Z"
+ *                 - userId: "641d15f1e8b1f9c6a9a2a5ea"
+ *                   lastMessage: "See you tomorrow!"
+ *                   lastMessageTimestamp: "2024-03-17T14:30:00Z"
+ *       500:
+ *         description: Internal server error
+ */

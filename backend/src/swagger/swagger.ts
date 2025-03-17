@@ -14,6 +14,7 @@
       { name: "Auth", description: "Authentication Endpoints" },
       { name: "Posts", description: "Post Management" },
       { name: "Comments", description: "Comment Management" },
+      { name: "Chat", description: "Chat Management Endpoints" }
     ],
     servers: [{ url: 'http://localhost:5000' }], // TODO update when we deploy
   };

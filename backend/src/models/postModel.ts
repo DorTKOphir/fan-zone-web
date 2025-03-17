@@ -5,7 +5,7 @@ export interface IPost extends Document {
   dateCreated: Date;
   content: string;
   matchId: string;
-  comments: mongoose.Schema.Types.ObjectId[];
+  comments: mongoose.Types.ObjectId[];
   likes: string[];
 }
 
