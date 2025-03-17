@@ -1,4 +1,4 @@
-import { Match } from '@/types/types';
+import { Match } from '@/models/match';
 import { format } from 'date-fns';
 
 type MatchListItemProps = {

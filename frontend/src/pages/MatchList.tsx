@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { format, isSameDay, parseISO } from 'date-fns';
-import { Match } from '@/types/types';
-import { fetchMatches } from '@/apiCalls/FootballData';
-import MatchListItem from './MatchListItem';
+import { Match } from '@/models/match';
+import { fetchMatches } from '@/services/matches';
+import MatchListItem from '../components/MatchListItem';
 
 export default function MatchList() {
 	const [matches, setMatches] = useState<Match[]>([]);
