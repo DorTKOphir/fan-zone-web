@@ -15,8 +15,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
-app.use('./api/comments', commentRoutes);
-app.use('./api/chat', chatRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/chat', chatRoutes);
 setupSwagger(app);
 
 export default app;

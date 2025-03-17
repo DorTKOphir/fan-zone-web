@@ -7,7 +7,7 @@ class ChatController {
     async sendMessage (req: Request, res: Response) {
         try {
           const { senderId, receiverId, content } = req.body;
-      
+
           const sender = await userModel.findById(senderId);
           const receiver = await userModel.findById(receiverId);
 
@@ -16,7 +16,7 @@ class ChatController {
             return res.status(404).json({ error: "Sender or receiver not found." });
           }
       
-          const message = new messageModel({ senderId, receiverId, content });
+          const message = new messageModel({ sender: senderId, receiver: receiverId, content });
           message.save().then((msg: IMessage) => {
             chatGateway.sendMessage(msg);      
             console.log(`Sent message successfully from ${senderId} to -> ${receiverId}`);
