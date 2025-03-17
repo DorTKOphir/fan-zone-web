@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import postRoutes from './routes/postRoutes';
 import commentRoutes from './routes/commentRoutes';
+import matchRoutes from './routes/matchRoutes';
 import { setupSwagger } from './swagger/swagger';
 
 dotenv.config();
@@ -15,7 +16,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
-app.use('./api/comments', commentRoutes)
+app.use('/api/comments', commentRoutes);
+app.use('/api/matches', matchRoutes);
 setupSwagger(app);
 
 export default app;

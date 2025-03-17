@@ -91,8 +91,8 @@ class AuthController {
 
 			jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err, user: any) => {
 				if (err) {
-          console.error('Token does not match');
-          return res.status(403).json({ error: 'Invalid refresh token' });
+					console.error('Token does not match');
+					return res.status(403).json({ error: 'Invalid refresh token' });
 				}
 
 				const foundUser = await userModel.findOne({
