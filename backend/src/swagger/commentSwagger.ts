@@ -1,63 +1,26 @@
 /**
  * @swagger
  * tags:
- *   - name: Posts
- *     description: Post Management Endpoints
+ *   - name: Comments
+ *     description: Endpoints for managing comments
  */
 
 /**
  * @swagger
- * /posts/{id}:
- *   get:
- *     summary: Get a post by ID
+ * /comments/{postId}:
+ *   post:
+ *     summary: Create a new comment on a post
  *     tags:
- *       - Posts
+ *       - Comments
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: postId
  *         required: true
  *         schema:
  *           type: string
- *         example: "641d15f1e8b1f9c6a9a2a5e9"
- *         description: The ID of the post to retrieve
- *     responses:
- *       200:
- *         description: Successfully fetched the post
- *         content:
- *           application/json:
- *             example:
- *               _id: "641d15f1e8b1f9c6a9a2a5e9"
- *               content: "This is a sample post."
- *               author: { _id: "641d134fe8b1f9c6a9a2a123", username: "john_doe" }
- *               comments: [
- *                 {
- *                   _id: "641d164de8b1f9c6a9a2a7e8",
- *                   content: "Great post!",
- *                   author: { _id: "641d123fe8b1f9c6a9a1a111", username: "jane_doe" },
- *                 }
- *               ]
- *               dateCreated: "2025-03-14T10:15:30.000Z"
- *       404:
- *         description: Post not found
- *         content:
- *           application/json:
- *             example:
- *               error: "Post not found"
- *       500:
- *         description: Error fetching post
- *         content:
- *           application/json:
- *             example:
- *               error: "Error fetching post"
- */
-
-/**
- * @swagger
- * /posts:
- *   post:
- *     summary: Create a new post
- *     tags:
- *       - Posts
+ *         description: The ID of the post to comment on
  *     requestBody:
  *       required: true
  *       content:
@@ -65,52 +28,51 @@
  *           schema:
  *             type: object
  *             properties:
- *               author:
- *                 type: string
- *                 example: "641d134fe8b1f9c6a9a2a123"
  *               content:
  *                 type: string
- *                 example: "This is a new post content."
+ *                 example: "Great match!"
  *     responses:
  *       201:
- *         description: Post created successfully
+ *         description: Comment successfully created
  *         content:
  *           application/json:
- *             example:
- *               _id: "641d15f1e8b1f9c6a9a2a5e9"
- *               author: "641d134fe8b1f9c6a9a2a123"
- *               content: "This is a new post content."
- *               comments: []
- *               dateCreated: "2025-03-14T10:15:30.000Z"
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60d9f1b3f72e4b001c8f8d12"
+ *                 content:
+ *                   type: string
+ *                   example: "Great match!"
+ *                 author:
+ *                   type: string
+ *                   example: "60a7c9e9f5e2b14c8b3e8f01"
+ *                 postId:
+ *                   type: string
+ *                   example: "609d1e9c3b5e4b001c8f7a1e"
  *       400:
- *         description: Content is required
- *         content:
- *           application/json:
- *             example:
- *               error: "Content is required"
- *       500:
- *         description: Error creating post
- *         content:
- *           application/json:
- *             example:
- *               error: "Error creating post"
+ *         description: Invalid input or missing required fields
+ *       401:
+ *         description: Unauthorized (Invalid or missing token)
  */
 
 /**
  * @swagger
- * /posts/{id}:
+ * /comments/{commentId}:
  *   patch:
- *     summary: Update a post by ID
+ *     summary: Update an existing comment
  *     tags:
- *       - Posts
+ *       - Comments
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: commentId
  *         required: true
  *         schema:
  *           type: string
- *         example: "641d15f1e8b1f9c6a9a2a5e9"
- *         description: The ID of the post to update
+ *         description: The ID of the comment to update
  *     requestBody:
  *       required: true
  *       content:
@@ -120,72 +82,53 @@
  *             properties:
  *               content:
  *                 type: string
- *                 example: "Updated post content."
- *               likes:
- *                 type: number
- *                 example: 10
+ *                 example: "Updated comment text"
  *     responses:
  *       200:
- *         description: Post updated successfully
+ *         description: Comment successfully updated
  *         content:
  *           application/json:
- *             example:
- *               _id: "641d15f1e8b1f9c6a9a2a5e9"
- *               content: "Updated post content."
- *               likes: 10
- *               author: { _id: "641d134fe8b1f9c6a9a2a123", username: "john_doe" }
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60d9f1b3f72e4b001c8f8d12"
+ *                 content:
+ *                   type: string
+ *                   example: "Updated comment text"
+ *                 author:
+ *                   type: string
+ *                   example: "60a7c9e9f5e2b14c8b3e8f01"
  *       400:
- *         description: No valid fields provided for update
- *         content:
- *           application/json:
- *             example:
- *               error: "No valid fields provided for update"
- *       404:
- *         description: Post not found
- *         content:
- *           application/json:
- *             example:
- *               error: "Post not found"
- *       500:
- *         description: Error updating post
- *         content:
- *           application/json:
- *             example:
- *               error: "Error updating post"
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized (Invalid or missing token)
+ *       403:
+ *         description: Forbidden (Only the author can update)
  */
 
 /**
  * @swagger
- * /posts/{id}:
+ * /comments/{commentId}:
  *   delete:
- *     summary: Delete a post by ID
+ *     summary: Delete a comment
  *     tags:
- *       - Posts
+ *       - Comments
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: commentId
  *         required: true
  *         schema:
  *           type: string
- *         example: "641d15f1e8b1f9c6a9a2a5e9"
- *         description: The ID of the post to delete
+ *         description: The ID of the comment to delete
  *     responses:
  *       200:
- *         description: Post deleted successfully
- *         content:
- *           application/json:
- *             example:
- *               message: "Post deleted successfully"
- *       404:
- *         description: Post not found
- *         content:
- *           application/json:
- *             example:
- *               error: "Post not found"
- *       500:
- *         description: Error deleting post
- *         content:
- *           application/json:
- *             example:
- *               error: "Error deleting post"
+ *         description: Comment successfully deleted
+ *       401:
+ *         description: Unauthorized (Invalid or missing token)
+ *       403:
+ *         description: Forbidden (Only the author can delete)
  */

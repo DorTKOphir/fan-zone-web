@@ -1,12 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import postRoutes from './routes/postRoutes';
 import commentRoutes from './routes/commentRoutes';
 import chatRoutes from './routes/chatRoutes';
 import { setupSwagger } from './swagger/swagger';
-import cors from 'cors';
 dotenv.config();
 
 const app = express();

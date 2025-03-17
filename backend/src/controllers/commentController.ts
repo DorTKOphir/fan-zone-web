@@ -7,7 +7,7 @@ class CommentController {
     try {
       const { content } = req.body;
       const postId = req.params.postId;
-      const userId = (req as any).user._id;
+      const author = (req as any).user._id;
 
       if (!content || !postId) {
         console.error('Content and postId are required')
@@ -16,7 +16,7 @@ class CommentController {
 
       const newComment = new commentModel({
         content,
-        author: userId,
+        author,
         dateCreated: new Date(),
       });
 
