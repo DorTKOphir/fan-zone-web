@@ -22,7 +22,9 @@ class PostController {
 
   async create(req: Request, res: Response) {
     try {
-      const { author, content, matchId } = req.body;
+      const { content, matchId } = req.body;
+      const author = (req as any).user._id;
+      
       if (!content) {
         console.error('Content is required');
         return res.status(400).json({ error: 'Content is required' });
