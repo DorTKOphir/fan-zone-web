@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   get:
  *     summary: Get a post by ID
  *     tags:
@@ -53,9 +53,11 @@
 
 /**
  * @swagger
- * /posts:
+ * /api/posts:
  *   post:
  *     summary: Create a new post
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Posts
  *     requestBody:
@@ -65,12 +67,12 @@
  *           schema:
  *             type: object
  *             properties:
- *               author:
- *                 type: string
- *                 example: "641d134fe8b1f9c6a9a2a123"
  *               content:
  *                 type: string
  *                 example: "This is a new post content."
+ *  *            matchId:
+ *                 type: string
+ *                 example: "12305942"
  *     responses:
  *       201:
  *         description: Post created successfully
@@ -98,9 +100,11 @@
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   patch:
  *     summary: Update a post by ID
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Posts
  *     parameters:
@@ -156,9 +160,11 @@
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   delete:
  *     summary: Delete a post by ID
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Posts
  *     parameters:
@@ -192,7 +198,7 @@
 
  /**
  * @swagger
- * /posts/match/{matchId}:
+ * /api/posts/match/{matchId}:
  *   get:
  *     summary: Get posts by matchId
  *     tags:

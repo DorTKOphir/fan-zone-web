@@ -8,13 +8,13 @@
 
 /**
  * @swagger
- * /chat/send:
+ * /api/chat/send:
  *   post:
  *     summary: Send a message
  *     tags:
  *       - Chat
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -50,13 +50,13 @@
 
 /**
  * @swagger
- * /chat/history/{user1}/{user2}:
+ * /api/chat/history/{user1}/{user2}:
  *   get:
  *     summary: Retrieve chat history between two users
  *     tags:
  *       - Chat
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: user1
@@ -93,13 +93,13 @@
 
 /**
  * @swagger
- * /chat/chats:
+ * /api/chat/chats:
  *   get:
  *     summary: Retrieve all chats of a user
  *     tags:
  *       - Chat
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved user chats
