@@ -25,7 +25,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const [user, setUser] = useState<any>(null);
 	const [accessToken, setAccessToken] = useState<string | null>(
-		localStorage.getItem('accessToken')
+		localStorage.getItem('accessToken'),
 	);
 	const navigate = useNavigate();
 
@@ -53,14 +53,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			localStorage.setItem('accessToken', res.accessToken);
 			localStorage.setItem('refreshToken', res.refreshToken);
 			localStorage.setItem('username', username);
-			navigate('/dashboard');
+			navigate('/');
 		}
 	};
 
 	return (
-		<AuthContext.Provider
-			value={{ user, accessToken, login, logout: apiLogout }}
-		>
+		<AuthContext.Provider value={{ user, accessToken, login, logout: apiLogout }}>
 			{children}
 		</AuthContext.Provider>
 	);
