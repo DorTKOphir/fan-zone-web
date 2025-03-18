@@ -1,7 +1,6 @@
 /**
  * @swagger
  * tags:
- * 
  *   - name: Chat
  *     description: Chat Management Endpoints
  */
@@ -102,17 +101,18 @@
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Successfully retrieved user chats
+ *         description: Successfully retrieved all users the current user has chatted with
  *         content:
  *           application/json:
  *             example:
- *               chats:
- *                 - userId: "641d15f1e8b1f9c6a9a2a5e9"
- *                   lastMessage: "Hey, what's up?"
- *                   lastMessageTimestamp: "2024-03-17T12:10:00Z"
- *                 - userId: "641d15f1e8b1f9c6a9a2a5ea"
- *                   lastMessage: "See you tomorrow!"
- *                   lastMessageTimestamp: "2024-03-17T14:30:00Z"
+ *               - _id: "641d15f1e8b1f9c6a9a2a5e9"
+ *                 username: "john_doe"
+ *               - _id: "641d15f1e8b1f9c6a9a2a5ea"
+ *                 username: "jane_doe"
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Internal server error"
  */
