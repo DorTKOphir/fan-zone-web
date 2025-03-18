@@ -28,14 +28,15 @@
  *             example:
  *               _id: "641d15f1e8b1f9c6a9a2a5e9"
  *               content: "This is a sample post."
- *               author: { _id: "641d134fe8b1f9c6a9a2a123", username: "john_doe" }
- *               comments: [
- *                 {
- *                   _id: "641d164de8b1f9c6a9a2a7e8",
- *                   content: "Great post!",
- *                   author: { _id: "641d123fe8b1f9c6a9a1a111", username: "jane_doe" },
- *                 }
- *               ]
+ *               author:
+ *                 _id: "641d134fe8b1f9c6a9a2a123"
+ *                 username: "john_doe"
+ *               comments:
+ *                 - _id: "641d164de8b1f9c6a9a2a7e8"
+ *                   content: "Great post!"
+ *                   author:
+ *                     _id: "641d123fe8b1f9c6a9a1a111"
+ *                     username: "jane_doe"
  *               dateCreated: "2025-03-14T10:15:30.000Z"
  *       404:
  *         description: Post not found
@@ -56,6 +57,8 @@
  * /api/posts:
  *   post:
  *     summary: Create a new post
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Posts
  *     requestBody:
@@ -65,12 +68,12 @@
  *           schema:
  *             type: object
  *             properties:
- *               author:
- *                 type: string
- *                 example: "641d134fe8b1f9c6a9a2a123"
  *               content:
  *                 type: string
  *                 example: "This is a new post content."
+ *               matchId:
+ *                 type: string
+ *                 example: "12305942"
  *     responses:
  *       201:
  *         description: Post created successfully
@@ -101,6 +104,8 @@
  * /api/posts/{id}:
  *   patch:
  *     summary: Update a post by ID
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Posts
  *     parameters:
@@ -133,7 +138,9 @@
  *               _id: "641d15f1e8b1f9c6a9a2a5e9"
  *               content: "Updated post content."
  *               likes: 10
- *               author: { _id: "641d134fe8b1f9c6a9a2a123", username: "john_doe" }
+ *               author:
+ *                 _id: "641d134fe8b1f9c6a9a2a123"
+ *                 username: "john_doe"
  *       400:
  *         description: No valid fields provided for update
  *         content:
@@ -159,6 +166,8 @@
  * /api/posts/{id}:
  *   delete:
  *     summary: Delete a post by ID
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Posts
  *     parameters:
@@ -205,10 +214,10 @@
  *         schema:
  *           type: string
  *         example: "65a123e4b5c678f9d0a1b234"
- *         description: The ID of the match to fetch posts for.
+ *         description: The ID of the match to fetch posts for
  *     responses:
  *       200:
- *         description: Successfully retrieved posts for the given match ID.
+ *         description: Successfully retrieved posts for the given match ID
  *         content:
  *           application/json:
  *             example:
@@ -225,21 +234,21 @@
  *                       _id: "641d123fe8b1f9c6a9a1a111"
  *                       username: "jane_smith"
  *       400:
- *         description: Missing match ID in request.
+ *         description: Missing match ID in request
  *         content:
  *           application/json:
  *             example:
- *               message: "Match ID is required."
+ *               message: "Match ID is required"
  *       404:
- *         description: No posts found for the given match ID.
+ *         description: No posts found for the given match ID
  *         content:
  *           application/json:
  *             example:
- *               message: "No posts found for this match ID."
+ *               message: "No posts found for this match ID"
  *       500:
- *         description: Internal server error.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             example:
- *               message: "Server error."
+ *               message: "Server error"
  */

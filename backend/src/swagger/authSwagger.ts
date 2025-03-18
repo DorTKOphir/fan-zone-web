@@ -90,6 +90,8 @@
  * /api/auth/logout:
  *   post:
  *     summary: Logout a user
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Auth
  *     requestBody:
@@ -128,6 +130,8 @@
  * /api/auth/refresh:
  *   post:
  *     summary: Refresh access token
+ *     security:
+ *       - BearerAuth: []
  *     tags:
  *       - Auth
  *     requestBody:
