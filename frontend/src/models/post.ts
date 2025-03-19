@@ -9,7 +9,7 @@ export type Post = {
 	comments: Comment[];
 };
 
-export interface IPost {
+export interface PostResponse {
 	_id: string;
 	author: User;
 	content: string;

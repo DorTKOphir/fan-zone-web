@@ -1,6 +1,6 @@
 import CommentListItem from '@/components/CommentListItem';
 import { Comment, NewComment } from '@/models/comment';
-import { IPost, Post } from '@/models/post';
+import { PostResponse, Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { addCommentOnPost, deleteComment } from '@/services/comment';
 import { getPostById } from '@/services/posts';
@@ -14,7 +14,7 @@ export default function CommentList() {
 	useEffect(() => {
 		const fetchPost = async () => {
 			try {
-				const data: IPost = await getPostById('67d9d275e1e693a13a8b6ed0');
+				const data: PostResponse = await getPostById('67d9d275e1e693a13a8b6ed0');
 
 				const parsedComments: Comment[] = data.comments.map((comment: Comment) => ({
 					_id: comment._id,
