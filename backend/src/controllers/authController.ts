@@ -53,7 +53,7 @@ class AuthController {
 			await user.save();
 
 			console.log('User logged in succesfully');
-			res.status(200).json({ accessToken, refreshToken });
+			res.status(200).json({ accessToken, refreshToken, user });
 		} catch (error) {
 			console.error('Login failed');
 			res.status(500).json({ error: 'Login failed' });
