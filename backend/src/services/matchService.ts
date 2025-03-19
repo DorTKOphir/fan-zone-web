@@ -17,6 +17,17 @@ export const fetchMatches = async () => {
 	return parseMatches(response.data.matches);
 };
 
+export const fetchMatchById = async (matchId: string) => {
+	return {
+		"id": 497410,
+		"date": "2024-08-16T19:00:00Z",
+		"homeTeam": "Manchester United FC",
+		"awayTeam": "Fulham FC",
+		"homeTeamScore": 1,
+		"awayTeamScore": 0
+	};
+}
+
 const parseMatches = (matches: MatchResponseData[]) =>
 	matches.map((match) => ({
 		id: match.id,

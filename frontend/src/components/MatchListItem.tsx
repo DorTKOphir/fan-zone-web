@@ -1,11 +1,18 @@
 import { Match } from '@/models/match';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 type MatchListItemProps = {
 	match: Match;
 };
 
 export default function MatchListItem({ match }: MatchListItemProps) {
+	const navigate = useNavigate();
+
+	const handleViewDetails = () => {
+		navigate(`/match/${match.id}`);
+	};
+
 	return (
 		<div
 			key={match.id}
@@ -28,7 +35,10 @@ export default function MatchListItem({ match }: MatchListItemProps) {
 					{format(new Date(match.date), 'MMMM dd, yyyy - HH:mm')}
 				</p>
 			</div>
-			<button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+			<button
+				onClick={handleViewDetails}
+				className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+			>
 				View Details
 			</button>
 		</div>
