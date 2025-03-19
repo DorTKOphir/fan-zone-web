@@ -13,6 +13,10 @@ class AuthController {
 
 			const newUser = new userModel({ username, email, password: hashedPassword });
 
+			const accessToken = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET, {
+				expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
+			});
+
 			const refreshToken = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET, {
 				expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
 			});
@@ -22,9 +26,9 @@ class AuthController {
 			await newUser.save();
 
 			console.log('User registered successfully');
-			res.status(201).json({ message: 'User registered successfully' });
+			res.status(201).json({ accessToken, refreshToken, user: newUser });
 		} catch (error) {
-			console.error('Registration failed');
+			console.error('Registration failed', error);
 			res.status(500).json({ error: 'Registration failed' });
 		}
 	}
