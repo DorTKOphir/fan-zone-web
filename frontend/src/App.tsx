@@ -5,7 +5,6 @@ import MatchList from './pages/MatchList';
 import Chat from './pages/Chat';
 import { AuthProvider } from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
-import Navbar from './components/Navbar';
 import Layout from './components/Layout';
 
 function App() {
