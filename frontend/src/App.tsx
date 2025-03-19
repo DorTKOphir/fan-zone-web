@@ -6,6 +6,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import CommentList from './pages/CommentList';
 import Layout from './components/Layout';
+import Profile from './pages/Profile';
 
 function App() {
 	return (
@@ -19,6 +20,7 @@ function App() {
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />
 					<Route path="/sign-up" element={<SignUp />} />
+					<Route path="/profile" element={<Profile />} />
 					<Route path="/match/comments" element={<CommentList />} />
 				</Routes>
 			</AuthProvider>
