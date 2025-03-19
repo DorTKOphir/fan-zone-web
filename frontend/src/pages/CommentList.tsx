@@ -43,7 +43,7 @@ export default function CommentList() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (post && newComment?.postId && newComment.content?.trim()) {
+		if (post && user && newComment?.postId && newComment.content?.trim()) {
 			const comment: Comment = await addCommentOnPost(newComment);
 
 			setPost({

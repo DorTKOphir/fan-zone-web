@@ -3,14 +3,17 @@ import {
 	login as apiLogin,
 	refreshToken as apiRefreshToken,
 	logout as apiLogout,
+	register as apiRegister,
+	getUser,
 } from '../services/auth';
 import { useNavigate } from 'react-router-dom';
 import User from '@/models/user';
 
 interface AuthContextType {
-	user: User;
+	user: User | null;
 	accessToken: string | null;
 	login: (username: string, password: string) => Promise<void>;
+	signUp: (username: string, email: string, password: string) => Promise<void>;
 	logout: () => void;
 }
 
@@ -23,7 +26,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-	const [user, setUser] = useState<any>(null);
+	const [user, setUser] = useState<User | null>(null);
 	const [accessToken, setAccessToken] = useState<string | null>(
 		localStorage.getItem('accessToken'),
 	);
@@ -35,7 +38,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				const newAccessToken = await apiRefreshToken();
 				if (newAccessToken) {
 					setAccessToken(newAccessToken);
-					setUser({ email: localStorage.getItem('userEmail') });
+
+					const userData = await getUser();
+					if (userData) {
+						setUser(userData);
+					}
 				} else {
 					apiLogout();
 				}
@@ -49,16 +56,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		const res = await apiLogin(username, password);
 		if (res.accessToken && res.refreshToken) {
 			setAccessToken(res.accessToken);
-			setUser({ email: username });
+			setUser(res.user);
 			localStorage.setItem('accessToken', res.accessToken);
 			localStorage.setItem('refreshToken', res.refreshToken);
-			localStorage.setItem('username', username);
+			navigate('/');
+		}
+	};
+
+	const signUp = async (username: string, email: string, password: string) => {
+		const res = await apiRegister(username, email, password);
+		if (res.accessToken && res.refreshToken) {
+			setAccessToken(res.accessToken);
+			localStorage.setItem('accessToken', res.accessToken);
+			localStorage.setItem('refreshToken', res.refreshToken);
+			setUser(res.user);
 			navigate('/');
 		}
 	};
 
 	return (
-		<AuthContext.Provider value={{ user, accessToken, login, logout: apiLogout }}>
+		<AuthContext.Provider value={{ user, accessToken, login, signUp, logout: apiLogout }}>
 			{children}
 		</AuthContext.Provider>
 	);

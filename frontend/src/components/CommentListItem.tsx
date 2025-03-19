@@ -5,7 +5,7 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 type CommentListItemProps = {
 	comment: Comment;
 	onDelete: (comment: Comment) => void;
-	user: User;
+	user: User | null;
 };
 
 const CommentListItem = ({ comment, onDelete, user }: CommentListItemProps) => {
@@ -20,7 +20,7 @@ const CommentListItem = ({ comment, onDelete, user }: CommentListItemProps) => {
 			<p className="mt-2 text-gray-700">{comment.content}</p>
 			<div className="flex items-center justify-between mt-2">
 				<div className="text-sm text-gray-500">{comment.dateCreated}</div>
-				{comment.author._id === user._id && (
+				{comment.author._id === user?._id && (
 					<button
 						onClick={() => onDelete(comment)}
 						className="text-red-500 hover:text-red-700 transition"

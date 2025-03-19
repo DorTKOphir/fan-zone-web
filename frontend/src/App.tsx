@@ -5,6 +5,7 @@ import MatchList from './pages/MatchList';
 import { AuthProvider } from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import CommentList from './pages/CommentList';
+import Layout from './components/Layout';
 
 function App() {
 	return (
@@ -12,7 +13,9 @@ function App() {
 			<AuthProvider>
 				<Routes>
 					<Route element={<ProtectedRoute />}>
-						<Route path="/" element={<MatchList />} />
+						<Route element={<Layout />}>
+							<Route path="/" element={<MatchList />} />
+						</Route>
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />
 					<Route path="/sign-up" element={<SignUp />} />
