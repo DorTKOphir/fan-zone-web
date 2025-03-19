@@ -73,15 +73,17 @@ const Chat: React.FC = () => {
   };
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) {
+    const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) {
       setSearchResults([]);
       return;
     }
     try {
-      const response = await api.get<ChatListItem[]>(`/users/search?query=${searchQuery}`);
+      const response = await api.get<ChatListItem[]>(`/users/search?usernameQuery=${trimmedQuery}`);
       setSearchResults(response.data);
     } catch (error) {
       console.error("Error searching users", error);
+      setSearchResults([]);
     }
   };
 
@@ -97,7 +99,7 @@ const Chat: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for users..."
           />
-          <Button onClick={handleSearch}>Search</Button>
+          <Button className="cursor-pointer"  onClick={handleSearch}>Search</Button>
         </div>
         <ChatList 
           chats={searchResults.length > 0 ? searchResults : chats} 
@@ -119,7 +121,9 @@ const Chat: React.FC = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message"
           />
-          <Button onClick={handleSendMessage}>Send</Button>
+          <Button className="cursor-pointer" onClick={handleSendMessage} disabled={!newMessage.trim() || !selectedChat}>
+            Send
+          </Button>
         </div>
       </div>
     </div>
