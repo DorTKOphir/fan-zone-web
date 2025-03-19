@@ -34,18 +34,7 @@ class ChatGateway {
     this.userSockets.set(userId, socket.id);
     console.log(`User ${userId} registered with socket ${socket.id}`);
   }
-
-  private async handleSendMessage(message: IMessage): Promise<void> {
-    try {
-      const receiverSocketId = this.userSockets.get(message.receiver.toString());
-      if (receiverSocketId) {
-        this.io.to(receiverSocketId).emit("message", message);
-      }
-    } catch (error) {
-      console.error("Error saving message:", error);
-    }
-  }
-
+  
   private handleDisconnect(socket: Socket): void {
     for (const [userId, socketId] of this.userSockets.entries()) {
       if (socketId === socket.id) {
