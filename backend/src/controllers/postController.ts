@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import postModel from '../models/postModel';
 import commentModel from '../models/commentModel';
-import { getFootballPostSuggestion } from '../services/geminiService';
+import { getPostSuggestion } from '../services/geminiService';
 
 class PostController {
 	async getById(req: Request, res: Response) {
@@ -127,7 +127,7 @@ class PostController {
 		}
 
 		try {
-			const suggestion = await getFootballPostSuggestion(matchDetails);
+			const suggestion = await getPostSuggestion(matchDetails);
 			res.json({ suggestion });
 		} catch (error) {
 			res.status(500).json({ error: 'Failed to generate suggestion' });

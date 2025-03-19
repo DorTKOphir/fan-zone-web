@@ -13,7 +13,7 @@ if (!API_KEY) {
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-export async function getFootballPostSuggestion(matchDetails: string): Promise<string> {
+export async function getPostSuggestion(matchDetails: string): Promise<string> {
 	const prompt = `Generate a post for a football match with the following details: ${matchDetails}`;
 
 	try {
