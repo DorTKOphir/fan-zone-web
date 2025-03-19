@@ -20,7 +20,7 @@ class CommentController {
 				dateCreated: new Date(),
 			});
 
-			(await newComment.save()).populate('author');
+			await newComment.save();
 
 			await postModel.findByIdAndUpdate(postId, { $push: { comments: newComment._id } });
 
