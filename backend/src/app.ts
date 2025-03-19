@@ -8,7 +8,6 @@ import postRoutes from './routes/postRoutes';
 import commentRoutes from './routes/commentRoutes';
 import chatRoutes from './routes/chatRoutes';
 import matchRoutes from './routes/matchRoutes';
-import userRoutes from './routes/userRoutes';
 import { setupSwagger } from './swagger/swagger';
 dotenv.config();
 
@@ -21,7 +20,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
 setupSwagger(app);
 

@@ -39,7 +39,7 @@ export const sendMessage = async (
 };
 
 /** Fetch chat history between two users */
-export const getChatHistory = async (user1: string, user2: string): Promise<{ messages: Message[] }> => {
+export const getChatHistory = async (user1: string, user2: string): Promise<Message[]> => {
   const response = await api.get<{ messages: Message[] }>(`/chat/history/${user1}/${user2}`);
   return response.data;
 };
