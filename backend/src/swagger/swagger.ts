@@ -2,21 +2,22 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
 
-// Swagger Definition
-const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Fan Zone Web API',
-    version: '1.0.0',
-    description: 'API documentation for Fan Zone Web endpoints',
-  },
-  tags: [
-    { name: "Auth", description: "Authentication Endpoints" },
-    { name: "Posts", description: "Post Management" },
-    { name: "Comments", description: "Comment Management" },
-  ],
-  servers: [{ url: 'http://localhost:5000' }], // TODO update when we deploy
-};
+  // Swagger Definition
+  const swaggerDefinition = {
+    openapi: '3.0.0',
+    info: {
+      title: 'Fan Zone Web API',
+      version: '1.0.0',
+      description: 'API documentation for Fan Zone Web endpoints',
+    },
+    tags: [
+      { name: "Auth", description: "Authentication Endpoints" },
+      { name: "Posts", description: "Post Management" },
+      { name: "Comments", description: "Comment Management" },
+      { name: "Chat", description: "Chat Management Endpoints" }
+    ],
+    servers: [{ url: 'http://localhost:5000' }], // TODO update when we deploy
+  };
 
 const options = {
   swaggerDefinition,
