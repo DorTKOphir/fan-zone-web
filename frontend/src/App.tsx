@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp';
 import MatchList from './pages/MatchList';
 import { AuthProvider } from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
+import CommentList from './pages/CommentList';
 import Layout from './components/Layout';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />
 					<Route path="/sign-up" element={<SignUp />} />
+					<Route path="/match/comments" element={<CommentList />} />
 				</Routes>
 			</AuthProvider>
 		</Router>
