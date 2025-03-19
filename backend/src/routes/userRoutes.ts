@@ -4,6 +4,8 @@ import UserController from '../controllers/userController';
 
 const router = express.Router();
 
+router.get("/", authMiddleware, UserController.getUser.bind(UserController));
+router.patch("/", authMiddleware, UserController.updateUser.bind(UserController));
 router.post("/search", authMiddleware, UserController.searchUsers.bind(UserController));
 
 export default router;
