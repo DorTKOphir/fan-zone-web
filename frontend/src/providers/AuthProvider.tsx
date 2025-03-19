@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				const newAccessToken = await apiRefreshToken();
 				if (newAccessToken) {
 					setAccessToken(newAccessToken);
-					setUser({ email: localStorage.getItem('userEmail') });
+					// setUser({ email: localStorage.getItem('userEmail') });
 				} else {
 					apiLogout();
 				}
@@ -49,10 +49,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		const res = await apiLogin(username, password);
 		if (res.accessToken && res.refreshToken) {
 			setAccessToken(res.accessToken);
-			setUser({ email: username });
+			setUser(res.user);
 			localStorage.setItem('accessToken', res.accessToken);
 			localStorage.setItem('refreshToken', res.refreshToken);
-			localStorage.setItem('username', username);
+			localStorage.setItem('user', user);
 			navigate('/');
 		}
 	};
