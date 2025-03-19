@@ -1,7 +1,7 @@
-import { Comment } from '@/models/comment';
+import { IPost } from '@/models/post';
 import api from './api';
 
-export const getPostById = async (postId: string): Promise<any> => {
+export const getPostById = async (postId: string): Promise<IPost> => {
 	try {
 		const response = await api.get(`/posts/${postId}`);
 		return response.data;

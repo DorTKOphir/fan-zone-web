@@ -6,3 +6,8 @@ export type Comment = {
 	content: string;
 	dateCreated: string;
 };
+
+export type NewComment = {
+	postId: string;
+	content?: string;
+};
