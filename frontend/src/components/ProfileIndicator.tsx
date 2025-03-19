@@ -12,10 +12,16 @@ import { FaUserCircle } from 'react-icons/fa';
 
 const ProfileIndicator: React.FC = ({}) => {
 	const {
-		user: { profilePicUrl, username },
+		user,
 		logout,
 	} = useAuth();
 	const navigate = useNavigate();
+
+	if (!user) {
+		return null;
+	}
+
+	const {profilePicUrl, username} = user;
 
 	return (
 		<DropdownMenu>

@@ -3,12 +3,13 @@ import {
 	login as apiLogin,
 	refreshToken as apiRefreshToken,
 	logout as apiLogout,
+	getUser,
 } from '../services/auth';
 import { useNavigate } from 'react-router-dom';
 import User from '@/models/user';
 
 interface AuthContextType {
-	user: User;
+	user: User | null;
 	accessToken: string | null;
 	login: (username: string, password: string) => Promise<void>;
 	logout: () => void;
@@ -23,7 +24,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-	const [user, setUser] = useState<any>(null);
+	const [user, setUser] = useState<User | null>(null);
 	const [accessToken, setAccessToken] = useState<string | null>(
 		localStorage.getItem('accessToken'),
 	);
@@ -35,7 +36,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 				const newAccessToken = await apiRefreshToken();
 				if (newAccessToken) {
 					setAccessToken(newAccessToken);
-					// setUser({ email: localStorage.getItem('userEmail') });
+
+					const userData = await getUser();
+					if (userData) {
+						setUser(userData);
+					}
 				} else {
 					apiLogout();
 				}
@@ -52,7 +57,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setUser(res.user);
 			localStorage.setItem('accessToken', res.accessToken);
 			localStorage.setItem('refreshToken', res.refreshToken);
-			localStorage.setItem('user', user);
 			navigate('/');
 		}
 	};

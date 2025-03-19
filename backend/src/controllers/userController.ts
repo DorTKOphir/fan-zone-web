@@ -1,18 +1,15 @@
 import { Request, Response } from 'express';
 import userModel from '../models/userModel';
-import mongoose from 'mongoose';
 
 class UserController {
-	async getById(req: Request, res: Response) {
+	/**
+	 * Get authenticated user details
+	 */
+	async getUser(req: Request, res: Response) {
 		try {
-			const { userId } = req.params;
-
-			if (!mongoose.Types.ObjectId.isValid(userId)) {
-				console.error('Invalid user ID');
-				return res.status(400).json({ error: 'Invalid user ID' });
-			}
-
-			const user = await userModel.findById(userId).select('-password -refreshTokens');
+			const user = await userModel
+				.findById((req as any).user._id)
+				.select('-password -refreshTokens');
 
 			if (!user) {
 				console.error('User not found');
@@ -27,9 +24,11 @@ class UserController {
 		}
 	}
 
-	async update(req: Request, res: Response) {
+	/**
+	 * Update authenticated user details (Only username and email)
+	 */
+	async updateUser(req: Request, res: Response) {
 		try {
-			const { userId } = req.params;
 			const updateBody: { [key: string]: any } = {};
 
 			for (const field of this.getUpdateFields()) {
@@ -43,16 +42,11 @@ class UserController {
 				return res.status(400).json({ error: 'No valid fields provided for update' });
 			}
 
-			if (!mongoose.Types.ObjectId.isValid(userId)) {
-				console.error('Invalid user ID');
-				return res.status(400).json({ error: 'Invalid user ID' });
-			}
-
-			const updatedUser = await userModel.findByIdAndUpdate(userId, updateBody, {
-				new: true,
-				runValidators: true,
-				select: '-password -refreshTokens',
-			});
+			const updatedUser = await userModel.findByIdAndUpdate(
+				(req as any).user._id,
+				updateBody,
+				{ new: true, runValidators: true, select: '-password -refreshTokens' },
+			);
 
 			if (!updatedUser) {
 				console.error('User not found');
