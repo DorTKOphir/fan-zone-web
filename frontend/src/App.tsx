@@ -15,7 +15,7 @@ function App() {
 					<Route element={<ProtectedRoute />}>
 						<Route element={<Layout />}>
 							<Route path="/" element={<MatchList />} />
-							<Route path="/match/:matchId" element={<MatchDetails />} />
+							<Route path="/:matchId" element={<MatchDetails />} />
 						</Route>
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />

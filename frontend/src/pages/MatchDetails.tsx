@@ -4,7 +4,7 @@ import { Match } from '@/models/match';
 import Post from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { getMatchById } from '@/services/matches';
-import { getPostsByMatchId, updatePost } from '@/services/posts';
+import { deletePost, getPostsByMatchId, updatePost } from '@/services/posts';
 import PostItem from '@/components/PostItem';
 import NewPostForm from '@/components/NewPostForm';
 
@@ -43,6 +43,16 @@ export default function MatchDetails() {
 		}
 	};
 
+	const handleDelete = async (postId: string) => {
+		await deletePost(postId);
+		setPosts((prev) => prev.filter((p) => p._id !== postId));
+	};
+
+	const handleUpdate = async (postId: string, newContent: string) => {
+		const updatedPost = await updatePost(postId, { content: newContent });
+		setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
+	};
+
 	if (!match) return <p>Loading match details...</p>;
 
 	return (
@@ -61,7 +71,13 @@ export default function MatchDetails() {
 					<h2 className="text-xl font-semibold mt-6">Posts</h2>
 					<div className="space-y-4">
 						{posts.map((post) => (
-							<PostItem key={post._id} post={post} onLike={handleLike} />
+							<PostItem
+								key={post._id}
+								post={post}
+								onLike={handleLike}
+								onDelete={handleDelete}
+								onUpdate={handleUpdate}
+							/>
 						))}
 					</div>
 				</div>

@@ -9,8 +9,8 @@ type MatchListItemProps = {
 export default function MatchListItem({ match }: MatchListItemProps) {
 	const navigate = useNavigate();
 
-	const handleViewDetails = () => {
-		navigate(`/match/${match.id}`);
+	const handleViewPosts = () => {
+		navigate(`/${match.id}`);
 	};
 
 	return (
@@ -36,10 +36,10 @@ export default function MatchListItem({ match }: MatchListItemProps) {
 				</p>
 			</div>
 			<button
-				onClick={handleViewDetails}
+				onClick={handleViewPosts}
 				className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
 			>
-				View Details
+				View Posts
 			</button>
 		</div>
 	);

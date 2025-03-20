@@ -20,3 +20,7 @@ export const createPost = async (postData: {
 	const response = await api.post(`/posts`, postData);
 	return response.data;
 };
+
+export const deletePost = async (postId: string): Promise<void> => {
+	await api.delete(`/posts/${postId}`);
+};
