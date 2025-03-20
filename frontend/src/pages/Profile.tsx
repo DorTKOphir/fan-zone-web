@@ -1,4 +1,5 @@
 import { useAuth } from '@/providers/AuthProvider';
+import { getPostByAuthorId } from '@/services/posts';
 import { useState, useEffect } from 'react';
 
 interface User {
@@ -21,17 +22,21 @@ const Profile = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { user } = useAuth();
 
-	// Fetch user profile
 	useEffect(() => {
 		const fetchProfileData = async () => {
-			try {
-				// const userPosts = await getUserPosts(userId);
-				// setPosts(userPosts);
-				setLoading(false);
-			} catch (err) {
-				setError('Failed to load profile or posts');
-				setLoading(false);
+			if (user) {
+				try {
+					const userPostsData = await getPostByAuthorId(user._id);
+					const userPosts = userPostsData.map((userPostData) => ({
+						...userPostData,
+						author: user,
+					}));
+					setPosts(userPosts);
+				} catch (err) {
+					setError('Failed to load profile or posts');
+				}
 			}
+			setLoading(false);
 		};
 		fetchProfileData();
 	}, [user]);
