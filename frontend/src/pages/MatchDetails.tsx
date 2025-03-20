@@ -5,10 +5,8 @@ import Post from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { getMatchById } from '@/services/matches';
 import { getPostsByMatchId, updatePost } from '@/services/posts';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FaComment, FaHeart, FaRegHeart } from 'react-icons/fa';
-import UserAvatar from '@/components/UserAvatar';
+import PostItem from '@/components/PostItem';
+import NewPostForm from '@/components/NewPostForm';
 
 export default function MatchDetails() {
 	const { matchId } = useParams<{ matchId: string }>();
@@ -34,10 +32,15 @@ export default function MatchDetails() {
 			? post.likes.filter((id) => id !== user._id)
 			: [...post.likes, user._id];
 
-		// Update post using the existing update API
 		const updatedPost = await updatePost(postId, { likes: updatedLikes });
 
 		setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
+	};
+
+	const handlePostCreated = () => {
+		if (matchId) {
+			getPostsByMatchId(matchId).then(setPosts);
+		}
 	};
 
 	if (!match) return <p>Loading match details...</p>;
@@ -53,35 +56,12 @@ export default function MatchDetails() {
 						Date: {new Date(match.date).toLocaleDateString()}
 					</p>
 
+					<NewPostForm matchId={matchId!} onPostCreated={handlePostCreated} />
+
 					<h2 className="text-xl font-semibold mt-6">Posts</h2>
 					<div className="space-y-4">
 						{posts.map((post) => (
-							<Card key={post._id} className="p-4">
-								<div className="flex items-center space-x-4">
-									<UserAvatar profilePicUrl={post.author.profilePicUrl} />
-									<div>
-										<p className="font-semibold">{post.author.username}</p>
-										<p className="text-sm text-gray-500">
-											{new Date(post.dateCreated).toLocaleDateString()}
-										</p>
-									</div>
-								</div>
-								<p className="mt-2">{post.content}</p>
-								<div className="flex items-center space-x-4 mt-4">
-									<Button variant="ghost" onClick={() => handleLike(post._id)}>
-										{post.likes.includes(user?._id ?? '') ? (
-											<FaHeart className="text-red-500" />
-										) : (
-											<FaRegHeart />
-										)}
-										<span className="ml-1">{post.likes.length}</span>
-									</Button>
-									<Button variant="ghost">
-										<FaComment />
-										<span className="ml-1">{post.comments.length}</span>
-									</Button>
-								</div>
-							</Card>
+							<PostItem key={post._id} post={post} onLike={handleLike} />
 						))}
 					</div>
 				</div>
