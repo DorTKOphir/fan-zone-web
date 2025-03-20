@@ -2,12 +2,6 @@ import { Request, Response } from 'express';
 import userModel from '../models/userModel';
 
 class UserController {
-	constructor() {
-		userModel.find({ username: new RegExp("dor", "i") })
-            .select("_id username")
-            .limit(10).then(user => console.log('DOR USER', user));
-	}
-
     async searchUsers(req: Request, res: Response) {
         try {
             const usernameQuery = req.query.usernameQuery as string;

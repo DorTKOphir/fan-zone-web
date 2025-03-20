@@ -25,7 +25,16 @@ export const disconnectSocket = () => {
 
 /** Listen for new messages */
 export const onNewMessage = (callback: (message: Message) => void) => {
+  socket?.off("newMessage");
   socket?.on("newMessage", callback);
+};
+
+/** Listen for chat list updates */
+export const onChatListUpdate = (callback: () => void) => {
+  if (!socket) return;
+
+  socket.off("chatListUpdate");
+  socket.on("chatListUpdate", callback);
 };
 
 /** Send a message */

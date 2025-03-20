@@ -4,9 +4,12 @@ import { Message } from "../models/message";
 interface ChatMessagesProps {
   messages?: Message[];
   userId: string;
+  selectedChatId: string | null;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ messages = [], userId }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({ messages = [], userId, selectedChatId }) => {
+  if (!selectedChatId) return null;
+
   return (
     <div className="flex-1 overflow-y-auto p-3 bg-gray-50">
       {messages.length > 0 ? (

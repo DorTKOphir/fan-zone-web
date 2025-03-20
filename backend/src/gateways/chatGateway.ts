@@ -15,6 +15,7 @@ class ChatGateway {
     const receiverSocketId = this.userSockets.get(msg.receiver.toString());
     if (receiverSocketId) {
       this.io.to(receiverSocketId).emit("newMessage", msg);
+      this.io.to(receiverSocketId).emit('chatListUpdate');  
     }
   }
 

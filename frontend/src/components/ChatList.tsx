@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChatListItem } from "../models/chatListItem";
+import { onChatListUpdate, getUserChats } from "../services/chat";
 
 interface ChatListProps {
-  chats: ChatListItem[];
   selectedChat: ChatListItem | null;
   onSelectChat: (chat: ChatListItem) => void;
 }
 
-const ChatList: React.FC<ChatListProps> = ({ chats, selectedChat, onSelectChat }) => {
+const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
+  const [chats, setChats] = useState<ChatListItem[]>([]);
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      const userChats = await getUserChats();
+      setChats(userChats);
+    };
+
+    fetchChats();
+    onChatListUpdate(fetchChats);
+
+    return () => {
+      onChatListUpdate(() => {});
+    };
+  }, []);
+
   return (
     <div className="flex flex-col overflow-y-auto">
       {chats.length > 0 ? (

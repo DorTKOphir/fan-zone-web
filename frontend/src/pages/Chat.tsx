@@ -5,7 +5,8 @@ import {
   getUserChats, 
   getChatHistory, 
   sendMessage, 
-  onNewMessage 
+  onNewMessage, 
+  onChatListUpdate
 } from "../services/chat";
 import { Message } from "../models/message";
 import { ChatListItem } from "../models/chatListItem";
@@ -30,14 +31,19 @@ const Chat: React.FC = () => {
 
     connectSocket(user._id);
     fetchChats();
+    onChatListUpdate(fetchChats);
 
     return () => {
       disconnectSocket();
+      onChatListUpdate(() => {}); // ✅ Cleanup listener
     };
   }, [user?._id]);
 
   useEffect(() => {
-    if (!selectedChat || !user?._id) return;
+    if (!selectedChat || !user?._id) {
+      setMessages([]); // ✅ Clear messages when no chat is selected
+      return;
+    }
 
     fetchMessages(selectedChat._id);
     setSearchResults([]);
@@ -47,13 +53,16 @@ const Chat: React.FC = () => {
     if (!user?._id) return;
   
     const messageListener = (message: Message) => {
-      setMessages((prev) => [...prev, message]);
+      // ✅ Only add messages that belong to the selected chat
+      if (message.sender._id === selectedChat?._id || message.receiver._id === selectedChat?._id) {
+        setMessages((prev) => [...prev, message]);
+      }
     };
   
     onNewMessage(messageListener);
-  
+
     return () => {
-      onNewMessage(() => {});
+      onNewMessage(() => {}); // ✅ Prevent duplicate listeners
     };
   }, [selectedChat, user?._id]);
 
@@ -144,10 +153,9 @@ const Chat: React.FC = () => {
           </Button>
         </div>
 
-        {/* Chat List (Ensures chat list fits within available space) */}
+        {/* Chat List */}
         <div className="flex-1 overflow-y-auto min-h-0">
           <ChatList 
-            chats={searchResults.length > 0 ? searchResults : chats} 
             selectedChat={selectedChat} 
             onSelectChat={setSelectedChat} 
           />
@@ -162,12 +170,12 @@ const Chat: React.FC = () => {
           <h3>{selectedChat ? selectedChat.username : "Select a chat"}</h3>
         </div>
 
-        {/* Chat Messages (Scrolls while keeping input fixed) */}
+        {/* Chat Messages (Only render if a chat is selected) */}
         <div className="flex-1 overflow-y-auto p-3 min-h-0"> 
-          <ChatMessages messages={messages} userId={user._id} />
+          {selectedChat && <ChatMessages messages={messages} userId={user._id} selectedChatId={selectedChat?._id} />}
         </div>
 
-        {/* Message Input Area (Always Visible) */}
+        {/* Message Input Area */}
         <div className="p-3 border-t flex items-center gap-2 bg-white flex-shrink-0 h-[60px]">
           <Input
             type="text"
