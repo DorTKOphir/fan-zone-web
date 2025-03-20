@@ -18,22 +18,25 @@ export const fetchMatches = async () => {
 };
 
 export const fetchMatchById = async (matchId: string) => {
-	return {
-		"id": 497410,
-		"date": "2024-08-16T19:00:00Z",
-		"homeTeam": "Manchester United FC",
-		"awayTeam": "Fulham FC",
-		"homeTeamScore": 1,
-		"awayTeamScore": 0
-	};
-}
+	const response: AxiosResponse<MatchResponseData> = await axios.get(
+		`${process.env.MATCHES_API_BASE_URL}/v4/matches/${matchId}`,
+		{
+			headers: {
+				'X-Auth-Token': process.env.MATCHES_API_TOKEN,
+			},
+		},
+	);
 
-const parseMatches = (matches: MatchResponseData[]) =>
-	matches.map((match) => ({
-		id: match.id,
-		date: match.utcDate,
-		homeTeam: match.homeTeam.name,
-		awayTeam: match.awayTeam.name,
-		homeTeamScore: match.score?.fullTime.home,
-		awayTeamScore: match.score?.fullTime.away,
-	}));
+	return parseMatch(response.data);
+};
+
+const parseMatch = (match: MatchResponseData) => ({
+	id: match.id,
+	date: match.utcDate,
+	homeTeam: match.homeTeam.name,
+	awayTeam: match.awayTeam.name,
+	homeTeamScore: match.score?.fullTime.home,
+	awayTeamScore: match.score?.fullTime.away,
+});
+
+const parseMatches = (matches: MatchResponseData[]) => matches.map(parseMatch);
