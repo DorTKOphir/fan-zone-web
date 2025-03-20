@@ -69,17 +69,23 @@ export default function MatchDetails() {
 					<NewPostForm matchId={matchId!} onPostCreated={handlePostCreated} />
 
 					<h2 className="text-xl font-semibold mt-6">Posts</h2>
-					<div className="space-y-4">
-						{posts.map((post) => (
-							<PostItem
-								key={post._id}
-								post={post}
-								onLike={handleLike}
-								onDelete={handleDelete}
-								onUpdate={handleUpdate}
-							/>
-						))}
-					</div>
+					{posts.length === 0 ? (
+						<p className="text-gray-500">
+							No posts yet. Be the first to share your thoughts!
+						</p>
+					) : (
+						<div className="space-y-4">
+							{posts.map((post) => (
+								<PostItem
+									key={post._id}
+									post={post}
+									onLike={handleLike}
+									onDelete={handleDelete}
+									onUpdate={handleUpdate}
+								/>
+							))}
+						</div>
+					)}
 				</div>
 			) : (
 				<p>Loading match details...</p>
