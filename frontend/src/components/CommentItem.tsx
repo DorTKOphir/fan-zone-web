@@ -3,13 +3,13 @@ import User from '@/models/user';
 import { format } from 'date-fns';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 
-type CommentListItemProps = {
+type CommentItemProps = {
 	comment: Comment;
 	onDelete: (comment: Comment) => void;
 	user: User | null;
 };
 
-const CommentListItem = ({ comment, onDelete, user }: CommentListItemProps) => {
+const CommentItem = ({ comment, onDelete, user }: CommentItemProps) => {
 	return (
 		<div
 			key={comment._id}
@@ -35,4 +35,4 @@ const CommentListItem = ({ comment, onDelete, user }: CommentListItemProps) => {
 	);
 };
 
-export default CommentListItem;
+export default CommentItem;

@@ -1,4 +1,4 @@
-import CommentListItem from '@/components/CommentListItem';
+import CommentItem from '@/components/CommentItem';
 import { Comment } from '@/models/comment';
 import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
@@ -85,7 +85,7 @@ export default function PostComments() {
 					</form>
 					<div className="space-y-6">
 						{post.comments.map((comment) => (
-							<CommentListItem
+							<CommentItem
 								comment={comment}
 								onDelete={handleDelete}
 								user={user}
