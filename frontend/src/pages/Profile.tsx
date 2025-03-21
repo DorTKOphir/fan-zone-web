@@ -1,7 +1,7 @@
 import User from '@/models/user';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
-import { updateUser } from '@/services/user';
+import { uploadProfilePicture } from '@/services/user';
 import { useState, useEffect } from 'react';
 
 interface Post {
@@ -16,7 +16,7 @@ const Profile = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const { user } = useAuth();
+	const { user, accessToken } = useAuth();
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
@@ -45,18 +45,12 @@ const Profile = () => {
 	};
 
 	const handleUpload = async () => {
-		if (imageFile && user) {
+		if (imageFile && user && accessToken) {
 			try {
 				setLoading(true);
-				const formData = new FormData();
-				formData.append('profilePic', imageFile);
 
-				// const response = await updateUser({_id: user._id, profilePicUrl: });
+				await uploadProfilePicture(imageFile, accessToken);
 
-				// setUser((prevUser) => ({
-				//   ...prevUser!,
-				//   profilePicUrl: response.data.profilePicUrl,
-				// }));
 				setLoading(false);
 			} catch (error) {
 				setError('Failed to upload profile picture');
