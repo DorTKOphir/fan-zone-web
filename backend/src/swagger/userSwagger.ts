@@ -41,7 +41,7 @@
  *                   example: "Profile picture updated"
  *                 profilePicture:
  *                   type: string
- *                   example: "/uploads/profile_pictures/abc123.jpg"
+ *                   example: "BASE_URL/uploads/profile_pictures/abc123.jpg"
  *       400:
  *         description: No file uploaded
  *         content:
@@ -79,8 +79,132 @@
 
 /**
  * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Get current user details
+ *     description: Returns the authenticated user's public profile information.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60d21b4667d0d8992e610c85"
+ *                 username:
+ *                   type: string
+ *                   example: "johndoe"
+ *                 email:
+ *                   type: string
+ *                   example: "johndoe@example.com"
+ *                 profilePicture:
+ *                   type: string
+ *                   example: "BASE_URL/uploads/profile_pictures/johndoe.jpg"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error fetching user"
+ */
+
+/**
+ * @swagger
+ * /api/users:
+ *   patch:
+ *     summary: Update current user's profile
+ *     description: Allows the authenticated user to update their username, email, or profile picture.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "newusername"
+ *               email:
+ *                 type: string
+ *                 example: "newemail@example.com"
+ *               profilePicture:
+ *                 type: string
+ *                 example: "BASE_URL/uploads/profile_pictures/updated.jpg"
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60d21b4667d0d8992e610c85"
+ *                 username:
+ *                   type: string
+ *                   example: "newusername"
+ *                 email:
+ *                   type: string
+ *                   example: "newemail@example.com"
+ *                 profilePicture:
+ *                   type: string
+ *                   example: "BASE_URL/uploads/profile_pictures/updated.jpg"
+ *       400:
+ *         description: No valid fields provided for update
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No valid fields provided for update"
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Error updating user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error updating user"
+ */
+
+/**
+ * @swagger
  * /api/users/search:
- *   post:
+ *   get:
  *     summary: Search for users by username
  *     description: Searches for users using a partial or full username match.
  *     tags:
@@ -113,7 +237,7 @@
  *                     example: "johndoe"
  *                   profilePicture:
  *                     type: string
- *                     example: "/uploads/profile_pictures/johndoe.jpg"
+ *                     example: "BASE_URL/uploads/profile_pictures/johndoe.jpg"
  *       400:
  *         description: Query parameter is required
  *         content:
