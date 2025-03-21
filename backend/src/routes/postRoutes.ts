@@ -11,5 +11,6 @@ router.post('/', authMiddleware, upload.single('image'), PostController.create.b
 router.patch('/:id', authMiddleware, postMiddleware, PostController.update.bind(PostController));
 router.delete('/:id', authMiddleware, postMiddleware, PostController.delete.bind(PostController));
 router.get('/match/:matchId', PostController.getPostsByMatchId.bind(PostController));
+router.post('/getSuggestion', PostController.getPostSuggestion.bind(PostController));
 
 export default router;

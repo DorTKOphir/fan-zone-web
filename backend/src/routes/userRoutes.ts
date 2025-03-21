@@ -6,6 +6,8 @@ import { upload } from "../middlewares/uploadMiddleware";
 const router = express.Router();
 
 router.post('/upload-profile-picture', authMiddleware, upload.single('profilePicture'), UserController.uploadProfilePicture.bind(UserController));
-router.post("/search", authMiddleware, UserController.searchUsers.bind(UserController));
+router.get("/", authMiddleware, UserController.getUser.bind(UserController));
+router.patch("/", authMiddleware, UserController.updateUser.bind(UserController));
+router.get("/search", authMiddleware, UserController.searchUsers.bind(UserController));
 
 export default router;

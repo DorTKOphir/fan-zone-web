@@ -9,7 +9,7 @@ const MONGO_URI = process.env.MONGO_URI;
 const INITIAL_DELAY_MS = 2000;
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { cors: { origin: "*"} });
 const chatGateway = new ChatGateway(io);
 
 if (!MONGO_URI) {
@@ -22,7 +22,7 @@ const connectWithRetry = async (delay = INITIAL_DELAY_MS) => {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected successfully');
 
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   } catch (error) {
     console.error(`MongoDB connection failed`, error);
 

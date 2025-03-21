@@ -117,6 +117,46 @@
 
 /**
  * @swagger
+ * /api/posts/getSuggestion:
+ *   post:
+ *     summary: get suggestion
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Posts
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               matchDetails:
+ *                 type: string
+ *                 example: "team a: arsenal, team b: liverpool ,team a score: 3, team b score: 1"
+ *     responses:
+ *       201:
+ *         description: suggestion sent successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               "what a great match"
+ *       400:
+ *         description: Match details are required
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Match details are required"
+ *       500:
+ *         description: Failed to generate suggestion
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Failed to generate suggestion"
+ */
+
+/**
+ * @swagger
  * /api/posts/{id}:
  *   patch:
  *     summary: Update a post by ID

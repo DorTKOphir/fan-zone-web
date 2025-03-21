@@ -14,7 +14,9 @@ const ChatList: React.FC<ChatListProps> = ({ chats, selectedChat, onSelectChat }
         chats.map((chat) => (
           <div
             key={chat._id}
-            className={`p-3 cursor-pointer border-b ${selectedChat?._id === chat._id ? "bg-gray-200" : "bg-white"}`}
+            className={`p-3 cursor-pointer border-b ${
+              selectedChat?._id === chat._id ? "bg-gray-200" : "bg-white"
+            }`}
             onClick={() => onSelectChat(chat)}
           >
             {chat.username}

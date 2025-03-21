@@ -25,7 +25,16 @@ export const disconnectSocket = () => {
 
 /** Listen for new messages */
 export const onNewMessage = (callback: (message: Message) => void) => {
+  socket?.off("newMessage");
   socket?.on("newMessage", callback);
+};
+
+/** Listen for chat list updates */
+export const onChatListUpdate = (callback: () => void) => {
+  if (!socket) return;
+
+  socket.off("chatListUpdate");
+  socket.on("chatListUpdate", callback);
 };
 
 /** Send a message */
@@ -39,8 +48,8 @@ export const sendMessage = async (
 };
 
 /** Fetch chat history between two users */
-export const getChatHistory = async (user1: string, user2: string): Promise<{ messages: Message[] }> => {
-  const response = await api.get<{ messages: Message[] }>(`/chat/history/${user1}/${user2}`);
+export const getChatHistory = async (user1: string, user2: string): Promise<Message[]> => {
+  const response = await api.get<Message[]>(`/chat/history/${user1}/${user2}`);
   return response.data;
 };
 

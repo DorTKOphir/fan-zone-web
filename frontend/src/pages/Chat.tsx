@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { connectSocket, disconnectSocket, getUserChats, getChatHistory, sendMessage, onNewMessage } from "../services/chat";
+import {
+  connectSocket,
+  disconnectSocket,
+  getUserChats,
+  getChatHistory,
+  sendMessage,
+  onNewMessage,
+  onChatListUpdate,
+} from "../services/chat";
 import { Message } from "../models/message";
 import { ChatListItem } from "../models/chatListItem";
 import { useAuth } from "../providers/AuthProvider";
@@ -19,31 +27,57 @@ const Chat: React.FC = () => {
   const [searchResults, setSearchResults] = useState<ChatListItem[]>([]);
 
   useEffect(() => {
+    if (!user?._id) return;
+
     connectSocket(user._id);
     fetchChats();
-    return () => disconnectSocket();
-  }, []);
+    onChatListUpdate(fetchChats);
 
-  useEffect(() => {
-    if (selectedChat) {
-      fetchMessages(selectedChat._id);
-      setSearchResults([]); // Clear search results when selecting a chat
-    }
-  }, [selectedChat]);
-
-  useEffect(() => {
-    const messageListener = (message: Message) => {
-      setMessages((prev) => [...prev, message]);
-    };
-    onNewMessage(messageListener);
     return () => {
+      disconnectSocket();
+      onChatListUpdate(() => {});
+    };
+  }, [user?._id]);
+
+  useEffect(() => {
+    if (!selectedChat || !user?._id) {
+      setMessages([]);
+      return;
+    }
+
+    fetchMessages(selectedChat._id);
+    setSearchResults([]);
+  }, [selectedChat, user?._id]);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const messageListener = async (message: Message) => {
+      const incomingId =
+        message.sender._id === user._id ? message.receiver._id : message.sender._id;
+
+      if (selectedChat && selectedChat._id === incomingId) {
+        setMessages((prev) => [...prev, message]);
+      }
+
+      // 🔁 Refresh chats and update selectedChat reference
+      const newChats = await fetchChatsAndReturn();
       if (selectedChat) {
-        onNewMessage(() => {}); // Remove listener when chat changes
+        const updated = newChats.find((c) => c._id === selectedChat._id);
+        if (updated) setSelectedChat(updated);
       }
     };
-  }, [selectedChat]);
+
+    onNewMessage(messageListener);
+
+    return () => {
+      onNewMessage(() => {});
+    };
+  }, [selectedChat, user?._id]);
 
   const fetchChats = async () => {
+    if (!user?._id) return;
+
     try {
       const chatList = await getUserChats();
       setChats(chatList);
@@ -52,21 +86,46 @@ const Chat: React.FC = () => {
     }
   };
 
-  const fetchMessages = async (chatId: string) => {
+  const fetchChatsAndReturn = async (): Promise<ChatListItem[]> => {
     try {
-      const response = await getChatHistory(user._id, chatId);
-      setMessages(response.messages);
+      const chatList = await getUserChats();
+      setChats(chatList);
+      return chatList;
+    } catch (error) {
+      console.error("Error fetching chats", error);
+      return [];
+    }
+  };
+
+  const fetchMessages = async (chatId: string) => {
+    if (!user?._id) return;
+
+    try {
+      const messages: Message[] = await getChatHistory(user._id, chatId);
+      setMessages(messages);
     } catch (error) {
       console.error("Error fetching messages", error);
     }
   };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedChat) return;
+    if (!newMessage.trim() || !selectedChat || !user?._id) return;
+
     try {
       const message = await sendMessage(user._id, selectedChat._id, newMessage);
-      setMessages((prev) => [...prev, message]);
+
+      setMessages((prev = []) => [
+        ...prev,
+        {
+          ...message,
+          sender: { _id: user._id, username: user.username },
+          receiver: { _id: selectedChat._id, username: selectedChat.username },
+        },
+      ]);
+
       setNewMessage("");
+      setSearchQuery(""); // Clear search after sending message
+      setSearchResults([]);
     } catch (error) {
       console.error("Error sending message", error);
     }
@@ -74,12 +133,15 @@ const Chat: React.FC = () => {
 
   const handleSearch = async () => {
     const trimmedQuery = searchQuery.trim();
-    if (!trimmedQuery) {
+    if (!trimmedQuery || !user?._id) {
       setSearchResults([]);
       return;
     }
+
     try {
-      const response = await api.get<ChatListItem[]>(`/users/search?usernameQuery=${trimmedQuery}`);
+      const response = await api.get<ChatListItem[]>(
+        `/users/search?usernameQuery=${trimmedQuery}`
+      );
       setSearchResults(response.data);
     } catch (error) {
       console.error("Error searching users", error);
@@ -87,41 +149,86 @@ const Chat: React.FC = () => {
     }
   };
 
+  if (!user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Loading chat...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen">
+    <div className="flex h-[80vh] w-[95vw]">
       {/* Chat List + Search */}
-      <div className="w-1/4 border-r p-3 flex flex-col">
+      <div className="w-1/4 border-r p-3 flex flex-col h-full">
         <h3 className="text-lg font-semibold mb-2">Chats</h3>
-        <div className="flex gap-2 mb-3">
+
+        <div className="flex gap-2 my-3">
           <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
             placeholder="Search for users..."
+            disabled={!user}
           />
-          <Button className="cursor-pointer"  onClick={handleSearch}>Search</Button>
+          <Button
+            className="cursor-pointer"
+            onClick={handleSearch}
+            disabled={!user}
+          >
+            Search
+          </Button>
         </div>
-        <ChatList 
-          chats={searchResults.length > 0 ? searchResults : chats} 
-          selectedChat={selectedChat} 
-          onSelectChat={setSelectedChat} 
-        />
+
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <ChatList
+            chats={searchQuery.trim() ? searchResults : chats}
+            selectedChat={selectedChat}
+            onSelectChat={(chat) => {
+              setSelectedChat(chat);
+              setSearchQuery("");
+              setSearchResults([]);
+            }}
+          />
+        </div>
       </div>
 
       {/* Chat Window */}
-      <div className="flex flex-col flex-1">
-        <div className="p-3 border-b">
+      <div className="flex flex-col flex-1 h-full">
+        <div className="p-3 border-b flex-shrink-0">
           <h3>{selectedChat ? selectedChat.username : "Select a chat"}</h3>
         </div>
-        <ChatMessages messages={messages} userId={user._id} />
-        <div className="flex items-center gap-2 p-3 border-t">
+
+        <div className="flex-1 overflow-y-auto p-3 min-h-0">
+          {selectedChat && (
+            <ChatMessages
+              messages={messages}
+              userId={user._id}
+              selectedChatId={selectedChat?._id}
+            />
+          )}
+        </div>
+
+        <div className="p-3 border-t flex items-center gap-2 bg-white flex-shrink-0 h-[60px]">
           <Input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSendMessage();
+            }}
             placeholder="Type a message"
+            disabled={!user}
+            className="flex-1"
           />
-          <Button className="cursor-pointer" onClick={handleSendMessage} disabled={!newMessage.trim() || !selectedChat}>
+          <Button
+            className="cursor-pointer"
+            onClick={handleSendMessage}
+            disabled={!newMessage.trim() || !selectedChat || !user}
+          >
             Send
           </Button>
         </div>
