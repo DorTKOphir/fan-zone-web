@@ -47,8 +47,8 @@ class ChatController {
             ],
           })
             .sort({ timestamp: 'ascending' })
-            .populate("sender", "username profilePicture")
-            .populate("receiver", "username profilePicture");
+            .populate("sender", "username")
+            .populate("receiver", "username");
 
             console.log(`Fetched messages between user: ${firstUserId} and ${secondUserId}`);
             return res.status(200).json(messages);
@@ -68,10 +68,17 @@ class ChatController {
             .then((receivers) => [...new Set([...senders, ...receivers])])
         );
     
-        const users = await userModel.find(
+        let users = await userModel.find(
           { _id: { $in: userIds } },
-          "_id username"
+          "_id username profilePicture"
         );
+
+        users.forEach((user) => {
+          if (user.profilePicture) {
+            user.profilePicture = `${process.env.BASE_URL}${user.profilePicture}`;
+          }
+          return user;
+        })
     
         console.log('Successfully fetched all chatted users');
         return res.status(200).json(users);

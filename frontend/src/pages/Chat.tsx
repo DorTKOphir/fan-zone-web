@@ -60,7 +60,6 @@ const Chat: React.FC = () => {
         setMessages((prev) => [...prev, message]);
       }
 
-      // 🔁 Refresh chats and update selectedChat reference
       const newChats = await fetchChatsAndReturn();
       if (selectedChat) {
         const updated = newChats.find((c) => c._id === selectedChat._id);
@@ -124,7 +123,7 @@ const Chat: React.FC = () => {
       ]);
 
       setNewMessage("");
-      setSearchQuery(""); // Clear search after sending message
+      setSearchQuery("");
       setSearchResults([]);
     } catch (error) {
       console.error("Error sending message", error);
