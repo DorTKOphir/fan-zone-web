@@ -168,6 +168,9 @@ const Chat: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
             placeholder="Search for users..."
             disabled={!user}
           />
@@ -214,6 +217,9 @@ const Chat: React.FC = () => {
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSendMessage();
+            }}
             placeholder="Type a message"
             disabled={!user}
             className="flex-1"
