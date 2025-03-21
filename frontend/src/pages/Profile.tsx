@@ -1,14 +1,8 @@
+import User from '@/models/user';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
 import { updateUser } from '@/services/user';
 import { useState, useEffect } from 'react';
-
-interface User {
-	_id: string;
-	username: string;
-	email: string;
-	profilePicUrl: string | null;
-}
 
 interface Post {
 	_id: string;
@@ -57,7 +51,7 @@ const Profile = () => {
 				const formData = new FormData();
 				formData.append('profilePic', imageFile);
 
-				const response = await updateUser({_id: user._id, profilePicUrl: });
+				// const response = await updateUser({_id: user._id, profilePicUrl: });
 
 				// setUser((prevUser) => ({
 				//   ...prevUser!,
@@ -81,9 +75,9 @@ const Profile = () => {
 				<>
 					<div className="flex items-center space-x-6 mb-8">
 						<div className="w-24 h-24 rounded-full overflow-hidden">
-							{user?.profilePicUrl ? (
+							{user?.profilePicture ? (
 								<img
-									src={user.profilePicUrl}
+									src={user.profilePicture}
 									alt="Profile"
 									className="w-full h-full object-cover"
 								/>
