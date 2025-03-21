@@ -37,6 +37,10 @@ const ProfileIndicator: React.FC = () => {
       <DropdownMenuContent align="end" className="w-48">
         <div className="px-3 py-2 text-sm font-semibold">{username}</div>
 
+        <DropdownMenuItem onClick={() => navigate('/')} className="cursor-pointer">
+          Match List
+        </DropdownMenuItem>
+
         <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
           Profile
         </DropdownMenuItem>
