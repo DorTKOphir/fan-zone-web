@@ -1,10 +1,10 @@
 import api from './api';
-import { Comment, NewComment } from '@/models/comment';
+import { Comment } from '@/models/comment';
 
-export const addCommentOnPost = async (comment: NewComment): Promise<Comment> => {
+export const addCommentOnPost = async (postId: string, commentContent: string): Promise<Comment> => {
 	try {
-		const response = await api.post(`/comments/${comment.postId}`, {
-			content: comment.content,
+		const response = await api.post(`/comments/${postId}`, {
+			content: commentContent,
 		});
 		return response.data;
 	} catch (error) {

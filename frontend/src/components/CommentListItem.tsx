@@ -1,5 +1,6 @@
 import { Comment } from '@/models/comment';
 import User from '@/models/user';
+import { format } from 'date-fns';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 
 type CommentListItemProps = {
@@ -19,7 +20,7 @@ const CommentListItem = ({ comment, onDelete, user }: CommentListItemProps) => {
 			</div>
 			<p className="mt-2 text-gray-700">{comment.content}</p>
 			<div className="flex items-center justify-between mt-2">
-				<div className="text-sm text-gray-500">{comment.dateCreated}</div>
+				<div className="text-sm text-gray-500">{format(new Date(comment.dateCreated), 'PPpp')}</div>
 				{comment.author._id === user?._id && (
 					<button
 						onClick={() => onDelete(comment)}

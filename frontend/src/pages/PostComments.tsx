@@ -1,23 +1,25 @@
 import CommentListItem from '@/components/CommentListItem';
-import { Comment, NewComment } from '@/models/comment';
+import { Comment } from '@/models/comment';
 import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { addCommentOnPost, deleteComment } from '@/services/comment';
 import { getPostById } from '@/services/posts';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-export default function CommentList() {
-	const [post, setPost] = useState<Post>();
-	const [newComment, setNewComment] = useState<NewComment>();
+export default function PostComments() {
+	const { postId } = useParams<{ matchId: string; postId: string }>();
+	const [post, setPost] = useState<Post | null>(null);
+	const [newComment, setNewComment] = useState<string>('');
 	const { user } = useAuth();
 
 	useEffect(() => {
 		const fetchPost = async () => {
 			try {
-				const post = await getPostById('67d9d275e1e693a13a8b6ed0');
-
-				setPost(post);
-				setNewComment({ postId: post._id });
+				if (postId) {
+					const post = await getPostById(postId);
+					setPost(post);
+				}
 			} catch (error) {
 				console.error('Error fetching post:', error);
 			}
@@ -28,8 +30,8 @@ export default function CommentList() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (post && user && newComment?.postId && newComment.content?.trim()) {
-			const comment: Comment = await addCommentOnPost(newComment);
+		if (post && user && newComment.trim()) {
+			const comment: Comment = await addCommentOnPost(post._id, newComment);
 
 			setPost({
 				...post,
@@ -37,7 +39,6 @@ export default function CommentList() {
 					...post.comments,
 					{
 						...comment,
-						dateCreated: new Date(comment.dateCreated).toLocaleString(),
 						author: user,
 					},
 				],
@@ -48,18 +49,12 @@ export default function CommentList() {
 	const handleDelete = (comment: Comment) => {
 		if (post) {
 			deleteComment(comment._id);
-			const newComments = removeItem(post?.comments, comment);
-			setPost({ ...post, comments: newComments });
+			setPost((prev) => ({
+				...post,
+				comments: prev?.comments.filter((p) => p._id !== comment._id) || [],
+			}));
 		}
 	};
-
-	function removeItem<T>(arr: Array<T>, value: T): Array<T> {
-		const index = arr.indexOf(value);
-		if (index > -1) {
-			arr.splice(index, 1);
-		}
-		return arr;
-	}
 
 	return (
 		<div className="w-[70%] mx-auto mt-10 p-4">
@@ -70,11 +65,9 @@ export default function CommentList() {
 						<div>
 							<label className="block font-medium">Your Comment</label>
 							<textarea
-								value={newComment?.content}
+								value={newComment}
 								onChange={(e) => {
-									if (newComment) {
-										setNewComment({ ...newComment, content: e.target.value });
-									}
+									setNewComment(e.target.value);
 								}}
 								placeholder="Write your comment here..."
 								className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
