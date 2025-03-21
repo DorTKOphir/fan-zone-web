@@ -1,5 +1,6 @@
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
+import { updateUser } from '@/services/user';
 import { useState, useEffect } from 'react';
 
 interface User {
@@ -20,6 +21,7 @@ const Profile = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [imageFile, setImageFile] = useState<File | null>(null);
 	const { user } = useAuth();
 
 	useEffect(() => {
@@ -40,6 +42,34 @@ const Profile = () => {
 		};
 		fetchProfileData();
 	}, [user]);
+
+	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files ? event.target.files[0] : null;
+		if (file) {
+			setImageFile(file);
+		}
+	};
+
+	const handleUpload = async () => {
+		if (imageFile && user) {
+			try {
+				setLoading(true);
+				const formData = new FormData();
+				formData.append('profilePic', imageFile);
+
+				const response = await updateUser({_id: user._id, profilePicUrl: });
+
+				// setUser((prevUser) => ({
+				//   ...prevUser!,
+				//   profilePicUrl: response.data.profilePicUrl,
+				// }));
+				setLoading(false);
+			} catch (error) {
+				setError('Failed to upload profile picture');
+				setLoading(false);
+			}
+		}
+	};
 
 	return (
 		<div className="w-[70%] mx-auto mt-10 p-4">
@@ -68,6 +98,33 @@ const Profile = () => {
 							<h1 className="text-3xl font-bold">{user?.username}</h1>
 							<p className="text-lg text-gray-500">{user?.email}</p>
 						</div>
+					</div>
+
+					<div className="mb-6">
+						<input
+							type="file"
+							accept="image/*"
+							onChange={handleFileChange}
+							className="hidden"
+							id="fileInput"
+						/>
+						<label
+							htmlFor="fileInput"
+							className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition"
+						>
+							Upload Profile Picture
+						</label>
+						{imageFile && (
+							<div className="mt-2 text-sm text-gray-500">
+								<p>Selected file: {imageFile.name}</p>
+								<button
+									onClick={handleUpload}
+									className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+								>
+									Upload
+								</button>
+							</div>
+						)}
 					</div>
 
 					<div>
