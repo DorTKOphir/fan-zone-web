@@ -27,7 +27,7 @@ class PostController {
 			const author = (req as any).user._id;
 			const file = (req as any).file;
 
-			if (!content || !file) {
+			if (!content && !file) {
 				console.error('Content or image is required');
 				return res.status(400).json({ error: 'Content or image is required' });
 			}
