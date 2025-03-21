@@ -3,13 +3,11 @@ import { io, Socket } from "socket.io-client";
 import { Message } from "../models/message";
 import { ChatListItem } from "../models/chatListItem";
 
-const SOCKET_URL = "http://localhost:5000";
-
 let socket: Socket | null = null;
 
 /** Initialize WebSocket connection */
 export const connectSocket = (userId: string) => {
-  socket = io(SOCKET_URL, {
+  socket = io(process.env.BASE_URL, {
     auth: { token: localStorage.getItem("accessToken") },
   });
   socket.emit("register", userId);
