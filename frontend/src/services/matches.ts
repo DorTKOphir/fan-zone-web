@@ -9,3 +9,8 @@ export const fetchMatches = async (): Promise<Match[]> => {
 		throw error;
 	}
 };
+
+export const getMatchById = async (matchId: string): Promise<Match> => {
+	const response = await api.get(`/matches/${matchId}`);
+	return response.data;
+  };

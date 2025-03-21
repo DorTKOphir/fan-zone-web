@@ -7,6 +7,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import CommentList from './pages/CommentList';
 import Layout from './components/Layout';
+import MatchDetails from './pages/MatchDetails';
 
 function App() {
 	return (
@@ -16,6 +17,7 @@ function App() {
 					<Route element={<ProtectedRoute />}>
 						<Route element={<Layout />}>
 							<Route path="/" element={<MatchList />} />
+							<Route path="/:matchId" element={<MatchDetails />} />
 							<Route path="/chat" element={<Chat />} />
 						</Route>
 					</Route>

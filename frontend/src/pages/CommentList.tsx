@@ -1,6 +1,6 @@
 import CommentListItem from '@/components/CommentListItem';
 import { Comment, NewComment } from '@/models/comment';
-import { PostResponse, Post } from '@/models/post';
+import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { addCommentOnPost, deleteComment } from '@/services/comment';
 import { getPostById } from '@/services/posts';
@@ -14,25 +14,10 @@ export default function CommentList() {
 	useEffect(() => {
 		const fetchPost = async () => {
 			try {
-				const data: PostResponse = await getPostById('67d9d275e1e693a13a8b6ed0');
+				const post = await getPostById('67d9d275e1e693a13a8b6ed0');
 
-				const parsedComments: Comment[] = data.comments.map((comment: Comment) => ({
-					_id: comment._id,
-					author: comment.author,
-					content: comment.content,
-					dateCreated: new Date(comment.dateCreated).toLocaleString(),
-				}));
-
-				const parsedPost: Post = {
-					id: data._id,
-					author: data.author,
-					content: data.content,
-					dateCreated: new Date(data.dateCreated).toLocaleString(),
-					comments: parsedComments,
-				};
-
-				setPost(parsedPost);
-				setNewComment({ postId: parsedPost.id });
+				setPost(post);
+				setNewComment({ postId: post._id });
 			} catch (error) {
 				console.error('Error fetching post:', error);
 			}

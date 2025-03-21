@@ -27,7 +27,7 @@ class PostController {
 			const author = (req as any).user._id;
 			const file = (req as any).file;
 
-			if (!content || !file) {
+			if (!content && !file) {
 				console.error('Content or image is required');
 				return res.status(400).json({ error: 'Content or image is required' });
 			}
@@ -111,7 +111,9 @@ class PostController {
 				return res.status(400).json({ message: 'Match ID is required.' });
 			}
 
-			const posts = await this.populatePost(postModel.find({ matchId }));
+			const posts = await this.populatePost(
+				postModel.find({ matchId }).sort({ dateCreated: -1 }),
+			);
 
 			console.log('Posts returned successfully');
 			return res.status(200).json(posts);
