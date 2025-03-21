@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import postModel from '../models/postModel';
+import postModel, { IPost } from '../models/postModel';
 import commentModel from '../models/commentModel';
 import { getPostSuggestion } from '../services/geminiService';
+import { Query } from 'mongoose';
 
 class PostController {
 	async getById(req: Request, res: Response) {
@@ -138,12 +139,13 @@ class PostController {
 		}
 	}
 
-	private async populatePost(query: any) {
+	private populatePost<T extends IPost | IPost[] | null>(query: Query<T, IPost>) {
 		return query.populate([
 			{ path: 'author' },
 			{
 				path: 'comments',
 				populate: { path: 'author' },
+				options: { sort: { dateCreated: -1 } }
 			},
 		]);
 	}
