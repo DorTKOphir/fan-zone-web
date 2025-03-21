@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import postModel from '../models/postModel';
 import commentModel from '../models/commentModel';
+import { getPostSuggestion } from '../services/geminiService';
 
 class PostController {
 	async getById(req: Request, res: Response) {
@@ -115,6 +116,21 @@ class PostController {
 		} catch (error) {
 			console.error('Error fetching posts by matchId:', error);
 			return res.status(500).json({ message: 'Error fetching posts by matchId' });
+		}
+	}
+
+	async getPostSuggestion(req: Request, res: Response) {
+		const { matchDetails } = req.body;
+
+		if (!matchDetails) {
+			return res.status(400).json({ error: 'Match details are required' });
+		}
+
+		try {
+			const suggestion = await getPostSuggestion(matchDetails);
+			res.json({ suggestion });
+		} catch (error) {
+			res.status(500).json({ error: 'Failed to generate suggestion' });
 		}
 	}
 
