@@ -1,5 +1,6 @@
 import React from "react";
 import { ChatListItem } from "../models/chatListItem";
+import { DEFAULT_PROFILE_PIC } from "@/constants/images";
 
 interface ChatListProps {
   chats: ChatListItem[];
@@ -7,8 +8,6 @@ interface ChatListProps {
   onSelectChat: (chat: ChatListItem) => void;
 }
 
-const DEFAULT_PROFILE_PIC =
-  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const ChatList: React.FC<ChatListProps> = ({
   chats,
