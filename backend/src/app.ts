@@ -9,6 +9,7 @@ import chatRoutes from './routes/chatRoutes';
 import matchRoutes from './routes/matchRoutes';
 import userRoutes from './routes/userRoutes';
 import { setupSwagger } from './swagger/swagger';
+import path from 'path';
 dotenv.config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 setupSwagger(app);
 
 export default app;
