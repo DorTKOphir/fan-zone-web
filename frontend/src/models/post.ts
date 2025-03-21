@@ -1,12 +1,12 @@
-import User from "./user";
+import { Comment } from './comment';
+import User from './user';
 
-interface Post {
-    _id: string;
-    content: string;
-    author: User;
-    dateCreated: string;
-    likes: string[];
-    comments: Comment[];
-  }
-
-export default Post;
+export type Post = {
+	id: string;
+	author: User;
+	content: string;
+	dateCreated: string;
+	comments: Comment[];
+	matchId: string;
+	likes: string[];
+};

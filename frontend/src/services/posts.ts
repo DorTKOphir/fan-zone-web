@@ -1,5 +1,5 @@
 import api from './api';
-import Post from '@/models/post';
+import { Post } from '@/models/post';
 
 export const getPostsByMatchId = async (matchId: string): Promise<Post[]> => {
 	const response = await api.get(`/posts/match/${matchId}`);
@@ -23,4 +23,13 @@ export const createPost = async (postData: {
 
 export const deletePost = async (postId: string): Promise<void> => {
 	await api.delete(`/posts/${postId}`);
+};
+
+export const getPostById = async (postId: string): Promise<Post> => {
+	try {
+		const response = await api.get(`/posts/${postId}`);
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
 };

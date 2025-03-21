@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import postModel from '../models/postModel';
 import commentModel from '../models/commentModel';
+import { getPostSuggestion } from '../services/geminiService';
 
 class PostController {
 	async getById(req: Request, res: Response) {
@@ -24,10 +25,11 @@ class PostController {
 		try {
 			const { content, matchId } = req.body;
 			const author = (req as any).user._id;
+			const file = (req as any).file;
 
-			if (!content) {
-				console.error('Content is required');
-				return res.status(400).json({ error: 'Content is required' });
+			if (!content || !file) {
+				console.error('Content or image is required');
+				return res.status(400).json({ error: 'Content or image is required' });
 			}
 
 			const newPost = new postModel({
@@ -36,6 +38,7 @@ class PostController {
 				content,
 				matchId,
 				dateCreated: new Date(),
+				image: file ? `/uploads/post_images/${file.filename}` : undefined,
 			});
 
 			await newPost.save();
@@ -117,6 +120,21 @@ class PostController {
 		} catch (error) {
 			console.error('Error fetching posts by matchId:', error);
 			return res.status(500).json({ message: 'Error fetching posts by matchId' });
+		}
+	}
+
+	async getPostSuggestion(req: Request, res: Response) {
+		const { matchDetails } = req.body;
+
+		if (!matchDetails) {
+			return res.status(400).json({ error: 'Match details are required' });
+		}
+
+		try {
+			const suggestion = await getPostSuggestion(matchDetails);
+			res.json({ suggestion });
+		} catch (error) {
+			res.status(500).json({ error: 'Failed to generate suggestion' });
 		}
 	}
 
