@@ -54,49 +54,65 @@
 
 /**
  * @swagger
- * /api/posts:
+ * /api/posts/create:
  *   post:
  *     summary: Create a new post
- *     security:
- *       - BearerAuth: []
+ *     description: Allows authenticated users to create posts with optional images.
  *     tags:
  *       - Posts
+ *     security:
+ *       - BearerAuth: []
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               content:
  *                 type: string
- *                 example: "This is a new post content."
+ *                 example: "This is my new post!"
+ *                 description: The content of the post
  *               matchId:
  *                 type: string
- *                 example: "12305942"
+ *                 example: "60d21b4667d0d8992e610c85"
+ *                 description: (Optional) ID of the match associated with the post
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: (Optional) Image file for the post
  *     responses:
  *       201:
  *         description: Post created successfully
  *         content:
  *           application/json:
- *             example:
- *               _id: "641d15f1e8b1f9c6a9a2a5e9"
- *               author: "641d134fe8b1f9c6a9a2a123"
- *               content: "This is a new post content."
- *               comments: []
- *               dateCreated: "2025-03-14T10:15:30.000Z"
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Post created successfully"
+ *                 post:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60d21b4667d0d8992e610c85"
+ *                     author:
+ *                       type: string
+ *                       example: "60d21b4667d0d8992e610c85"
+ *                     content:
+ *                       type: string
+ *                       example: "This is my new post!"
+ *                     image:
+ *                       type: string
+ *                       example: "/uploads/post_images/myphoto.jpg"
  *       400:
- *         description: Content is required
- *         content:
- *           application/json:
- *             example:
- *               error: "Content is required"
+ *         description: Content or image is required
  *       500:
- *         description: Error creating post
- *         content:
- *           application/json:
- *             example:
- *               error: "Error creating post"
+ *         description: Internal server error
  */
 
 /**

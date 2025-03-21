@@ -25,10 +25,11 @@ class PostController {
 		try {
 			const { content, matchId } = req.body;
 			const author = (req as any).user._id;
+			const file = (req as any).file;
 
-			if (!content) {
-				console.error('Content is required');
-				return res.status(400).json({ error: 'Content is required' });
+			if (!content || !file) {
+				console.error('Content or image is required');
+				return res.status(400).json({ error: 'Content or image is required' });
 			}
 
 			const newPost = new postModel({
@@ -37,6 +38,7 @@ class PostController {
 				content,
 				matchId,
 				dateCreated: new Date(),
+				image: file ? `/uploads/post_images/${file.filename}` : undefined,
 			});
 
 			await newPost.save();
