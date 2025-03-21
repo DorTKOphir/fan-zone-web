@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Match } from '@/models/match';
-import Post from '@/models/post';
+import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { getMatchById } from '@/services/matches';
 import { deletePost, getPostsByMatchId, updatePost } from '@/services/posts';

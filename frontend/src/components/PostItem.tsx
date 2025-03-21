@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Post from '@/models/post';
+import { Post } from '@/models/post';
 import UserAvatar from '@/components/UserAvatar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,7 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 		<Card key={post._id} className="p-4">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
-					<UserAvatar profilePicUrl={post.author.profilePicUrl} />
+					<UserAvatar profilePicUrl={post.author.profilePicture} />
 					<div>
 						<p className="font-semibold">{post.author.username}</p>
 						<p className="text-sm text-gray-500">{formattedDate}</p>
