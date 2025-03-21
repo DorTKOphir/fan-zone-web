@@ -77,7 +77,7 @@ const Profile = () => {
 						<div className="w-24 h-24 rounded-full overflow-hidden">
 							{user?.profilePicture ? (
 								<img
-									src={user.profilePicture}
+									src={`http://localhost:5000${user.profilePicture}`}
 									alt="Profile"
 									className="w-full h-full object-cover"
 								/>

@@ -107,8 +107,10 @@
  *             example:
  *               - _id: "641d15f1e8b1f9c6a9a2a5e9"
  *                 username: "john_doe"
+ *                 profilePicture: "john_doe-profile.img"
  *               - _id: "641d15f1e8b1f9c6a9a2a5ea"
  *                 username: "jane_doe"
+ *                 profilePicture: "jane_doe-profile.img"
  *       500:
  *         description: Internal server error
  *         content:

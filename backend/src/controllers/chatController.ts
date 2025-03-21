@@ -47,8 +47,8 @@ class ChatController {
             ],
           })
             .sort({ timestamp: 'ascending' })
-            .populate("sender", "username")
-            .populate("receiver", "username");
+            .populate("sender", "username profilePicture")
+            .populate("receiver", "username profilePicture");
 
             console.log(`Fetched messages between user: ${firstUserId} and ${secondUserId}`);
             return res.status(200).json(messages);
