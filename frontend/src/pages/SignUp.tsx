@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import { useEffect } from 'react';
 
 const signUpSchema = z.object({
 	username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -15,7 +16,15 @@ const signUpSchema = z.object({
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function SignUp() {
-	const { signUp } = useAuth();
+	const { signUp, user } = useAuth();
+	const navigate = useNavigate();
+	
+	useEffect(() => {
+		if (user) {
+			navigate('/');
+		}
+	}, [user, navigate]);
+
 	const {
 		register,
 		handleSubmit,
