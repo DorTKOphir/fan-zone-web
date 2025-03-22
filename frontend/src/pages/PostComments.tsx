@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import CommentItem from '@/components/CommentItem';
+import { format } from 'date-fns';
 
 const commentSchema = z.object({
 	content: z.string().min(1, 'Comment cannot be empty'),
@@ -80,7 +81,7 @@ export default function PostComments() {
 						<CardContent>
 							<p className="text-gray-800 text-lg font-medium">{post.content}</p>
 							<p className="text-sm text-gray-500 mt-2">
-								Created: {new Date(post.dateCreated).toLocaleString()}
+								Created: {format(new Date(post.dateCreated), 'PPpp')}
 							</p>
 						</CardContent>
 					</Card>
