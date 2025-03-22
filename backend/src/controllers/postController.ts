@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import postModel from '../models/postModel';
+import postModel, { IPost } from '../models/postModel';
 import commentModel from '../models/commentModel';
 import { getPostSuggestion } from '../services/geminiService';
+import { Query } from 'mongoose';
 
 class PostController {
 	async getById(req: Request, res: Response) {
@@ -27,7 +28,7 @@ class PostController {
 			const author = (req as any).user._id;
 			const file = (req as any).file;
 
-			if (!content || !file) {
+			if (!content && !file) {
 				console.error('Content or image is required');
 				return res.status(400).json({ error: 'Content or image is required' });
 			}
@@ -111,7 +112,9 @@ class PostController {
 				return res.status(400).json({ message: 'Match ID is required.' });
 			}
 
-			const posts = await this.populatePost(postModel.find({ matchId }));
+			const posts = await this.populatePost(
+				postModel.find({ matchId }).sort({ dateCreated: -1 }),
+			);
 
 			console.log('Posts returned successfully');
 			return res.status(200).json(posts);
@@ -159,12 +162,13 @@ class PostController {
 		}
 	}
 
-	private async populatePost(query: any) {
+	private populatePost<T extends IPost | IPost[] | null>(query: Query<T, IPost>) {
 		return query.populate([
 			{ path: 'author' },
 			{
 				path: 'comments',
 				populate: { path: 'author' },
+				options: { sort: { dateCreated: -1 } }
 			},
 		]);
 	}

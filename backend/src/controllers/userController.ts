@@ -67,6 +67,9 @@ class UserController {
 				return res.status(404).json({ error: 'User not found' });
 			}
 
+			if (user.profilePicture) 
+				user.profilePicture = `${process.env.BASE_URL}${user.profilePicture}`;
+
 			console.log('User returned successfully');
 			res.status(200).json(user);
 		} catch (error) {
