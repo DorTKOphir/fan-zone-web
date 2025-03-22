@@ -18,12 +18,12 @@ export async function getPostSuggestion(match: Match): Promise<string> {
 	const matchDetails = `date: ${match.date}, home team: ${match.homeTeam}, away team: ${
 		match.awayTeam
 	}${
-		isPastDate(match.date)
+		match.homeTeamScore
 			? `, home team score: ${match.homeTeamScore}, away team score: ${match.awayTeamScore}`
 			: ``
 	}`;
 
-	const prompt = `Generate a post for a football match with the following details: ${matchDetails}. \n keep in mind that the post can contain only text and a picture`;
+	const prompt = `Generate a post for a football match with the following details: ${matchDetails}. \n keep in mind that the post can contain only text and try to keep it a sentence or two`;
 
 	try {
 		const result = await model.generateContent(prompt);
@@ -35,14 +35,3 @@ export async function getPostSuggestion(match: Match): Promise<string> {
 		throw error;
 	}
 }
-
-const isPastDate = (dateString: string): boolean => {
-	const inputDate = new Date(dateString);
-	const today = new Date();
-
-	// Normalize both dates to the start of the day to avoid time discrepancies
-	today.setHours(0, 0, 0, 0);
-	inputDate.setHours(0, 0, 0, 0);
-
-	return inputDate < today;
-};
