@@ -40,6 +40,7 @@ export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) 
 			loadSuggestion();
 		}
 	}, [match]);
+
 	const onSubmit = async (data: { content: string }) => {
 		if (!user) return;
 		setLoading(true);
