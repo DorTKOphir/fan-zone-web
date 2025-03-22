@@ -13,6 +13,7 @@ interface AuthContextType {
 	user: User | null;
 	accessToken: string | null;
 	login: (username: string, password: string) => Promise<void>;
+	loginWithToken: (accessToken: string, refreshToken: string, user: User) => void;
 	signUp: (username: string, email: string, password: string) => Promise<void>;
 	logout: () => void;
 	updateUser: () => void;
@@ -71,6 +72,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 	};
 
+	const loginWithToken = (accessToken: string, refreshToken: string, user: User) => {
+		if (accessToken && refreshToken) {
+			setAccessToken(accessToken);
+			localStorage.setItem('accessToken', accessToken);
+			localStorage.setItem('refreshToken', refreshToken);
+			setUser(user);
+			navigate('/');
+		}
+	}
+
 	const updateUser = async () => {
 		const userData = await getUser();
 		if (userData) {
@@ -79,9 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	return (
-		<AuthContext.Provider
-			value={{ user, accessToken, login, signUp, logout: apiLogout, updateUser }}
-		>
+		<AuthContext.Provider value={{ user, accessToken, login, signUp, loginWithToken, logout: apiLogout, updateUser }}>
 			{children}
 		</AuthContext.Provider>
 	);
