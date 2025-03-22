@@ -1,15 +1,8 @@
-import User from '@/models/user';
+import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
 import { uploadProfilePicture } from '@/services/user';
 import { useState, useEffect } from 'react';
-
-interface Post {
-	_id: string;
-	content: string;
-	dateCreated: string;
-	author: User;
-}
 
 const Profile = () => {
 	const [posts, setPosts] = useState<Post[]>([]);

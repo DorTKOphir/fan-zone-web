@@ -34,7 +34,7 @@ export const getPostById = async (postId: string): Promise<Post> => {
 	}
 };
 
-export const getPostByAuthorId = async (authorId: string): Promise<PostResponse[]> => {
+export const getPostByAuthorId = async (authorId: string): Promise<Post[]> => {
 	try {
 		const response = await api.get(`/posts/author/${authorId}`);
 		return response.data;
