@@ -42,14 +42,7 @@ class UserController {
 				.limit(10);
 
 			console.log(`Users queried successfully by query: ${usernameQuery}`);
-
-			const userFiles = users.map((user) => ({
-				username: user.username,
-				file: user.profilePicture ? `${process.env.BASE_URL}${user.profilePicture}` : null,
-			}));
-
-			console.log(`Users queried successfully by query: ${usernameQuery}`);
-			return res.json(userFiles);
+			return res.json(users);
 		} catch (error) {
 			console.error('Error searching for users', error);
 			res.status(500).json({ error: 'Internal server error' });
@@ -66,9 +59,6 @@ class UserController {
 				console.error('User not found');
 				return res.status(404).json({ error: 'User not found' });
 			}
-
-			if (user.profilePicture) 
-				user.profilePicture = `${process.env.BASE_URL}${user.profilePicture}`;
 
 			console.log('User returned successfully');
 			res.status(200).json(user);
