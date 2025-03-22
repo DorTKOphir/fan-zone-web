@@ -83,7 +83,7 @@ const Profile = () => {
 		setSaving(true);
 		try {
 			await updateUser({ ...user, username, email });
-			await reloadUser(); // Refresh user data
+			await reloadUser();
 			setEditMode(false);
 		} catch (error) {
 			setError('Failed to update profile');
@@ -110,7 +110,6 @@ const Profile = () => {
 					<div className="text-red-500 text-center">{error}</div>
 				) : (
 					<>
-						{/* Profile Header */}
 						<div className="flex flex-col items-center space-y-4">
 							<div className="w-24 h-24 rounded-full border overflow-hidden">
 								{user?.fullProfilePicture ? (
@@ -167,7 +166,6 @@ const Profile = () => {
 							)}
 						</div>
 
-						{/* Profile Picture Upload */}
 						<div className="mt-6">
 							<Label htmlFor="fileInput" className="font-semibold">
 								Change Profile Picture
