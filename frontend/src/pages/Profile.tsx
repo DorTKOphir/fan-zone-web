@@ -1,6 +1,7 @@
+import PostItem from '@/components/PostItem';
 import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
-import { getPostByAuthorId } from '@/services/posts';
+import { getPostByAuthorId, handleDelete, handleLike, handleUpdate } from '@/services/posts';
 import { uploadProfilePicture } from '@/services/user';
 import { useState, useEffect } from 'react';
 
@@ -51,6 +52,13 @@ const Profile = () => {
 			}
 		}
 	};
+
+	const onLike = async (postId: string) => handleLike(postId, posts, user, setPosts);
+
+	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
+
+	const onUpdate = async (postId: string, newContent: string) =>
+		handleUpdate(postId, newContent, setPosts);
 
 	return (
 		<div className="w-[70%] mx-auto mt-10 p-4">
@@ -113,26 +121,13 @@ const Profile = () => {
 						<div className="space-y-6">
 							{posts.length > 0 ? (
 								posts.map((post) => (
-									<div
+									<PostItem
 										key={post._id}
-										className="bg-white p-6 rounded-lg shadow-md hover:bg-gray-50 transition"
-									>
-										<div className="flex justify-between mb-3">
-											<span className="font-semibold text-lg">
-												{post.author.username}
-											</span>
-											<span className="text-sm text-gray-500">
-												{new Date(post.dateCreated).toLocaleString()}
-											</span>
-										</div>
-										<p className="text-gray-700">{post.content}</p>
-										<button
-											className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-											onClick={() => alert(`Viewing Post ${post._id}`)}
-										>
-											View Details
-										</button>
-									</div>
+										post={post}
+										onLike={onLike}
+										onDelete={onDelete}
+										onUpdate={onUpdate}
+									/>
 								))
 							) : (
 								<div>No posts found.</div>

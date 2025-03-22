@@ -1,3 +1,4 @@
+import User from '@/models/user';
 import api from './api';
 import { Post } from '@/models/post';
 
@@ -41,4 +42,51 @@ export const getPostByAuthorId = async (authorId: string): Promise<Post[]> => {
 	} catch (error) {
 		throw error;
 	}
+};
+
+export const handleLike = async (
+	postId: string,
+	posts: Post[],
+	user: User | null,
+	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
+) => {
+	if (!user) return;
+
+	const post = posts.find((p) => p._id === postId);
+	if (!post) return;
+
+	const isLiked = post.likes.includes(user._id);
+	const updatedLikes = isLiked
+		? post.likes.filter((id) => id !== user._id)
+		: [...post.likes, user._id];
+
+	const updatedPost = await updatePost(postId, { likes: updatedLikes });
+
+	setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
+};
+
+export const handlePostCreated = (
+	matchId: string | undefined,
+	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
+) => {
+	if (matchId) {
+		getPostsByMatchId(matchId).then(setPosts);
+	}
+};
+
+export const handleDelete = async (
+	postId: string,
+	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
+) => {
+	await deletePost(postId);
+	setPosts((prev) => prev.filter((p) => p._id !== postId));
+};
+
+export const handleUpdate = async (
+	postId: string,
+	newContent: string,
+	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
+) => {
+	const updatedPost = await updatePost(postId, { content: newContent });
+	setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
 };
