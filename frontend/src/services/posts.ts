@@ -94,7 +94,7 @@ export const handleUpdate = async (
 
 export const getPostSuggestion = async (match: Match): Promise<string> => {
 	try {
-		const response = await api.post(`/posts/getSuggestion`, { match });
+		const response = await api.post(`/posts/suggestion`, { match });
 		return response.data.suggestion;
 	} catch (error) {
 		throw error;
