@@ -2,7 +2,7 @@ interface User {
 	_id: string;
 	username: string;
 	email: string;
-	profilePicture: string | null;
+	fullProfilePicture: string | null;
 }
 
 export type updateUserDTO = Partial<User>;

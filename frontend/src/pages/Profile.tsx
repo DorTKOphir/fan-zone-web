@@ -10,7 +10,7 @@ const Profile = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const { user } = useAuth();
+	const { user, updateUser } = useAuth();
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
@@ -43,6 +43,7 @@ const Profile = () => {
 				setLoading(true);
 
 				await uploadProfilePicture(imageFile);
+				await updateUser();
 
 				setLoading(false);
 			} catch (error) {
@@ -69,9 +70,9 @@ const Profile = () => {
 				<>
 					<div className="flex items-center space-x-6 mb-8">
 						<div className="w-24 h-24 rounded-full overflow-hidden">
-							{user?.profilePicture ? (
+							{user?.fullProfilePicture ? (
 								<img
-									src={user.profilePicture}
+									src={user.fullProfilePicture}
 									alt="Profile"
 									className="w-full h-full object-cover"
 								/>
