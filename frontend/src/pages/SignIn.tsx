@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { loginWithGoogle } from '@/services/auth';
 
 const signInSchema = z.object({
 	username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -14,7 +16,7 @@ const signInSchema = z.object({
 type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
-	const { login } = useAuth();
+	const { login, loginWithToken } = useAuth();
 	const {
 		register,
 		handleSubmit,
@@ -22,6 +24,22 @@ export default function SignIn() {
 	} = useForm<SignInFormData>({
 		resolver: zodResolver(signInSchema),
 	});
+
+	const googleResponseMessage = async (credentialResponse: CredentialResponse) => {
+		const credential = credentialResponse.credential;
+		if (!credential) return;
+	  
+		try {
+		  const data = await loginWithGoogle(credential);
+		  loginWithToken(data.accessToken, data.refreshToken, data.user);
+		} catch (error) {
+		  console.error("Google login failed:", error);
+		}
+	  };
+
+	const googleErrorMessge = () => {
+		console.log("Google error");
+	}
 
 	const onSubmit = ({ username, password }: SignInFormData) => {
 		login(username, password);
@@ -51,6 +69,9 @@ export default function SignIn() {
 					Sign In
 				</Button>
 			</form>
+			
+			<GoogleLogin onSuccess={googleResponseMessage} onError={googleErrorMessge} />
+
 			<p className="text-center text-sm">
 				If you don't have an account,{' '}
 				<Link to="/sign-up" className="text-blue-500">

@@ -39,6 +39,11 @@ export const register = async (username: string, email: string, password: string
 	return response.data;
 };
 
+export const loginWithGoogle = async (credential: string) => {
+	const res = await api.post("/auth/google", { credential });
+	return res.data;
+};
+
 export const refreshToken = async (): Promise<string | null> => {
 	const storedRefreshToken = localStorage.getItem('refreshToken');
 	if (!storedRefreshToken) return null;
