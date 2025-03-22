@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import useRedirectSignedInUser from '@/hooks/useRedirectSignedInUser';
 
 const signInSchema = z.object({
@@ -16,7 +17,7 @@ type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
 	useRedirectSignedInUser();
-	const { login } = useAuth();
+	const { login, loginWithGoogle } = useAuth();
 
 	const {
 		register,
@@ -25,6 +26,17 @@ export default function SignIn() {
 	} = useForm<SignInFormData>({
 		resolver: zodResolver(signInSchema),
 	});
+
+	const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+		const credential = credentialResponse.credential;
+		if (!credential) return;
+
+		loginWithGoogle(credential);
+	};
+
+	const onGoogleLoginError = () => {
+		console.log('Google error');
+	};
 
 	const onSubmit = ({ username, password }: SignInFormData) => {
 		login(username, password);
@@ -36,24 +48,21 @@ export default function SignIn() {
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 				<div>
 					<Input {...register('username')} placeholder="Username" />
-					{errors.username && (
-						<p className="text-red-500">{errors.username.message}</p>
-					)}
+					{errors.username && <p className="text-red-500">{errors.username.message}</p>}
 				</div>
 				<div>
-					<Input
-						{...register('password')}
-						type="password"
-						placeholder="Password"
-					/>
-					{errors.password && (
-						<p className="text-red-500">{errors.password.message}</p>
-					)}
+					<Input {...register('password')} type="password" placeholder="Password" />
+					{errors.password && <p className="text-red-500">{errors.password.message}</p>}
 				</div>
 				<Button type="submit" className="w-full">
 					Sign In
 				</Button>
 			</form>
+
+			<div className="flex justify-center">
+				<GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} />
+			</div>
+
 			<p className="text-center text-sm">
 				If you don't have an account,{' '}
 				<Link to="/sign-up" className="text-blue-500">
