@@ -21,11 +21,11 @@ function App() {
 							<Route path="/:matchId" element={<MatchDetails />} />
 							<Route path="/:matchId/:postId" element={<PostComments />} />
 							<Route path="/chat" element={<Chat />} />
+							<Route path="/profile" element={<Profile />} />
 						</Route>
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />
 					<Route path="/sign-up" element={<SignUp />} />
-					<Route path="/profile" element={<Profile />} />
 				</Routes>
 			</AuthProvider>
 		</Router>

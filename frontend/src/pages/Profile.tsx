@@ -10,14 +10,13 @@ const Profile = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const { user, accessToken } = useAuth();
+	const { user } = useAuth();
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
 			if (user) {
 				try {
-					const userPostsData = await getPostByAuthorId(user._id);
-					const userPosts = userPostsData.map((userPostData) => ({
+					const userPosts = (await getPostByAuthorId(user._id)).map((userPostData) => ({
 						...userPostData,
 						author: user,
 					}));
@@ -39,11 +38,11 @@ const Profile = () => {
 	};
 
 	const handleUpload = async () => {
-		if (imageFile && user && accessToken) {
+		if (imageFile && user) {
 			try {
 				setLoading(true);
 
-				await uploadProfilePicture(imageFile, accessToken);
+				await uploadProfilePicture(imageFile);
 
 				setLoading(false);
 			} catch (error) {
@@ -72,7 +71,7 @@ const Profile = () => {
 						<div className="w-24 h-24 rounded-full overflow-hidden">
 							{user?.profilePicture ? (
 								<img
-									src={`http://localhost:5000${user.profilePicture}`}
+									src={user.profilePicture}
 									alt="Profile"
 									className="w-full h-full object-cover"
 								/>
