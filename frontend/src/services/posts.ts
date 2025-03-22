@@ -1,3 +1,4 @@
+import { Match } from '@/models/match';
 import api from './api';
 import { Post } from '@/models/post';
 
@@ -29,6 +30,15 @@ export const getPostById = async (postId: string): Promise<Post> => {
 	try {
 		const response = await api.get(`/posts/${postId}`);
 		return response.data;
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const getPostSuggestion = async (match: Match): Promise<string> => {
+	try {
+		const response = await api.post(`/posts/getSuggestion`, { match });
+		return response.data.suggestion;
 	} catch (error) {
 		throw error;
 	}
