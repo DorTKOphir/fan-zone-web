@@ -125,6 +125,24 @@ class PostController {
 		}
 	}
 
+	async getPostsByAuthorId(req: Request, res: Response) {
+		try {
+			const { authorId } = req.params;
+			if (!authorId) {
+				console.error('Author ID is required');
+				return res.status(400).json({ message: 'Author ID is required.' });
+			}
+
+			const posts = await this.populatePost(postModel.find({ author: authorId }));
+
+			console.log(`Posts found for author ${authorId}`);
+			res.status(200).json(posts);
+		} catch (err) {
+			console.error('Error fetching posts by author ID:', err);
+			res.status(500).json({ error: 'Server error' });
+		}
+	}
+
 	async getPostSuggestion(req: Request, res: Response) {
 		const { match }: { match: Match } = req.body;
 

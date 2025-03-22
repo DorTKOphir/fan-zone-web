@@ -7,6 +7,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import PostComments from './pages/PostComments';
 import Layout from './components/Layout';
+import Profile from './pages/Profile';
 import MatchDetails from './pages/MatchDetails';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
 							<Route path="/:matchId" element={<MatchDetails />} />
 							<Route path="/:matchId/:postId" element={<PostComments />} />
 							<Route path="/chat" element={<Chat />} />
+							<Route path="/profile" element={<Profile />} />
 						</Route>
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />
