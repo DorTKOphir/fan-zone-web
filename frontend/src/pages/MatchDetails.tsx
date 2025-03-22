@@ -49,7 +49,7 @@ export default function MatchDetails() {
 						Date: {new Date(match.date).toLocaleDateString()}
 					</p>
 
-					<NewPostForm matchId={matchId!} onPostCreated={onPostCreated} />
+					<NewPostForm match={match} onPostCreated={onPostCreated} />
 
 					<h2 className="text-xl font-semibold mt-6">Posts</h2>
 					{posts.length === 0 ? (

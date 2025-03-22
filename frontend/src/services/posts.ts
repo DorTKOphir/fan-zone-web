@@ -1,4 +1,5 @@
 import User from '@/models/user';
+import { Match } from '@/models/match';
 import api from './api';
 import { Post } from '@/models/post';
 
@@ -89,4 +90,13 @@ export const handleUpdate = async (
 ) => {
 	const updatedPost = await updatePost(postId, { content: newContent });
 	setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
+};
+
+export const getPostSuggestion = async (match: Match): Promise<string> => {
+	try {
+		const response = await api.post(`/posts/suggestion`, { match });
+		return response.data.suggestion;
+	} catch (error) {
+		throw error;
+	}
 };

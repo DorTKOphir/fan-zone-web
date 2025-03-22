@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import useRedirectSignedInUser from '@/hooks/useRedirectSignedInUser';
 
 const signInSchema = z.object({
 	username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -15,7 +16,9 @@ const signInSchema = z.object({
 type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
+	useRedirectSignedInUser();
 	const { login, loginWithGoogle } = useAuth();
+
 	const {
 		register,
 		handleSubmit,
