@@ -5,7 +5,7 @@ import { createPost, getPostSuggestion } from '@/services/posts';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/providers/AuthProvider';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Match } from '@/models/match';
 
 const postSchema = z.object({
@@ -20,7 +20,8 @@ interface NewPostFormProps {
 export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) {
 	const { user } = useAuth();
 	const [loading, setLoading] = useState(false);
-	const [contentPlaceHolder, setContentPlaceHolder] = useState('Write your post...');
+	const [contentPlaceHolder, setContentPlaceHolder] = useState('Loading suggestion...');
+	const matchIdRef = useRef<string | null>(null);
 
 	const {
 		register,
@@ -32,11 +33,22 @@ export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) 
 	});
 
 	useEffect(() => {
-		if (match) {
-			const loadSuggestion = async () => {
+		const loadSuggestion = async () => {
+			const currentMatchId = String(match.id);
+
+			if (matchIdRef.current === currentMatchId) return;
+
+			matchIdRef.current = currentMatchId;
+
+			try {
 				const suggestion = await getPostSuggestion(match);
 				setContentPlaceHolder(suggestion);
-			};
+			} catch (error) {
+				console.error('Failed to load suggestion:', error);
+			}
+		};
+
+		if (match) {
 			loadSuggestion();
 		}
 	}, [match]);
