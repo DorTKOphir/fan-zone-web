@@ -126,7 +126,7 @@ class PostController {
 			const { authorId } = req.params;
 			if (!authorId) {
 				console.error('Author ID is required');
-				return res.status(400).json({ message: 'Match ID is required.' });
+				return res.status(400).json({ message: 'Author ID is required.' });
 			}
 
 			const posts = await postModel.find({ author: authorId });
