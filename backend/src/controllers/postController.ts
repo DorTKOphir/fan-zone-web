@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import postModel, { IPost } from '../models/postModel';
 import commentModel from '../models/commentModel';
 import { getPostSuggestion } from '../services/geminiService';
+import { Match } from '../types/matchTypes';
 import { Query } from 'mongoose';
 
 class PostController {
@@ -143,14 +144,14 @@ class PostController {
 	}
 
 	async getPostSuggestion(req: Request, res: Response) {
-		const { matchDetails } = req.body;
+		const { match }: { match: Match } = req.body;
 
-		if (!matchDetails) {
-			return res.status(400).json({ error: 'Match details are required' });
+		if (!match) {
+			return res.status(400).json({ error: 'Match is required' });
 		}
 
 		try {
-			const suggestion = await getPostSuggestion(matchDetails);
+			const suggestion = await getPostSuggestion(match);
 			res.json({ suggestion });
 		} catch (error) {
 			res.status(500).json({ error: 'Failed to generate suggestion' });
@@ -163,7 +164,7 @@ class PostController {
 			{
 				path: 'comments',
 				populate: { path: 'author' },
-				options: { sort: { dateCreated: -1 } }
+				options: { sort: { dateCreated: -1 } },
 			},
 		]);
 	}

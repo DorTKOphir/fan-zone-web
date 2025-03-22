@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as dotenv from 'dotenv';
+import { Match } from '../types/matchTypes';
 
 dotenv.config();
 
@@ -13,8 +14,16 @@ if (!API_KEY) {
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-export async function getPostSuggestion(matchDetails: string): Promise<string> {
-	const prompt = `Generate a post for a football match with the following details: ${matchDetails}`;
+export async function getPostSuggestion(match: Match): Promise<string> {
+	const matchDetails = `date: ${match.date}, home team: ${match.homeTeam}, away team: ${
+		match.awayTeam
+	}${
+		match.homeTeamScore
+			? `, home team score: ${match.homeTeamScore}, away team score: ${match.awayTeamScore}`
+			: ``
+	}`;
+
+	const prompt = `Generate a post for a football match with the following details: ${matchDetails}. \n keep in mind that the post can contain only text and try to keep it a sentence or two`;
 
 	try {
 		const result = await model.generateContent(prompt);
