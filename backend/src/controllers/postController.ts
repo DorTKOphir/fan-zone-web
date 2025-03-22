@@ -56,6 +56,8 @@ class PostController {
 
 	async update(req: Request, res: Response) {
 		try {
+			const file = (req as any).file;
+
 			const updateBody: { [key: string]: any } = {};
 
 			for (const field of this.getUpdateFields()) {
@@ -70,7 +72,14 @@ class PostController {
 			}
 
 			const updatedPost = await this.populatePost(
-				postModel.findByIdAndUpdate(req.params.id, updateBody, { new: true }),
+				postModel.findByIdAndUpdate(
+					req.params.id,
+					{
+						...updateBody,
+						image: file ? `/uploads/post_images/${file.filename}` : undefined,
+					},
+					{ new: true },
+				),
 			);
 
 			if (!updatedPost) {

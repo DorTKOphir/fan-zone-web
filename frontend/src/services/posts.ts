@@ -8,18 +8,47 @@ export const getPostsByMatchId = async (matchId: string): Promise<Post[]> => {
 	return response.data;
 };
 
-export const updatePost = async (postId: string, updatedData: Partial<Post>): Promise<Post> => {
-	const response = await api.patch(`/posts/${postId}`, updatedData);
+export const updatePost = async (
+	postId: string,
+	{ content, likes, image }: { content?: string; likes?: string[]; image: File | null },
+): Promise<Post> => {
+	const formData = new FormData();
+
+	content && formData.append('content', content);
+	likes && formData.append('likes', JSON.stringify(likes));
+	image && formData.append('image', image);
+
+	const response = await api.patch(`/posts/${postId}`, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+	});
+
 	return response.data;
 };
 
-export const createPost = async (postData: {
-	content: string;
-	author: string;
-	matchId: string;
-	dateCreated: string;
-}) => {
-	const response = await api.post(`/posts`, postData);
+export const createPost = async (
+	content: string,
+	author: string,
+	matchId: string,
+	dateCreated: string,
+	image: File | null,
+) => {
+	const formData = new FormData();
+
+	formData.append('content', content);
+	formData.append('author', author);
+	formData.append('matchId', matchId);
+	formData.append('dateCreated', dateCreated);
+
+	if (image) {
+		formData.append('image', image);
+	}
+
+	const response = await api.post(`/posts`, formData, {
+		headers: { 'Content-Type': 'multipart/form-data' },
+	});
+
 	return response.data;
 };
 
@@ -86,9 +115,14 @@ export const handleDelete = async (
 export const handleUpdate = async (
 	postId: string,
 	newContent: string,
+	newImage: File | null,
 	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
 ) => {
-	const updatedPost = await updatePost(postId, { content: newContent });
+	const updatedPost = await updatePost(postId, {
+		content: newContent,
+		image: newImage,
+	});
+
 	setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
 };
 

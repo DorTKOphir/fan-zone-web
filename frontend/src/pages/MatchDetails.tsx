@@ -33,8 +33,8 @@ export default function MatchDetails() {
 
 	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
 
-	const onUpdate = async (postId: string, newContent: string) =>
-		handleUpdate(postId, newContent, setPosts);
+	const onUpdate = async (postId: string, newContent: string, newImage: File | null) =>
+		handleUpdate(postId, newContent, newImage, setPosts);
 
 	if (!match) return <p>Loading match details...</p>;
 

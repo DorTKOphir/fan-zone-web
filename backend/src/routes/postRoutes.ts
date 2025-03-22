@@ -13,7 +13,13 @@ router.post(
 	upload.single('image'),
 	PostController.create.bind(PostController),
 );
-router.patch('/:id', authMiddleware, postMiddleware, PostController.update.bind(PostController));
+router.patch(
+	'/:id',
+	authMiddleware,
+	postMiddleware,
+	upload.single('image'),
+	PostController.update.bind(PostController),
+);
 router.delete('/:id', authMiddleware, postMiddleware, PostController.delete.bind(PostController));
 router.get('/match/:matchId', PostController.getPostsByMatchId.bind(PostController));
 router.get('/author/:authorId', PostController.getPostsByAuthorId.bind(PostController));
