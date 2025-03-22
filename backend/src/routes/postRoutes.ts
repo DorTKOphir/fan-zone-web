@@ -7,10 +7,16 @@ import { upload } from '../middlewares/uploadMiddleware';
 const router = Router();
 
 router.get('/:id', PostController.getById.bind(PostController));
-router.post('/', authMiddleware, upload.single('image'), PostController.create.bind(PostController));
+router.post(
+	'/',
+	authMiddleware,
+	upload.single('image'),
+	PostController.create.bind(PostController),
+);
 router.patch('/:id', authMiddleware, postMiddleware, PostController.update.bind(PostController));
 router.delete('/:id', authMiddleware, postMiddleware, PostController.delete.bind(PostController));
 router.get('/match/:matchId', PostController.getPostsByMatchId.bind(PostController));
+router.get('/author/:authorId', PostController.getPostsByAuthorId.bind(PostController));
 router.post('/getSuggestion', PostController.getPostSuggestion.bind(PostController));
 
 export default router;

@@ -49,7 +49,7 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 		<Card key={post._id} className="p-4">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
-					<UserAvatar profilePicUrl={post.author.profilePicture} />
+					<UserAvatar profilePicUrl={post.author.fullProfilePicture} />
 					<div>
 						<p className="font-semibold">{post.author.username}</p>
 						<p className="text-sm text-gray-500">{formattedDate}</p>
