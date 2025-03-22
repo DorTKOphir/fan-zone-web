@@ -15,13 +15,13 @@ const ProfileIndicator: React.FC = () => {
 
 	if (!user) return null;
 
-	const { profilePicture, username } = user;
+	const { fullProfilePicture, username } = user;
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<button className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-200 transition">
-					<UserAvatar profilePicUrl={profilePicture} />
+					<UserAvatar profilePicUrl={fullProfilePicture} />
 				</button>
 			</DropdownMenuTrigger>
 
