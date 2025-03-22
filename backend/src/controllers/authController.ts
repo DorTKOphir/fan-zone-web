@@ -69,49 +69,49 @@ class AuthController {
 		const credential = req.body.credential;
 
 		if (!credential) {
-		  return res.status(400).json({ error: 'Missing Google credential token' });
+			return res.status(400).json({ error: 'Missing Google credential token' });
 		}
-	
+
 		try {
-		  const client = new OAuth2Client();
-		  const ticket = await client.verifyIdToken({
-			idToken: credential,
-			audience: process.env.GOOGLE_CLIENT_ID,
-		  });
-	
-		  const payload = ticket.getPayload();
-	
-		  if (!payload?.email) {
-			return res.status(400).json({ error: 'Google token verification failed' });
-		  }
-	
-		  const email = payload.email;
-		  let user = await userModel.findOne({ email });
-	
-		  if (!user) {
-			user = await userModel.create({
-			  email,
-			  username: email.split('@')[0],
-			  password: 'google-signin',
-			  profilePicture: payload.picture,
+			const client = new OAuth2Client();
+			const ticket = await client.verifyIdToken({
+				idToken: credential,
+				audience: process.env.GOOGLE_CLIENT_ID,
 			});
-		  }
-	
-		  const accessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET!, {
-			expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
-		  });
-	
-		  const refreshToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET!, {
-			expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
-		  });
-	
-		  user.refreshTokens.push(refreshToken);
-		  await user.save();
-	
-		  return res.status(200).json({ accessToken, refreshToken, user });
+
+			const payload = ticket.getPayload();
+
+			if (!payload?.email) {
+				return res.status(400).json({ error: 'Google token verification failed' });
+			}
+
+			const email = payload.email;
+			let user = await userModel.findOne({ email });
+
+			if (!user) {
+				user = await userModel.create({
+					email,
+					username: email.split('@')[0],
+					password: 'google-signin',
+					profilePicture: payload.picture,
+				});
+			}
+
+			const accessToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET!, {
+				expiresIn: process.env.TOKEN_EXPIRE_DURATION as ms.StringValue,
+			});
+
+			const refreshToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET!, {
+				expiresIn: process.env.REFRESH_EXPIRE_DURATION as ms.StringValue,
+			});
+
+			user.refreshTokens.push(refreshToken);
+			await user.save();
+
+			return res.status(200).json({ accessToken, refreshToken, user });
 		} catch (error) {
-		  console.error('Google login failed:', error);
-		  return res.status(500).json({ error: 'Google login failed' });
+			console.error('Google login failed:', error);
+			return res.status(500).json({ error: 'Google login failed' });
 		}
 	}
 

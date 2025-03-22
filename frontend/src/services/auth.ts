@@ -65,10 +65,10 @@ export const refreshToken = async (): Promise<string | null> => {
 	return null;
 };
 
-export const logout = () => {
+export const logout = async () => {
+	await api.post("/auth/logout", { refreshToken: localStorage.getItem('refreshToken') });
 	localStorage.removeItem('accessToken');
 	localStorage.removeItem('refreshToken');
-	window.location.href = '/sign-in'; // Redirect to login
 };
 
 export const getUser = async () => {

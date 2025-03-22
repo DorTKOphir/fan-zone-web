@@ -4,6 +4,7 @@ import {
 	refreshToken as apiRefreshToken,
 	logout as apiLogout,
 	register as apiRegister,
+	loginWithGoogle as apiLoginWithGoogle,
 	getUser,
 } from '../services/auth';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,7 @@ interface AuthContextType {
 	user: User | null;
 	accessToken: string | null;
 	login: (username: string, password: string) => Promise<void>;
-	loginWithToken: (accessToken: string, refreshToken: string, user: User) => void;
+	loginWithGoogle: (credential: string) => void;
 	signUp: (username: string, email: string, password: string) => Promise<void>;
 	logout: () => void;
 	updateUser: () => void;
@@ -51,28 +52,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, []);
 
 	const login = async (username: string, password: string) => {
-		const res = await apiLogin(username, password);
-		if (res.accessToken && res.refreshToken) {
-			setAccessToken(res.accessToken);
-			setUser(res.user);
-			localStorage.setItem('accessToken', res.accessToken);
-			localStorage.setItem('refreshToken', res.refreshToken);
-			navigate('/');
-		}
+		const { accessToken, refreshToken, user } = await apiLogin(username, password);
+		setAuthProperties(accessToken, refreshToken, user);
 	};
 
 	const signUp = async (username: string, email: string, password: string) => {
-		const res = await apiRegister(username, email, password);
-		if (res.accessToken && res.refreshToken) {
-			setAccessToken(res.accessToken);
-			localStorage.setItem('accessToken', res.accessToken);
-			localStorage.setItem('refreshToken', res.refreshToken);
-			setUser(res.user);
-			navigate('/');
+		const { accessToken, refreshToken, user } = await apiRegister(username, email, password);
+		setAuthProperties(accessToken, refreshToken, user);
+	};
+
+	const loginWithGoogle = async (credential: string) => {
+		try {
+			const { accessToken, refreshToken, user } = await apiLoginWithGoogle(credential);
+			setAuthProperties(accessToken, refreshToken, user);
+		} catch (error) {
+			console.error('Google login failed:', error);
 		}
 	};
 
-	const loginWithToken = (accessToken: string, refreshToken: string, user: User) => {
+	const setAuthProperties = (accessToken: string, refreshToken: string, user: User) => {
 		if (accessToken && refreshToken) {
 			setAccessToken(accessToken);
 			localStorage.setItem('accessToken', accessToken);
@@ -80,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setUser(user);
 			navigate('/');
 		}
-	}
+	};
 
 	const updateUser = async () => {
 		const userData = await getUser();
@@ -89,8 +87,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 	};
 
+	const logout = async () => {
+		await apiLogout();
+		navigate('/sign-in')
+	}
+
 	return (
-		<AuthContext.Provider value={{ user, accessToken, login, signUp, loginWithToken, logout: apiLogout, updateUser }}>
+		<AuthContext.Provider
+			value={{
+				user,
+				accessToken,
+				login,
+				signUp,
+				loginWithGoogle,
+				logout,
+				updateUser,
+			}}
+		>
 			{children}
 		</AuthContext.Provider>
 	);
