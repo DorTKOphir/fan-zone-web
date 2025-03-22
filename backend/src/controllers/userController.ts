@@ -41,15 +41,13 @@ class UserController {
 				.select('_id username profilePicture')
 				.limit(10);
 
-			console.log(`Users queried successfully by query: ${usernameQuery}`);
-
-			const userFiles = users.map((user) => ({
-				username: user.username,
-				file: user.profilePicture ? `${process.env.BASE_URL}${user.profilePicture}` : null,
-			}));
+			users.forEach((user) => {
+				if (user.profilePicture)
+					user.profilePicture = `${process.env.BASE_URL}${user.profilePicture}`;
+			});
 
 			console.log(`Users queried successfully by query: ${usernameQuery}`);
-			return res.json(userFiles);
+			return res.json(users);
 		} catch (error) {
 			console.error('Error searching for users', error);
 			res.status(500).json({ error: 'Internal server error' });

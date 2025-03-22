@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 import { Message } from "../models/message";
 import { ChatListItem } from "../models/chatListItem";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = "http://localhost:5000"; // TODO change when we deploy
 
 let socket: Socket | null = null;
 

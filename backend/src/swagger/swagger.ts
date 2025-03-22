@@ -17,7 +17,7 @@ import { Express } from 'express';
       { name: "Chat", description: "Chat Management Endpoints" },
       { name: "Users", description: "Users Managment Endpoints" },
     ],
-    servers: [{ url: 'http://localhost:5000' }], // TODO update when we deploy
+    servers: [{ url: process.env.BASE_URL }],
   };
 
 const options = {
