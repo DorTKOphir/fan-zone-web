@@ -1,9 +1,15 @@
+'use client';
+
 import PostItem from '@/components/PostItem';
 import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId, handleDelete, handleLike, handleUpdate } from '@/services/posts';
 import { uploadProfilePicture } from '@/services/user';
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Profile = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
@@ -16,10 +22,7 @@ const Profile = () => {
 		const fetchProfileData = async () => {
 			if (user) {
 				try {
-					const userPosts = (await getPostByAuthorId(user._id)).map((userPostData) => ({
-						...userPostData,
-						author: user,
-					}));
+					const userPosts = await getPostByAuthorId(user._id);
 					setPosts(userPosts);
 				} catch (err) {
 					setError('Failed to load profile or posts');
@@ -37,39 +40,42 @@ const Profile = () => {
 		}
 	};
 
-	const handleUpload = async () => {
+	const handleUpload = async (event?: React.MouseEvent<HTMLButtonElement>) => {
+		event?.preventDefault();
+
 		if (imageFile && user) {
 			try {
 				setLoading(true);
-
 				await uploadProfilePicture(imageFile);
 				await updateUser();
-
-				setLoading(false);
+				setImageFile(null);
 			} catch (error) {
 				setError('Failed to upload profile picture');
+			} finally {
 				setLoading(false);
 			}
 		}
 	};
 
 	const onLike = async (postId: string) => handleLike(postId, posts, user, setPosts);
-
 	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
-
 	const onUpdate = async (postId: string, newContent: string) =>
 		handleUpdate(postId, newContent, setPosts);
 
 	return (
-		<div className="w-[70%] mx-auto mt-10 p-4">
+		<div className="max-w-3xl mx-auto mt-10 px-4">
 			{loading ? (
-				<div>Loading...</div>
+				<div className="space-y-4">
+					<Skeleton className="h-8 w-32" />
+					<Skeleton className="h-24 w-24 rounded-full" />
+					<Skeleton className="h-10 w-full" />
+				</div>
 			) : error ? (
-				<div>{error}</div>
+				<div className="text-red-500">{error}</div>
 			) : (
 				<>
 					<div className="flex items-center space-x-6 mb-8">
-						<div className="w-24 h-24 rounded-full overflow-hidden">
+						<div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">
 							{user?.fullProfilePicture ? (
 								<img
 									src={user.fullProfilePicture}
@@ -77,7 +83,7 @@ const Profile = () => {
 									className="w-full h-full object-cover"
 								/>
 							) : (
-								<div className="w-full h-full bg-gray-200 text-center flex items-center justify-center text-xl text-gray-600">
+								<div className="w-full h-full bg-muted flex items-center justify-center text-xl text-muted-foreground">
 									{user?.username[0]}
 								</div>
 							)}
@@ -85,33 +91,43 @@ const Profile = () => {
 
 						<div>
 							<h1 className="text-3xl font-bold">{user?.username}</h1>
-							<p className="text-lg text-gray-500">{user?.email}</p>
+							<p className="text-muted-foreground">{user?.email}</p>
 						</div>
 					</div>
 
-					<div className="mb-6">
-						<input
-							type="file"
-							accept="image/*"
-							onChange={handleFileChange}
-							className="hidden"
-							id="fileInput"
-						/>
-						<label
-							htmlFor="fileInput"
-							className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition"
-						>
-							Upload Profile Picture
-						</label>
+					<div className="mb-6 space-y-2">
+						<Label htmlFor="fileInput" className="text-base font-semibold">
+							Change Profile Picture
+						</Label>
+
+						<div className="flex items-center gap-4">
+							<Input
+								id="fileInput"
+								type="file"
+								accept="image/*"
+								onChange={handleFileChange}
+								className="w-full max-w-sm"
+							/>
+							<Button
+								variant="secondary"
+								onClick={handleUpload}
+								disabled={!imageFile}
+							>
+								Upload
+							</Button>
+						</div>
+
 						{imageFile && (
-							<div className="mt-2 text-sm text-gray-500">
-								<p>Selected file: {imageFile.name}</p>
-								<button
-									onClick={handleUpload}
-									className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-								>
-									Upload
-								</button>
+							<div className="mt-4 flex items-center gap-4">
+								<img
+									src={URL.createObjectURL(imageFile)}
+									alt="Preview"
+									className="w-16 h-16 rounded-full object-cover border"
+								/>
+								<p className="text-sm text-muted-foreground">
+									Selected file:{' '}
+									<span className="font-medium">{imageFile.name}</span>
+								</p>
 							</div>
 						)}
 					</div>
@@ -130,7 +146,7 @@ const Profile = () => {
 									/>
 								))
 							) : (
-								<div>No posts found.</div>
+								<p className="text-muted-foreground">No posts found.</p>
 							)}
 						</div>
 					</div>
