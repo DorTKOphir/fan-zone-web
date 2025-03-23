@@ -1,4 +1,3 @@
-import User from '@/models/user';
 import { Match } from '@/models/match';
 import api from './api';
 import { Post } from '@/models/post';
