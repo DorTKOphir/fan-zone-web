@@ -18,7 +18,7 @@ export const updatePost = async (
 	}: {
 		content?: string;
 		likes?: string[];
-		image: File | null;
+		image?: File | null;
 		imageDeleted?: boolean;
 	}
 ): Promise<Post> => {
