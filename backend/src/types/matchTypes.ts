@@ -2,6 +2,8 @@ export type Match = {
 	id: number;
 	homeTeam: string;
 	awayTeam: string;
+	homeTeamImage: string;
+	awayTeamImage: string;
 	date: string; // ISO string
 	homeTeamScore: number | undefined;
 	awayTeamScore: number | undefined;
@@ -22,6 +24,7 @@ export interface MatchResponseData {
 interface Team {
 	id: number;
 	name: string;
+	crest: string;
 }
 
 interface Score {
