@@ -56,12 +56,24 @@ class PostController {
 
 	async update(req: Request, res: Response) {
 		try {
+			const file = (req as any).file;
+
 			const updateBody: { [key: string]: any } = {};
 
 			for (const field of this.getUpdateFields()) {
 				if (req.body[field] !== undefined) {
-					updateBody[field] = req.body[field];
+					try {
+						updateBody[field] = JSON.parse(req.body[field]);
+					} catch (error) {
+						updateBody[field] = req.body[field];
+					}
 				}
+			}
+
+			if (file) {
+				updateBody.image = `/uploads/post_images/${file.filename}`;
+			} else if (req.body.imageDeleted === 'true') {
+				updateBody.image = null;
 			}
 
 			if (Object.keys(updateBody).length === 0) {
@@ -78,7 +90,7 @@ class PostController {
 				return res.status(404).json({ error: 'Post not found' });
 			}
 
-			console.log('Post updated sucessfully');
+			console.log('Post updated successfully');
 			res.status(200).json(updatedPost);
 		} catch (error) {
 			console.error('Error updating post:', error);
