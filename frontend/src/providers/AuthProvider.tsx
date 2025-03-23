@@ -89,8 +89,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const logout = async () => {
 		await apiLogout();
-		navigate('/sign-in');
-	};
+		setUser(null);
+		setAccessToken('');
+		navigate('/sign-in')
+	}
 
 	return (
 		<AuthContext.Provider
