@@ -66,7 +66,11 @@ export const refreshToken = async (): Promise<string | null> => {
 };
 
 export const logout = async () => {
-	await api.post("/auth/logout", { refreshToken: localStorage.getItem('refreshToken') });
+	try {
+		await api.post("/auth/logout", { refreshToken: localStorage.getItem('refreshToken') });
+	} catch (error) {
+		console.error("Logout failed with error", error);
+	}
 	localStorage.removeItem('accessToken');
 	localStorage.removeItem('refreshToken');
 };

@@ -10,13 +10,24 @@ export const getPostsByMatchId = async (matchId: string): Promise<Post[]> => {
 
 export const updatePost = async (
 	postId: string,
-	{ content, likes, image }: { content?: string; likes?: string[]; image: File | null },
+	{
+		content,
+		likes,
+		image,
+		imageDeleted,
+	}: {
+		content?: string;
+		likes?: string[];
+		image: File | null;
+		imageDeleted?: boolean;
+	}
 ): Promise<Post> => {
 	const formData = new FormData();
 
-	content && formData.append('content', content);
-	likes && formData.append('likes', JSON.stringify(likes));
-	image && formData.append('image', image);
+	if (content) formData.append('content', content);
+	if (likes) formData.append('likes', JSON.stringify(likes));
+	if (image) formData.append('image', image);
+	if (imageDeleted) formData.append('imageDeleted', 'true');
 
 	const response = await api.patch(`/posts/${postId}`, formData, {
 		headers: {
@@ -116,11 +127,13 @@ export const handleUpdate = async (
 	postId: string,
 	newContent: string,
 	newImage: File | null,
+	imageDeleted: boolean,
 	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
 ) => {
 	const updatedPost = await updatePost(postId, {
 		content: newContent,
 		image: newImage,
+		imageDeleted
 	});
 
 	setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
