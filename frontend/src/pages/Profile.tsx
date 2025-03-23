@@ -1,26 +1,40 @@
-'use client';
-
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import PostItem from '@/components/PostItem';
-import { Post } from '@/models/post';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId, handleDelete, handleLike, handleUpdate } from '@/services/posts';
+import { Post } from '@/models/post';
 import { updateUser, uploadProfilePicture } from '@/services/user';
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+
+// Define the Zod schema for validation
+const schema = z.object({
+	username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
+	email: z.string().email({ message: 'Please enter a valid email' }),
+});
 
 const Profile = () => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		setValue,
+	} = useForm({
+		resolver: zodResolver(schema),
+	});
+
+	const { user, reloadUser } = useAuth();
 	const [posts, setPosts] = useState<Post[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const { user, reloadUser } = useAuth();
-	const [editMode, setEditMode] = useState(false);
-	const [username, setUsername] = useState('');
-	const [email, setEmail] = useState('');
 	const [saving, setSaving] = useState(false);
+	const [editMode, setEditMode] = useState(false);
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
@@ -37,14 +51,14 @@ const Profile = () => {
 
 		const initUpdtableFields = () => {
 			if (user) {
-				setUsername(user.username);
-				setEmail(user.email);
+				setValue('username', user.username);
+				setValue('email', user.email);
 			}
 		};
 
 		fetchProfileData();
 		initUpdtableFields();
-	}, [user]);
+	}, [user, setValue]);
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files ? event.target.files[0] : null;
@@ -69,20 +83,13 @@ const Profile = () => {
 			}
 		}
 	};
-	const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setUsername(e.target.value);
-	};
 
-	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setEmail(e.target.value);
-	};
-
-	const handleSave = async () => {
+	const onSubmit = async (data: { username: string; email: string }) => {
 		if (!user) return;
 
 		setSaving(true);
 		try {
-			await updateUser({ ...user, username, email });
+			await updateUser({ ...user, username: data.username, email: data.email });
 			await reloadUser();
 			setEditMode(false);
 		} catch (error) {
@@ -125,26 +132,39 @@ const Profile = () => {
 								)}
 							</div>
 							{editMode ? (
-								<div className="w-full space-y-4">
+								<form
+									onSubmit={handleSubmit(onSubmit)}
+									className="w-full space-y-4"
+								>
 									<div>
 										<Label htmlFor="username">Username</Label>
 										<Input
 											id="username"
-											value={username}
-											onChange={handleUsernameChange}
+											{...register('username')}
+											className={errors.username ? 'border-red-500' : ''}
 										/>
+										{errors.username && (
+											<p className="text-red-500 text-sm">
+												{errors.username.message}
+											</p>
+										)}
 									</div>
 									<div>
 										<Label htmlFor="email">Email</Label>
 										<Input
 											id="email"
 											type="email"
-											value={email}
-											onChange={handleEmailChange}
+											{...register('email')}
+											className={errors.email ? 'border-red-500' : ''}
 										/>
+										{errors.email && (
+											<p className="text-red-500 text-sm">
+												{errors.email.message}
+											</p>
+										)}
 									</div>
 									<div className="flex justify-center gap-4">
-										<Button onClick={handleSave} disabled={saving}>
+										<Button type="submit" disabled={saving}>
 											{saving ? 'Saving...' : 'Save'}
 										</Button>
 										<Button
@@ -154,7 +174,7 @@ const Profile = () => {
 											Cancel
 										</Button>
 									</div>
-								</div>
+								</form>
 							) : (
 								<div className="text-center">
 									<h1 className="text-2xl font-bold">{user?.username}</h1>
