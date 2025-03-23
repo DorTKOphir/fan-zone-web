@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { MatchesResponse, MatchResponseData } from '../types/matchTypes';
+import { Match, MatchesResponse, MatchResponseData } from '../types/matchTypes';
 
 export const fetchMatches = async () => {
 	const response: AxiosResponse<MatchesResponse> = await axios.get(
@@ -30,11 +30,13 @@ export const fetchMatchById = async (matchId: string) => {
 	return parseMatch(response.data);
 };
 
-const parseMatch = (match: MatchResponseData) => ({
+const parseMatch = (match: MatchResponseData): Match => ({
 	id: match.id,
 	date: match.utcDate,
 	homeTeam: match.homeTeam.name,
 	awayTeam: match.awayTeam.name,
+	homeTeamImage: match.homeTeam.crest,
+	awayTeamImage: match.awayTeam.crest,
 	homeTeamScore: match.score?.fullTime.home,
 	awayTeamScore: match.score?.fullTime.away,
 });
