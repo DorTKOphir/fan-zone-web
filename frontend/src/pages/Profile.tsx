@@ -12,10 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
-// Define the Zod schema for validation
 const schema = z.object({
 	username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
-	email: z.string().email({ message: 'Please enter a valid email' }),
 });
 
 const Profile = () => {
@@ -52,7 +50,6 @@ const Profile = () => {
 		const initUpdtableFields = () => {
 			if (user) {
 				setValue('username', user.username);
-				setValue('email', user.email);
 			}
 		};
 
@@ -84,12 +81,12 @@ const Profile = () => {
 		}
 	};
 
-	const onSubmit = async (data: { username: string; email: string }) => {
+	const onSubmit = async (data: { username: string }) => {
 		if (!user) return;
 
 		setSaving(true);
 		try {
-			await updateUser({ ...user, username: data.username, email: data.email });
+			await updateUser({ ...user, username: data.username });
 			await reloadUser();
 			setEditMode(false);
 		} catch (error) {
@@ -101,8 +98,12 @@ const Profile = () => {
 
 	const onLike = async (postId: string) => handleLike(postId, posts, user, setPosts);
 	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
-	const onUpdate = async (postId: string, newContent: string, newImage: File | null, imageDeleted: boolean) =>
-		handleUpdate(postId, newContent, newImage, imageDeleted, setPosts);
+	const onUpdate = async (
+		postId: string,
+		newContent: string,
+		newImage: File | null,
+		imageDeleted: boolean,
+	) => handleUpdate(postId, newContent, newImage, imageDeleted, setPosts);
 
 	return (
 		<div>
@@ -149,20 +150,6 @@ const Profile = () => {
 											</p>
 										)}
 									</div>
-									<div>
-										<Label htmlFor="email">Email</Label>
-										<Input
-											id="email"
-											type="email"
-											{...register('email')}
-											className={errors.email ? 'border-red-500' : ''}
-										/>
-										{errors.email && (
-											<p className="text-red-500 text-sm">
-												{errors.email.message}
-											</p>
-										)}
-									</div>
 									<div className="flex justify-center gap-4">
 										<Button type="submit" disabled={saving}>
 											{saving ? 'Saving...' : 'Save'}
@@ -180,7 +167,7 @@ const Profile = () => {
 									<h1 className="text-2xl font-bold">{user?.username}</h1>
 									<p className="text-gray-500">{user?.email}</p>
 									<Button className="mt-4" onClick={() => setEditMode(true)}>
-										Edit Profile
+										Edit username
 									</Button>
 								</div>
 							)}
