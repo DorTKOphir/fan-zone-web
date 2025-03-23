@@ -19,7 +19,7 @@ export const uploadProfilePicture = async (file: File) => {
 
 export const updateUser = async (user: User) => {
 	try {
-		const response = await api.patch('users/', { ...user });
+		const response = await api.patch('users', { ...user });
 		console.log('user updated:', response.data);
 	} catch (error) {
 		console.error('Error updating user:', error);
