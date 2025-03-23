@@ -1,4 +1,5 @@
 import User from '@/models/user';
+import { Match } from '@/models/match';
 import api from './api';
 import { Post } from '@/models/post';
 
@@ -7,18 +8,58 @@ export const getPostsByMatchId = async (matchId: string): Promise<Post[]> => {
 	return response.data;
 };
 
-export const updatePost = async (postId: string, updatedData: Partial<Post>): Promise<Post> => {
-	const response = await api.patch(`/posts/${postId}`, updatedData);
+export const updatePost = async (
+	postId: string,
+	{
+		content,
+		likes,
+		image,
+		imageDeleted,
+	}: {
+		content?: string;
+		likes?: string[];
+		image: File | null;
+		imageDeleted?: boolean;
+	}
+): Promise<Post> => {
+	const formData = new FormData();
+
+	if (content) formData.append('content', content);
+	if (likes) formData.append('likes', JSON.stringify(likes));
+	if (image) formData.append('image', image);
+	if (imageDeleted) formData.append('imageDeleted', 'true');
+
+	const response = await api.patch(`/posts/${postId}`, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+	});
+
 	return response.data;
 };
 
-export const createPost = async (postData: {
-	content: string;
-	author: string;
-	matchId: string;
-	dateCreated: string;
-}) => {
-	const response = await api.post(`/posts`, postData);
+export const createPost = async (
+	content: string,
+	author: string,
+	matchId: string,
+	dateCreated: string,
+	image: File | null,
+) => {
+	const formData = new FormData();
+
+	formData.append('content', content);
+	formData.append('author', author);
+	formData.append('matchId', matchId);
+	formData.append('dateCreated', dateCreated);
+
+	if (image) {
+		formData.append('image', image);
+	}
+
+	const response = await api.post(`/posts`, formData, {
+		headers: { 'Content-Type': 'multipart/form-data' },
+	});
+
 	return response.data;
 };
 
@@ -85,8 +126,24 @@ export const handleDelete = async (
 export const handleUpdate = async (
 	postId: string,
 	newContent: string,
+	newImage: File | null,
+	imageDeleted: boolean,
 	setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
 ) => {
-	const updatedPost = await updatePost(postId, { content: newContent });
+	const updatedPost = await updatePost(postId, {
+		content: newContent,
+		image: newImage,
+		imageDeleted
+	});
+
 	setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
+};
+
+export const getPostSuggestion = async (match: Match): Promise<string> => {
+	try {
+		const response = await api.post(`/posts/suggestion`, { match });
+		return response.data.suggestion;
+	} catch (error) {
+		throw error;
+	}
 };

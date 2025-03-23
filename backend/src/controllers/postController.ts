@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import postModel, { IPost } from '../models/postModel';
 import commentModel from '../models/commentModel';
 import { getPostSuggestion } from '../services/geminiService';
+import { Match } from '../types/matchTypes';
 import { Query } from 'mongoose';
 
 class PostController {
@@ -55,12 +56,24 @@ class PostController {
 
 	async update(req: Request, res: Response) {
 		try {
+			const file = (req as any).file;
+
 			const updateBody: { [key: string]: any } = {};
 
 			for (const field of this.getUpdateFields()) {
 				if (req.body[field] !== undefined) {
-					updateBody[field] = req.body[field];
+					try {
+						updateBody[field] = JSON.parse(req.body[field]);
+					} catch (error) {
+						updateBody[field] = req.body[field];
+					}
 				}
+			}
+
+			if (file) {
+				updateBody.image = `/uploads/post_images/${file.filename}`;
+			} else if (req.body.imageDeleted === 'true') {
+				updateBody.image = null;
 			}
 
 			if (Object.keys(updateBody).length === 0) {
@@ -77,7 +90,7 @@ class PostController {
 				return res.status(404).json({ error: 'Post not found' });
 			}
 
-			console.log('Post updated sucessfully');
+			console.log('Post updated successfully');
 			res.status(200).json(updatedPost);
 		} catch (error) {
 			console.error('Error updating post:', error);
@@ -143,14 +156,14 @@ class PostController {
 	}
 
 	async getPostSuggestion(req: Request, res: Response) {
-		const { matchDetails } = req.body;
+		const { match }: { match: Match } = req.body;
 
-		if (!matchDetails) {
-			return res.status(400).json({ error: 'Match details are required' });
+		if (!match) {
+			return res.status(400).json({ error: 'Match is required' });
 		}
 
 		try {
-			const suggestion = await getPostSuggestion(matchDetails);
+			const suggestion = await getPostSuggestion(match);
 			res.json({ suggestion });
 		} catch (error) {
 			res.status(500).json({ error: 'Failed to generate suggestion' });
@@ -163,7 +176,7 @@ class PostController {
 			{
 				path: 'comments',
 				populate: { path: 'author' },
-				options: { sort: { dateCreated: -1 } }
+				options: { sort: { dateCreated: -1 } },
 			},
 		]);
 	}

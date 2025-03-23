@@ -9,4 +9,5 @@ export type Post = {
 	comments: Comment[];
 	matchId: string;
 	likes: string[];
+	image: string | null;
 };

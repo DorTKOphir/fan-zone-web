@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -5,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import useRedirectSignedInUser from '@/hooks/useRedirectSignedInUser';
 
 const signInSchema = z.object({
 	username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -14,7 +17,10 @@ const signInSchema = z.object({
 type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
-	const { login } = useAuth();
+	useRedirectSignedInUser();
+	const { login, loginWithGoogle } = useAuth();
+	const [errorMessage, setErrorMessage] = useState('');
+
 	const {
 		register,
 		handleSubmit,
@@ -23,8 +29,24 @@ export default function SignIn() {
 		resolver: zodResolver(signInSchema),
 	});
 
-	const onSubmit = ({ username, password }: SignInFormData) => {
-		login(username, password);
+	const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+		const credential = credentialResponse.credential;
+		if (!credential) return;
+
+		loginWithGoogle(credential);
+	};
+
+	const onGoogleLoginError = () => {
+		console.log('Google error');
+	};
+
+	const onSubmit = async ({ username, password }: SignInFormData) => {
+		try {
+			await login(username, password);
+			setErrorMessage('');
+		} catch (err: any) {
+			setErrorMessage('Invalid username or password. Please try again.');
+		}
 	};
 
 	return (
@@ -33,24 +55,26 @@ export default function SignIn() {
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 				<div>
 					<Input {...register('username')} placeholder="Username" />
-					{errors.username && (
-						<p className="text-red-500">{errors.username.message}</p>
-					)}
+					{errors.username && <p className="text-red-500">{errors.username.message}</p>}
 				</div>
 				<div>
-					<Input
-						{...register('password')}
-						type="password"
-						placeholder="Password"
-					/>
-					{errors.password && (
-						<p className="text-red-500">{errors.password.message}</p>
-					)}
+					<Input {...register('password')} type="password" placeholder="Password" />
+					{errors.password && <p className="text-red-500">{errors.password.message}</p>}
 				</div>
+				{errorMessage && (
+					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-sm text-center">
+						🚫 {errorMessage}
+					</div>
+				)}
 				<Button type="submit" className="w-full">
 					Sign In
 				</Button>
 			</form>
+
+			<div className="flex justify-center">
+				<GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} />
+			</div>
+
 			<p className="text-center text-sm">
 				If you don't have an account,{' '}
 				<Link to="/sign-up" className="text-blue-500">

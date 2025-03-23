@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import useRedirectSignedInUser from '@/hooks/useRedirectSignedInUser';
 
 const signUpSchema = z.object({
 	username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -15,7 +16,9 @@ const signUpSchema = z.object({
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function SignUp() {
+	useRedirectSignedInUser();
 	const { signUp } = useAuth();
+
 	const {
 		register,
 		handleSubmit,

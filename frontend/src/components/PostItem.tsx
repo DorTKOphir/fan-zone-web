@@ -4,6 +4,7 @@ import UserAvatar from '@/components/UserAvatar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { FaHeart, FaRegHeart, FaComment, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import { useAuth } from '@/providers/AuthProvider';
 import { format } from 'date-fns';
@@ -13,7 +14,12 @@ interface PostItemProps {
 	post: Post;
 	onLike: (postId: string) => void;
 	onDelete: (postId: string) => void;
-	onUpdate: (postId: string, newContent: string) => void;
+	onUpdate: (
+		postId: string,
+		newContent: string,
+		newImage: File | null,
+		imageDeleted: boolean,
+	) => void;
 }
 
 export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemProps) {
@@ -26,9 +32,29 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 
 	const [editMode, setEditMode] = useState(false);
 	const [newContent, setNewContent] = useState(post.content);
+	const [imagePreview, setImagePreview] = useState<string | null>(post.image ?? null);
+	const [newImageFile, setNewImageFile] = useState<File | null>(null);
+	const [imageDeleted, setImageDeleted] = useState(false);
+
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setNewImageFile(file);
+			setImageDeleted(false); // user is uploading a new image
+			const reader = new FileReader();
+			reader.onloadend = () => setImagePreview(reader.result as string);
+			reader.readAsDataURL(file);
+		}
+	};
+
+	const handleRemoveImage = () => {
+		setImagePreview(null);
+		setNewImageFile(null);
+		setImageDeleted(true);
+	};
 
 	const handleSave = () => {
-		onUpdate(post._id, newContent);
+		onUpdate(post._id, newContent, newImageFile, imageDeleted);
 		exitEditMode();
 	};
 
@@ -36,17 +62,20 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 		onDelete(post._id);
 	};
 
-	const enterExitMode = () => {
+	const enterEditMode = () => {
 		setEditMode(true);
 	};
 
 	const exitEditMode = () => {
-		setNewContent(post.content);
 		setEditMode(false);
+		setNewContent(post.content);
+		setNewImageFile(null);
+		setImageDeleted(false);
+		setImagePreview(post.image ?? null);
 	};
 
 	return (
-		<Card key={post._id} className="p-4">
+		<Card key={post._id} className="p-4 space-y-4">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
 					<UserAvatar profilePicUrl={post.author.fullProfilePicture} />
@@ -63,7 +92,11 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 								<Button
 									variant="ghost"
 									onClick={handleSave}
-									disabled={post.content === newContent}
+									disabled={
+										post.content === newContent &&
+										!newImageFile &&
+										!imageDeleted
+									}
 								>
 									Save
 								</Button>
@@ -72,7 +105,7 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 								</Button>
 							</>
 						) : (
-							<Button variant="ghost" onClick={enterExitMode}>
+							<Button variant="ghost" onClick={enterEditMode}>
 								<FaEdit />
 							</Button>
 						)}
@@ -86,16 +119,46 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 			</div>
 
 			{editMode ? (
-				<Input
-					value={newContent}
-					onChange={(e) => setNewContent(e.target.value)}
-					className="mt-2"
-				/>
+				<div className="space-y-3">
+					<Input value={newContent} onChange={(e) => setNewContent(e.target.value)} />
+					<div className="space-y-1">
+						<Label htmlFor={`post-image-${post._id}`}>Change Image</Label>
+						<Input
+							id={`post-image-${post._id}`}
+							type="file"
+							accept="image/*"
+							onChange={handleImageChange}
+						/>
+					</div>
+					{editMode && !imageDeleted && (imagePreview || post.image) && (
+						<div className="w-full flex flex-col items-center gap-2 rounded border p-2 bg-muted">
+							<img
+								src={imagePreview ?? post.image!}
+								alt="Post Preview"
+								className="max-h-[300px] w-auto object-contain"
+							/>
+							<Button variant="destructive" size="sm" onClick={handleRemoveImage}>
+								Remove Image
+							</Button>
+						</div>
+					)}
+				</div>
 			) : (
-				<p className="mt-2">{post.content}</p>
+				<>
+					<p>{post.content}</p>
+					{post.image && (
+						<div className="w-full max-h-[300px] flex justify-center items-center overflow-hidden rounded border">
+							<img
+								src={post.image}
+								alt="Post"
+								className="max-h-[300px] w-auto object-contain"
+							/>
+						</div>
+					)}
+				</>
 			)}
 
-			<div className="flex items-center space-x-4 mt-4">
+			<div className="flex items-center space-x-4">
 				<Button variant="ghost" onClick={() => onLike(post._id)}>
 					{isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
 					<span className="ml-1">{post.likes.length}</span>

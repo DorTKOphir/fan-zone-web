@@ -101,8 +101,8 @@ const Profile = () => {
 
 	const onLike = async (postId: string) => handleLike(postId, posts, user, setPosts);
 	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
-	const onUpdate = async (postId: string, newContent: string) =>
-		handleUpdate(postId, newContent, setPosts);
+	const onUpdate = async (postId: string, newContent: string, newImage: File | null, imageDeleted: boolean) =>
+		handleUpdate(postId, newContent, newImage, imageDeleted, setPosts);
 
 	return (
 		<div>

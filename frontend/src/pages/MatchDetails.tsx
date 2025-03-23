@@ -33,8 +33,8 @@ export default function MatchDetails() {
 
 	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
 
-	const onUpdate = async (postId: string, newContent: string) =>
-		handleUpdate(postId, newContent, setPosts);
+	const onUpdate = async (postId: string, newContent: string, newImage: File | null, imageDeleted: boolean) =>
+		handleUpdate(postId, newContent, newImage, imageDeleted, setPosts);
 
 	if (!match) return <p>Loading match details...</p>;
 
@@ -49,7 +49,7 @@ export default function MatchDetails() {
 						Date: {new Date(match.date).toLocaleDateString()}
 					</p>
 
-					<NewPostForm matchId={matchId!} onPostCreated={onPostCreated} />
+					<NewPostForm match={match} onPostCreated={onPostCreated} />
 
 					<h2 className="text-xl font-semibold mt-6">Posts</h2>
 					{posts.length === 0 ? (
