@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +19,7 @@ type SignInFormData = z.infer<typeof signInSchema>;
 export default function SignIn() {
 	useRedirectSignedInUser();
 	const { login, loginWithGoogle } = useAuth();
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const {
 		register,
@@ -38,8 +40,13 @@ export default function SignIn() {
 		console.log('Google error');
 	};
 
-	const onSubmit = ({ username, password }: SignInFormData) => {
-		login(username, password);
+	const onSubmit = async ({ username, password }: SignInFormData) => {
+		try {
+			await login(username, password);
+			setErrorMessage('');
+		} catch (err: any) {
+			setErrorMessage('Invalid username or password. Please try again.');
+		}
 	};
 
 	return (
@@ -54,6 +61,11 @@ export default function SignIn() {
 					<Input {...register('password')} type="password" placeholder="Password" />
 					{errors.password && <p className="text-red-500">{errors.password.message}</p>}
 				</div>
+				{errorMessage && (
+					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-sm text-center">
+						🚫 {errorMessage}
+					</div>
+				)}
 				<Button type="submit" className="w-full">
 					Sign In
 				</Button>
