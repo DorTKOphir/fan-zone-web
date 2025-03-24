@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import { Server } from 'socket.io';
@@ -10,19 +9,12 @@ const PORT = process.env.PORT ?? 5000;
 const MONGO_URI = process.env.MONGO_URI;
 const INITIAL_DELAY_MS = 2000;
 
-let server;
-if (process.env.NODE_ENV != "production") {
-  console.log('HTTP');
-  server = http.createServer(app);
-} else {
-  console.log('HTTPS');
-  const props = {
-    key: fs.readFileSync("./client-key.pem"),
-    cert: fs.readFileSync("./client-cert.pem"),
-  };
-  server = https.createServer(props, server)
-}
+const props = {
+  key: fs.readFileSync("./client-key.pem"),
+  cert: fs.readFileSync("./client-cert.pem"),
+};
 
+const server = https.createServer(props, app);
 const io = new Server(server, { cors: { origin: "*" } });
 const chatGateway = new ChatGateway(io);
 
