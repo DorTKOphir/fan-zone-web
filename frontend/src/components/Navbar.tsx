@@ -10,11 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Navbar: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
-  if (location.pathname === "/sign-in" || location.pathname === "/sign-up") return null;
 
   return (
     <nav
