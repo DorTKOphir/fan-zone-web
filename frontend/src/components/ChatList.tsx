@@ -34,7 +34,7 @@ const ChatList: React.FC<ChatListProps> = ({
           </div>
         ))
       ) : (
-        <p className="text-center text-gray-500 mt-3">No chats available</p>
+				<p className="text-center text-gray-500 mt-3">No chats found. Start chatting!</p>
       )}
     </div>
   );
