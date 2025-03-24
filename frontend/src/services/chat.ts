@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 import { Message } from "../models/message";
 import { ChatListItem } from "../models/chatListItem";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 let socket: Socket | null = null;
 

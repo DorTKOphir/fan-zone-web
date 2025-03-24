@@ -6,10 +6,6 @@ package-lock.json
 build/
 dist/
 
-# Environment variables
-.env
-.env.test
-
 # Logs & Debugging
 logs/
 *.log
@@ -25,3 +21,8 @@ coverage/
 Thumbs.db
 
 uploads/
+
+client-cert.pem
+client-key.pem
+
+front/

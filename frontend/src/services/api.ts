@@ -1,7 +1,8 @@
-// src/api/auth.ts
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiUrl = `${import.meta.env.VITE_BACKEND_BASE_URL}/api`;
+
+console.log('API_URL', apiUrl);
 
 const api = axios.create({
 	baseURL: apiUrl,
