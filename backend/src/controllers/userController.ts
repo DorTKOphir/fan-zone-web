@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import userModel from '../models/userModel';
+import mongoose from 'mongoose';
 
 class UserController {
 	async uploadProfilePicture(req: Request, res: Response) {
@@ -98,6 +99,25 @@ class UserController {
 		} catch (error) {
 			console.error('Error updating user:', error);
 			res.status(500).json({ error: 'Error updating user' });
+		}
+	}
+
+	async getUserById(req: Request, res: Response) {
+		const { userId } = req.params;
+
+		if (!mongoose.Types.ObjectId.isValid(userId)) {
+			return res.status(400).json({ message: 'Invalid user ID format.' });
+		}
+
+		try {
+			const user = await userModel.findById(userId).select('-password -refreshToken');
+			if (!user) {
+				return res.status(404).json({ message: 'User not found.' });
+			}
+			return res.status(200).json(user);
+		} catch (error) {
+			console.error(`Error fetching user by id: ${userId}`, error);
+			return res.status(500).json({ message: `Error fetching user by id: ${userId}` });
 		}
 	}
 

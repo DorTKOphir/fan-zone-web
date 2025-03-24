@@ -21,7 +21,7 @@ function App() {
 							<Route path="/:matchId" element={<MatchDetails />} />
 							<Route path="/:matchId/:postId" element={<PostComments />} />
 							<Route path="/chat" element={<Chat />} />
-							<Route path="/profile" element={<Profile />} />
+							<Route path="/profile/:userId" element={<Profile />} />
 						</Route>
 					</Route>
 					<Route path="/sign-in" element={<SignIn />} />
