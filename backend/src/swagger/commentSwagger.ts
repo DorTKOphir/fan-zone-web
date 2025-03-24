@@ -36,25 +36,25 @@
  *         description: Comment successfully created
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 _id:
- *                   type: string
- *                   example: "60d9f1b3f72e4b001c8f8d12"
- *                 content:
- *                   type: string
- *                   example: "Great match!"
- *                 author:
- *                   type: string
- *                   example: "60a7c9e9f5e2b14c8b3e8f01"
- *                 postId:
- *                   type: string
- *                   example: "609d1e9c3b5e4b001c8f7a1e"
+ *             example:
+ *               _id: "60d9f1b3f72e4b001c8f8d12"
+ *               content: "Great match!"
+ *               author: "60a7c9e9f5e2b14c8b3e8f01"
+ *               dateCreated: "2024-03-20T18:30:00.000Z"
  *       400:
- *         description: Invalid input or missing required fields
+ *         description: Missing content or post ID
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Content and postId are required"
  *       401:
  *         description: Unauthorized (Invalid or missing token)
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error creating comment"
  */
 
 /**
@@ -88,24 +88,33 @@
  *         description: Comment successfully updated
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 _id:
- *                   type: string
- *                   example: "60d9f1b3f72e4b001c8f8d12"
- *                 content:
- *                   type: string
- *                   example: "Updated comment text"
- *                 author:
- *                   type: string
- *                   example: "60a7c9e9f5e2b14c8b3e8f01"
+ *             example:
+ *               _id: "60d9f1b3f72e4b001c8f8d12"
+ *               content: "Updated comment text"
+ *               author: "60a7c9e9f5e2b14c8b3e8f01"
+ *               dateCreated: "2024-03-20T18:30:00.000Z"
  *       400:
  *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Content is required"
  *       401:
  *         description: Unauthorized (Invalid or missing token)
  *       403:
  *         description: Forbidden (Only the author can update)
+ *       404:
+ *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Comment not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error updating comment"
  */
 
 /**
@@ -127,8 +136,24 @@
  *     responses:
  *       200:
  *         description: Comment successfully deleted
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Comment deleted successfully"
  *       401:
  *         description: Unauthorized (Invalid or missing token)
  *       403:
  *         description: Forbidden (Only the author can delete)
+ *       404:
+ *         description: Comment not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Comment not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error deleting comment"
  */

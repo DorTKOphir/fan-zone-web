@@ -27,54 +27,34 @@
  *               profilePicture:
  *                 type: string
  *                 format: binary
- *                 description: The image file to upload as a profile picture
+ *                 description: The image file to upload
  *     responses:
  *       200:
  *         description: Profile picture uploaded successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Profile picture updated"
- *                 profilePicture:
- *                   type: string
- *                   example: "BASE_URL/uploads/profile_pictures/abc123.jpg"
+ *             example:
+ *               message: "Profile picture updated"
+ *               profilePicture: "/uploads/profile_pictures/abc123.jpg"
  *       400:
  *         description: No file uploaded
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "No file uploaded"
+ *             example:
+ *               message: "No file uploaded"
  *       404:
  *         description: User not found
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "User not found"
+ *             example:
+ *               message: "User not found"
  *       500:
  *         description: Internal server error
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- *                 error:
- *                   type: string
- *                   example: "Error message details"
+ *             example:
+ *               message: "Internal server error"
+ *               error: "Detailed error message"
  */
 
 /**
@@ -92,43 +72,30 @@
  *         description: User data retrieved successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 _id:
- *                   type: string
- *                   example: "60d21b4667d0d8992e610c85"
- *                 username:
- *                   type: string
- *                   example: "johndoe"
- *                 email:
- *                   type: string
- *                   example: "johndoe@example.com"
- *                 profilePicture:
- *                   type: string
- *                   example: "BASE_URL/uploads/profile_pictures/johndoe.jpg"
+ *             example:
+ *               _id: "60d21b4667d0d8992e610c85"
+ *               username: "johndoe"
+ *               email: "johndoe@example.com"
+ *               profilePicture: "/uploads/profile_pictures/johndoe.jpg"
+ *               fullProfilePicture: "https://yourdomain.com/uploads/profile_pictures/johndoe.jpg"
  *       401:
  *         description: Unauthorized
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Unauthorized"
+ *             example:
+ *               error: "Unauthorized"
  *       404:
  *         description: User not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "User not found"
  *       500:
  *         description: Internal server error
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Error fetching user"
+ *             example:
+ *               error: "Error fetching user"
  */
 
 /**
@@ -136,7 +103,7 @@
  * /api/users:
  *   patch:
  *     summary: Update current user's profile
- *     description: Allows the authenticated user to update their username, email, or profile picture.
+ *     description: Allows the authenticated user to update their username or email.
  *     tags:
  *       - Users
  *     security:
@@ -154,51 +121,35 @@
  *               email:
  *                 type: string
  *                 example: "newemail@example.com"
- *               profilePicture:
- *                 type: string
- *                 example: "BASE_URL/uploads/profile_pictures/updated.jpg"
  *     responses:
  *       200:
  *         description: User updated successfully
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 _id:
- *                   type: string
- *                   example: "60d21b4667d0d8992e610c85"
- *                 username:
- *                   type: string
- *                   example: "newusername"
- *                 email:
- *                   type: string
- *                   example: "newemail@example.com"
- *                 profilePicture:
- *                   type: string
- *                   example: "BASE_URL/uploads/profile_pictures/updated.jpg"
+ *             example:
+ *               _id: "60d21b4667d0d8992e610c85"
+ *               username: "newusername"
+ *               email: "newemail@example.com"
+ *               profilePicture: "/uploads/profile_pictures/updated.jpg"
+ *               fullProfilePicture: "https://yourdomain.com/uploads/profile_pictures/updated.jpg"
  *       400:
  *         description: No valid fields provided for update
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "No valid fields provided for update"
+ *             example:
+ *               error: "No valid fields provided for update"
  *       404:
  *         description: User not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "User not found"
  *       500:
  *         description: Error updating user
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Error updating user"
+ *             example:
+ *               error: "Error updating user"
  */
 
 /**
@@ -214,48 +165,32 @@
  *     parameters:
  *       - in: query
  *         name: usernameQuery
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The username (or partial username) to search for.
  *         example: "john"
+ *         description: Partial or full username to search for
  *     responses:
  *       200:
  *         description: A list of matching users
  *         content:
  *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     example: "60d21b4667d0d8992e610c85"
- *                   username:
- *                     type: string
- *                     example: "johndoe"
- *                   profilePicture:
- *                     type: string
- *                     example: "BASE_URL/uploads/profile_pictures/johndoe.jpg"
+ *             example:
+ *               - _id: "60d21b4667d0d8992e610c85"
+ *                 username: "johndoe"
+ *                 email: "johndoe@example.com"
+ *                 profilePicture: "/uploads/profile_pictures/johndoe.jpg"
+ *                 fullProfilePicture: "https://yourdomain.com/uploads/profile_pictures/johndoe.jpg"
  *       400:
  *         description: Query parameter is required
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Query is required"
+ *             example:
+ *               error: "Query is required"
  *       500:
  *         description: Internal server error
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Internal server error"
+ *             example:
+ *               error: "Internal server error"
  */
