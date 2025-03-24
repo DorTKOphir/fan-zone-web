@@ -13,19 +13,17 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
 	(response) => response,
 	async (error) => {
-		if (error.response?.status === 401) {
-			if (localStorage.getItem('accessToken')) {
-				try {
-					const newToken = await refreshToken();
-					if (newToken) {
-						error.config.headers.Authorization = `Bearer ${newToken}`;
-						return api.request(error.config); // Retry the original request
-					}
-				} catch (refreshError) {
-					console.error('Token refresh failed', refreshError);
+		if (error.response?.status === 401 && localStorage.getItem('accessToken')) {
+			try {
+				const newToken = await refreshToken();
+				if (newToken) {
+					error.config.headers.Authorization = `Bearer ${newToken}`;
+					return api.request(error.config); // Retry the original request
 				}
-				logout();
+			} catch (refreshError) {
+				console.error('Token refresh failed', refreshError);
 			}
+			logout();
 		}
 		return Promise.reject(error);
 	},
