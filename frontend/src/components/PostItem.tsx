@@ -20,9 +20,16 @@ interface PostItemProps {
 		newImage: File | null,
 		imageDeleted: boolean,
 	) => void;
+	showCommentsButton?: boolean;
 }
 
-export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemProps) {
+export default function PostItem({
+	post,
+	onLike,
+	onDelete,
+	onUpdate,
+	showCommentsButton = true,
+}: PostItemProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { user } = useAuth();
@@ -186,14 +193,16 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 						{isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
 						<span className="ml-1">{post.likes.length}</span>
 					</Button>
-					<Button
-						variant="ghost"
-						className="cursor-pointer"
-						onClick={() => navigate(`${location.pathname}/${post._id}`)}
-					>
-						<FaComment />
-						<span className="ml-1">{post.comments.length}</span>
-					</Button>
+					{showCommentsButton && (
+						<Button
+							variant="ghost"
+							className="cursor-pointer"
+							onClick={() => navigate(`${location.pathname}/${post._id}`)}
+						>
+							<FaComment />
+							<span className="ml-1">{post.comments.length}</span>
+						</Button>
+					)}
 				</div>
 			</Card>
 		</div>
