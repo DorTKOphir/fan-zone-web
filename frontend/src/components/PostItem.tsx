@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Post } from '@/models/post';
 import UserAvatar from '@/components/UserAvatar';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FaHeart, FaRegHeart, FaComment, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import { FaComment, FaEdit, FaHeart, FaRegHeart, FaTimes, FaTrash } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface PostItemProps {
