@@ -56,6 +56,5 @@ export const getChatHistory = async (user1: string, user2: string): Promise<Mess
 /** Fetch all chats for the logged-in user */
 export const getUserChats = async (): Promise<ChatListItem[]> => {
   const response = await api.get<ChatListItem[]>("/chat/chats");
-  console.log(response.data);
   return response.data;
 };

@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  if (location.pathname === "/signIn" || location.pathname === "/signUp") return null;
+  if (location.pathname === "/sign-in" || location.pathname === "/sign-up") return null;
 
   return (
     <nav

@@ -103,15 +103,13 @@ export default function MatchDetails() {
 				) : (
 					<div className="space-y-4">
 						{posts.map((post) => (
-							<div className="rounded-xl shadow bg-white p-4 hover:shadow-md transition">
-								<PostItem
-									key={post._id}
-									post={post}
-									onLike={onLike}
-									onDelete={onDelete}
-									onUpdate={onUpdate}
-								/>
-							</div>
+							<PostItem
+								key={post._id}
+								post={post}
+								onLike={onLike}
+								onDelete={onDelete}
+								onUpdate={onUpdate}
+							/>
 						))}
 					</div>
 				)}

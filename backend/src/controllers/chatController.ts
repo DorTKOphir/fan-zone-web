@@ -77,7 +77,6 @@ class ChatController {
         let users = await userModel.find(
           { _id: { $in: userIds } });
     
-        console.log(users);
         console.log('Successfully fetched all chatted users');
         return res.status(200).json(users);
       } catch (error) {
