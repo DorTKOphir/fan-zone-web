@@ -54,7 +54,7 @@
 
 /**
  * @swagger
- * /api/posts/create:
+ * /api/posts/:
  *   post:
  *     summary: Create a new post
  *     description: Allows authenticated users to create posts with optional images.

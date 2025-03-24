@@ -9,5 +9,6 @@
 		"sourceMap": true,
 		"resolveJsonModule": true,
 		"moduleResolution": "node"
-	}
+	},
+	"exclude": ["./src/tests"]
 }
