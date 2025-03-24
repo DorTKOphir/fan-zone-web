@@ -9,5 +9,6 @@ router.post('/upload-profile-picture', authMiddleware, upload.single('profilePic
 router.get("/", authMiddleware, UserController.getUser.bind(UserController));
 router.patch("/", authMiddleware, UserController.updateUser.bind(UserController));
 router.get("/search", authMiddleware, UserController.searchUsers.bind(UserController));
+router.get('/:userId', authMiddleware, UserController.getUserById.bind(UserController));
 
 export default router;

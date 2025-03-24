@@ -1,4 +1,3 @@
-import UserAvatar from '@/components/UserAvatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +7,8 @@ import { useAuth } from '@/providers/AuthProvider';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { FaComment, FaEdit, FaHeart, FaRegHeart, FaTimes, FaTrash } from 'react-icons/fa';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import UserHeader from './UserHeader';
 
 interface PostItemProps {
 	post: Post;
@@ -31,7 +31,6 @@ export default function PostItem({
 	showCommentsButton = true,
 }: PostItemProps) {
 	const navigate = useNavigate();
-	const location = useLocation();
 	const { user } = useAuth();
 	const isAuthor = post.author._id === user?._id;
 	const isLiked = post.likes.includes(user?._id ?? '');
@@ -72,7 +71,7 @@ export default function PostItem({
 	const enterEditMode = () => {
 		setEditMode(true);
 		setNewContent(post.content);
-		setImagePreview(post.image ?? null);		
+		setImagePreview(post.image ?? null);
 		setNewImageFile(null);
 		setImageDeleted(false);
 	};
@@ -81,16 +80,17 @@ export default function PostItem({
 		setEditMode(false);
 	};
 
+	const navigateToProfile = () => {
+		navigate(`/profile/${post.author._id}`);
+	};
+
 	return (
 		<div className="rounded-xl shadow bg-white p-4 hover:shadow-md transition">
 			<Card key={post._id} className="p-4 space-y-4">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-4">
-						<UserAvatar profilePicUrl={post.author.fullProfilePicture} />
-						<div>
-							<p className="font-semibold">{post.author.username}</p>
-							<p className="text-sm text-gray-500">{formattedDate}</p>
-						</div>
+					<div className="flex items-center space-x-4" onClick={navigateToProfile}>
+						<UserHeader user={post.author} />
+						<p className="text-sm text-gray-500">{formattedDate}</p>
 					</div>
 
 					{isAuthor && (
@@ -197,7 +197,7 @@ export default function PostItem({
 						<Button
 							variant="ghost"
 							className="cursor-pointer"
-							onClick={() => navigate(`${location.pathname}/${post._id}`)}
+							onClick={() => navigate(`/${post.matchId}/${post._id}`)}
 						>
 							<FaComment />
 							<span className="ml-1">{post.comments.length}</span>

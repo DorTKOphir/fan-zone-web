@@ -1,9 +1,10 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Comment } from '@/models/comment';
 import User from '@/models/user';
 import { format } from 'date-fns';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import UserHeader from './UserHeader';
 
 type CommentItemProps = {
 	comment: Comment;
@@ -15,12 +16,14 @@ const CommentItem = ({ comment, onDelete, user }: CommentItemProps) => {
 	return (
 		<Card className="hover:bg-gray-50 transition">
 			<CardHeader>
-				<div className="font-semibold text-lg">{comment.author.username}</div>
+				<UserHeader user={comment.author} />
 			</CardHeader>
 			<CardContent>
 				<p className="text-gray-700">{comment.content}</p>
 				<div className="flex items-center justify-between mt-2">
-					<div className="text-sm text-gray-500">{format(new Date(comment.dateCreated), 'PPpp')}</div>
+					<div className="text-sm text-gray-500">
+						{format(new Date(comment.dateCreated), 'PPpp')}
+					</div>
 					{comment.author._id === user?._id && (
 						<Button
 							variant="ghost"
