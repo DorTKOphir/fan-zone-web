@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import https from 'https';
+import http from 'http';
 import fs from 'fs';
 import { Server } from 'socket.io';
 import app from './app';
@@ -14,7 +15,15 @@ const props = {
   cert: fs.readFileSync("./client-cert.pem"),
 };
 
-const server = https.createServer(props, app);
+let server;
+if (process.env.NODE_ENV === "production") {
+  console.log('Using HTTPS');
+  server = https.createServer(props, app);
+} else {
+  console.log('Using HTTP');
+  server = http.createServer(app);
+}
+
 const io = new Server(server, { cors: { origin: "*" } });
 const chatGateway = new ChatGateway(io);
 

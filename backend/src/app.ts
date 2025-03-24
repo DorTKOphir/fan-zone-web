@@ -25,6 +25,7 @@ app.use('/api/matches', matchRoutes);
 app.use('/uploads/profile_pictures', express.static('uploads/profile_pictures'));
 app.use('/uploads/post_images', express.static('uploads/post_images'));
 app.use(express.static('front'));
+app.get('*', (req, res) => { res.sendFile(path.resolve(__dirname, '../../front', 'index.html')) });
 setupSwagger(app);
 
 export default app;
