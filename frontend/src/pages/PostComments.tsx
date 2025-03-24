@@ -91,7 +91,7 @@ export default function PostComments() {
 						{errors.content && (
 							<p className="text-red-500 text-sm">{errors.content.message}</p>
 						)}
-						<Button type="submit" className="w-full">
+						<Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700 w-fit px-4 py-2 text-sm">
 							Post Comment
 						</Button>
 					</form>
