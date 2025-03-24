@@ -5,13 +5,13 @@ import PostItem from '@/components/PostItem';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
-import { Post } from '@/models/post';
 import { updateUser, uploadProfilePicture } from '@/services/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { usePosts } from '@/hooks/usePosts';
+import { FaUserCircle } from 'react-icons/fa';
 
 const schema = z.object({
 	username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
@@ -107,7 +107,7 @@ const Profile = () => {
 				) : (
 					<>
 						<div className="flex flex-col items-center space-y-2">
-							<div className="w-28 h-28 rounded-full border overflow-hidden ring-2 ring-blue-300 hover:ring-blue-500 transition">
+							<div className="w-28 h-28 rounded-full overflow-hidden ring-2 ring-blue-300 hover:ring-blue-500 transition">
 								{user?.fullProfilePicture ? (
 									<img
 										src={user.fullProfilePicture}
@@ -115,9 +115,7 @@ const Profile = () => {
 										className="w-full h-full object-cover"
 									/>
 								) : (
-									<div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl font-bold">
-										{user?.username[0]}
-									</div>
+									<FaUserCircle className="w-28 h-28 text-gray-500" />
 								)}
 							</div>
 							{editMode ? (

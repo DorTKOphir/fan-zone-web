@@ -90,6 +90,7 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 						{editMode ? (
 							<>
 								<Button
+									className="cursor-pointer"
 									variant="ghost"
 									onClick={handleSave}
 									disabled={
@@ -100,17 +101,17 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 								>
 									Save
 								</Button>
-								<Button variant="ghost" onClick={exitEditMode}>
+								<Button variant="ghost" className="cursor-pointer" onClick={exitEditMode}>
 									<FaTimes className="text-gray-500" />
 								</Button>
 							</>
 						) : (
-							<Button variant="ghost" onClick={enterEditMode}>
+							<Button variant="ghost" className="cursor-pointer" onClick={enterEditMode}>
 								<FaEdit />
 							</Button>
 						)}
 						{!editMode && (
-							<Button variant="ghost" onClick={handleDelete}>
+							<Button variant="ghost" className="cursor-pointer" onClick={handleDelete}>
 								<FaTrash className="text-red-500" />
 							</Button>
 						)}
@@ -137,7 +138,7 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 								alt="Post Preview"
 								className="max-h-[300px] w-auto object-contain"
 							/>
-							<Button variant="destructive" size="sm" onClick={handleRemoveImage}>
+							<Button variant="destructive" className="cursor-pointer" size="sm" onClick={handleRemoveImage}>
 								Remove Image
 							</Button>
 						</div>
@@ -159,12 +160,13 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 			)}
 
 			<div className="flex items-center space-x-4">
-				<Button variant="ghost" onClick={() => onLike(post._id)}>
+				<Button variant="ghost" className="cursor-pointer" onClick={() => onLike(post._id)}>
 					{isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
 					<span className="ml-1">{post.likes.length}</span>
 				</Button>
 				<Button
 					variant="ghost"
+					className="cursor-pointer"
 					onClick={() => navigate(`${location.pathname}/${post._id}`)}
 				>
 					<FaComment />
