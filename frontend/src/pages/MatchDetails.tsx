@@ -5,6 +5,7 @@ import { getMatchById } from '@/services/matches';
 import PostItem from '@/components/PostItem';
 import NewPostForm from '@/components/NewPostForm';
 import { usePosts } from '@/hooks/usePosts';
+import { format } from 'date-fns';
 import { getPostsByMatchId } from '@/services/posts';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -20,7 +21,14 @@ export default function MatchDetails() {
 		return [];
 	}, [matchId]);
 
-	const { posts, loading: postsLoading, onLike, onPostCreated, onDelete, onUpdate } = usePosts(fetchPosts);
+	const {
+		posts,
+		loading: postsLoading,
+		onLike,
+		onPostCreated,
+		onDelete,
+		onUpdate,
+	} = usePosts(fetchPosts);
 
 	useEffect(() => {
 		if (matchId) {
@@ -42,11 +50,26 @@ export default function MatchDetails() {
 					</div>
 				) : match ? (
 					<>
-						<h1 className="text-2xl font-bold">
-							{match.homeTeam} vs {match.awayTeam}
-						</h1>
-						<p className="text-gray-500">
-							Date: {new Date(match.date).toLocaleDateString()}
+						<div className="flex items-center gap-4 bg-white rounded-xl shadow p-4">
+							<img
+								src={match.homeTeamImage}
+								alt={match.homeTeam}
+								className="w-12 h-12 object-contain"
+								onError={(e) => (e.currentTarget.style.display = 'none')}
+							/>
+							<h1 className="text-xl font-semibold">
+								{match.homeTeam} <span className="text-gray-400">vs</span>{' '}
+								{match.awayTeam}
+							</h1>
+							<img
+								src={match.awayTeamImage}
+								alt={match.awayTeam}
+								className="w-12 h-12 object-contain"
+								onError={(e) => (e.currentTarget.style.display = 'none')}
+							/>
+						</div>
+						<p className="text-sm text-gray-500 mt-2">
+							{format(new Date(match.date), 'MMMM dd, yyyy - HH:mm')}
 						</p>
 					</>
 				) : (
@@ -54,7 +77,11 @@ export default function MatchDetails() {
 				)}
 
 				{/* New Post Form */}
-				{match && <NewPostForm match={match} onPostCreated={onPostCreated} />}
+				{match && (
+					<div className="bg-white rounded-lg shadow p-4 mt-4">
+						<NewPostForm match={match} onPostCreated={onPostCreated} />
+					</div>
+				)}
 
 				{/* Posts section */}
 				<h2 className="text-xl font-semibold mt-6">Posts</h2>

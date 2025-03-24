@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Message } from "../models/message";
 
 interface ChatMessagesProps {
@@ -9,6 +9,11 @@ interface ChatMessagesProps {
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ messages = [], userId, selectedChatId }) => {
   if (!selectedChatId) return null;
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <div className="flex-1 overflow-y-auto p-3 bg-gray-50">
@@ -25,6 +30,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages = [], userId, sele
             >
               {msg.content}
             </div>
+            <div ref={bottomRef} />
           </div>
         ))
       ) : (

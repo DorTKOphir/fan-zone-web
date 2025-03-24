@@ -5,13 +5,13 @@ import PostItem from '@/components/PostItem';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
-import { Post } from '@/models/post';
 import { updateUser, uploadProfilePicture } from '@/services/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { usePosts } from '@/hooks/usePosts';
+import { FaUserCircle } from 'react-icons/fa';
 
 const schema = z.object({
 	username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
@@ -99,15 +99,15 @@ const Profile = () => {
 				{imageLoading || loading ? (
 					<div className="space-y-4">
 						<Skeleton className="h-8 w-32" />
-						<Skeleton className="h-24 w-24 rounded-full" />
+						<Skeleton className="h-20 w-20 rounded-full" />
 						<Skeleton className="h-10 w-full" />
 					</div>
 				) : error ? (
 					<div className="text-red-500 text-center">{error}</div>
 				) : (
 					<>
-						<div className="flex flex-col items-center space-y-4">
-							<div className="w-24 h-24 rounded-full border overflow-hidden">
+						<div className="flex flex-col items-center space-y-2">
+							<div className="w-28 h-28 rounded-full overflow-hidden ring-2 ring-blue-300 hover:ring-blue-500 transition">
 								{user?.fullProfilePicture ? (
 									<img
 										src={user.fullProfilePicture}
@@ -115,15 +115,13 @@ const Profile = () => {
 										className="w-full h-full object-cover"
 									/>
 								) : (
-									<div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl font-bold">
-										{user?.username[0]}
-									</div>
+									<FaUserCircle className="w-28 h-28 text-gray-500" />
 								)}
 							</div>
 							{editMode ? (
 								<form
 									onSubmit={handleSubmit(onSubmit)}
-									className="w-full space-y-4"
+									className="w-full space-y-3"
 								>
 									<div>
 										<Label htmlFor="username">Username</Label>
@@ -138,7 +136,7 @@ const Profile = () => {
 											</p>
 										)}
 									</div>
-									<div className="flex justify-center gap-4">
+									<div className="flex cursor-pointer justify-center gap-4">
 										<Button type="submit" disabled={saving}>
 											{saving ? 'Saving...' : 'Save'}
 										</Button>
@@ -151,11 +149,13 @@ const Profile = () => {
 									</div>
 								</form>
 							) : (
-								<div className="text-center">
-									<h1 className="text-2xl font-bold">{user?.username}</h1>
-									<p className="text-gray-500">{user?.email}</p>
-									<Button className="mt-4" onClick={() => setEditMode(true)}>
-										Edit username
+								<div className="w-full max-w-sm text-center space-y-2 bg-gray-50 rounded-xl p-2 shadow-md">
+									<h1 className="text-2xl font-bold text-blue-700">
+										{user?.username}
+									</h1>
+									<p className="text-gray-500 cursor-pointer text-sm">{user?.email}</p>
+									<Button className="mt-1" onClick={() => setEditMode(true)}>
+										Edit Profile
 									</Button>
 								</div>
 							)}
@@ -165,7 +165,7 @@ const Profile = () => {
 							<Label htmlFor="fileInput" className="font-semibold">
 								Change Profile Picture
 							</Label>
-							<div className="flex items-center gap-4 mt-2">
+							<div className="flex items-center gap-4 mt-1">
 								<Input
 									id="fileInput"
 									type="file"
@@ -173,6 +173,7 @@ const Profile = () => {
 									onChange={handleFileChange}
 								/>
 								<Button
+									className="cursor-pointer"
 									variant="secondary"
 									onClick={handleUpload}
 									disabled={!imageFile}
@@ -181,7 +182,7 @@ const Profile = () => {
 								</Button>
 							</div>
 							{imageFile && (
-								<div className="mt-4 flex items-center gap-4">
+								<div className="flex items-center gap-4">
 									<img
 										src={URL.createObjectURL(imageFile)}
 										alt="Preview"
@@ -198,8 +199,8 @@ const Profile = () => {
 				)}
 			</div>
 			<div>
-				<h2 className="text-2xl font-bold mb-4">User's Posts</h2>
-				<div className="space-y-6">
+				<h2 className="text-2xl font-bold mb-3">User's Posts</h2>
+				<div className="space-y-3">
 					{posts.length > 0 ? (
 						posts.map((post) => (
 							<PostItem
@@ -211,7 +212,9 @@ const Profile = () => {
 							/>
 						))
 					) : (
-						<p className="text-muted-foreground">No posts found.</p>
+						<p className="text-center text-gray-500 text-lg mt-10">
+							⚽ No posts yet. Get started by sharing something!
+						</p>
 					)}
 				</div>
 			</div>

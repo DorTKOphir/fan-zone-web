@@ -1,20 +1,22 @@
-import { FaUserCircle } from "react-icons/fa";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { FaUserCircle } from 'react-icons/fa';
 
 interface UserAvatarProps {
-  profilePicUrl: string | null;
+	profilePicUrl: string | null;
 }
 
 export default function UserAvatar({ profilePicUrl }: UserAvatarProps) {
-  return (
-    <Avatar className="w-14 h-14">
+	return (
+		<div className="w-14 h-14 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
       {profilePicUrl ? (
-        <AvatarImage className="w-14 h-14 rounded-full" src={profilePicUrl} alt="Profile" />
+        <img
+          src={profilePicUrl}
+          alt="Profile"
+          className="w-14 h-14 object-cover"
+          referrerPolicy="no-referrer"
+        />
       ) : (
-        <AvatarFallback className="w-14 h-14 flex items-center justify-center bg-gray-300 rounded-full">
-          <FaUserCircle className="w-14 h-14 text-gray-500" />
-        </AvatarFallback>
+        <FaUserCircle className="w-14 h-14 text-gray-500" />
       )}
-    </Avatar>
-  );
+    </div>
+	);
 }
