@@ -71,14 +71,14 @@ export default function PostItem({
 
 	const enterEditMode = () => {
 		setEditMode(true);
+		setNewContent(post.content);
+		setImagePreview(post.image ?? null);		
+		setNewImageFile(null);
+		setImageDeleted(false);
 	};
 
 	const exitEditMode = () => {
 		setEditMode(false);
-		setNewContent(post.content);
-		setNewImageFile(null);
-		setImageDeleted(false);
-		setImagePreview(post.image ?? null);
 	};
 
 	return (
