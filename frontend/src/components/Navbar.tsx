@@ -1,13 +1,13 @@
-import React from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/providers/AuthProvider";
-import UserAvatar from "./UserAvatar";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/providers/AuthProvider";
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import UserAvatar from "./UserAvatar";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
