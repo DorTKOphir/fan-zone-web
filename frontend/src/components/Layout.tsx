@@ -1,11 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import ProfileIndicator from "./ProfileIndicator";
+import Navbar from './Navbar';
 
 const Layout: React.FC = () => {
   return (
     <div className="relative">
-      <ProfileIndicator/>
+      <Navbar/>
       
       <main className="p-4">
         <Outlet />
