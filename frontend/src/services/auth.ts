@@ -13,7 +13,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
 	(response) => response,
 	async (error) => {
-		if (error.response?.status === 401) {
+		if (error.response?.status === 401 && localStorage.getItem('accessToken')) {
 			try {
 				const newToken = await refreshToken();
 				if (newToken) {
@@ -23,7 +23,7 @@ api.interceptors.response.use(
 			} catch (refreshError) {
 				console.error('Token refresh failed', refreshError);
 			}
-			logout(); // If refresh fails, log out
+			logout();
 		}
 		return Promise.reject(error);
 	},
@@ -35,12 +35,16 @@ export const login = async (username: string, password: string) => {
 };
 
 export const register = async (username: string, email: string, password: string) => {
-	const response = await api.post('/auth/register', { email, username, password });
-	return response.data;
+	try {
+		const response = await api.post('/auth/register', { email, username, password });
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const loginWithGoogle = async (credential: string) => {
-	const res = await api.post("/auth/google", { credential });
+	const res = await api.post('/auth/google', { credential });
 	return res.data;
 };
 
@@ -67,9 +71,9 @@ export const refreshToken = async (): Promise<string | null> => {
 
 export const logout = async () => {
 	try {
-		await api.post("/auth/logout", { refreshToken: localStorage.getItem('refreshToken') });
+		await api.post('/auth/logout', { refreshToken: localStorage.getItem('refreshToken') });
 	} catch (error) {
-		console.error("Logout failed with error", error);
+		console.error('Logout failed with error', error);
 	}
 	localStorage.removeItem('accessToken');
 	localStorage.removeItem('refreshToken');

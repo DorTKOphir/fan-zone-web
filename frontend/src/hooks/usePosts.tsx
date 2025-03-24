@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Post } from '@/models/post';
-import { deletePost, likePost, updatePost } from '@/services/posts';
+import { deletePost, updateLikes, updatePost } from '@/services/posts';
 import { useAuth } from '@/providers/AuthProvider';
 
 export function usePosts(fetchPosts: () => Promise<Post[]>) {
@@ -9,19 +9,19 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const loadPosts = async () => {
-			setLoading(true);
-			try {
-				const data = await fetchPosts();
-				setPosts(data);
-			} catch (err) {
-				setError('Failed to load posts');
-			} finally {
-				setLoading(false);
-			}
-		};
+	const loadPosts = async () => {
+		setLoading(true);
+		try {
+			const data = await fetchPosts();
+			setPosts(data);
+		} catch (err) {
+			setError('Failed to load posts');
+		} finally {
+			setLoading(false);
+		}
+	};
 
+	useEffect(() => {
 		loadPosts();
 	}, [fetchPosts]);
 
@@ -36,21 +36,13 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 			? post.likes.filter((id) => id !== user._id)
 			: [...post.likes, user._id];
 
-		const updatedPost = await likePost(postId, { likes: updatedLikes });
+		const updatedPost = await updateLikes(postId, { likes: updatedLikes });
 
 		setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
 	};
 
 	const onPostCreated = async () => {
-		setLoading(true);
-		try {
-			const data = await fetchPosts();
-			setPosts(data);
-		} catch (err) {
-			setError('Failed to load posts');
-		} finally {
-			setLoading(false);
-		}
+		loadPosts();
 	};
 
 	const onDelete = async (postId: string) => {
@@ -81,5 +73,6 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 		onPostCreated,
 		onDelete,
 		onUpdate,
+		loadPosts
 	};
 }
