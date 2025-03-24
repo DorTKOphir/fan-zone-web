@@ -14,7 +14,6 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  // Don’t show on auth pages
   if (location.pathname === "/signIn" || location.pathname === "/signUp") return null;
 
   return (

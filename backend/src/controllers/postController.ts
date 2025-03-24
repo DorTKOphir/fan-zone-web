@@ -145,7 +145,9 @@ class PostController {
 				return res.status(400).json({ message: 'Author ID is required.' });
 			}
 
-			const posts = await this.populatePost(postModel.find({ author: authorId }));
+			const posts = await this.populatePost(
+				postModel.find({ author: authorId }).sort({ dateCreated: -1 }),
+			);
 
 			console.log(`Posts found for author ${authorId}`);
 			res.status(200).json(posts);

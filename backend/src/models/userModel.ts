@@ -35,8 +35,10 @@ const userSchema = new Schema<IUser>({
 });
 
 userSchema.virtual('fullProfilePicture').get(function (this: IUser) {
-  if (!this.profilePicture) return null;
-  return `${process.env.BASE_URL}${this.profilePicture}`;
+	if (!this.profilePicture) return null;
+	return `${
+		this.profilePicture.startsWith('/uploads') ? process.env.BASE_URL : ''
+	}${this.profilePicture}`;
 });
 
 userSchema.set('toJSON', { virtuals: true });

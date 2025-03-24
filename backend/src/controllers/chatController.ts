@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import userModel from "../models/userModel";
 import messageModel, { IMessage } from "../models/messageModel";
 import { chatGateway } from "../server";
+import mongoose from "mongoose";
 
 class ChatController {
     async sendMessage (req: Request, res: Response) {
@@ -32,6 +33,11 @@ class ChatController {
         try {
           const { firstUserId, secondUserId } = req.params;
       
+          if (!mongoose.Types.ObjectId.isValid(firstUserId) || !mongoose.Types.ObjectId.isValid(secondUserId)) {
+            console.error('Invalid user ID format');
+            return res.status(404).json({ error: "User not found." });
+          }
+
           const firstUser = await userModel.findById(firstUserId);
           const secondUser = await userModel.findById(secondUserId);
 

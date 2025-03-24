@@ -21,7 +21,7 @@ const connectWithRetry = async (delay = INITIAL_DELAY_MS) => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected successfully');
-
+    
     server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   } catch (error) {
     console.error(`MongoDB connection failed`, error);
@@ -33,6 +33,8 @@ const connectWithRetry = async (delay = INITIAL_DELAY_MS) => {
   }
 };
 
-connectWithRetry();
+if (require.main === module) {
+  connectWithRetry();
+}
 
 export { chatGateway };
