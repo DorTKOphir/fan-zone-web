@@ -19,7 +19,7 @@ export const updatePost = async (
 		likes?: string[];
 		image?: File | null;
 		imageDeleted?: boolean;
-	}
+	},
 ): Promise<Post> => {
 	const formData = new FormData();
 
@@ -33,6 +33,19 @@ export const updatePost = async (
 			'Content-Type': 'multipart/form-data',
 		},
 	});
+
+	return response.data;
+};
+
+export const likePost = async (
+	postId: string,
+	{
+		likes,
+	}: {
+		likes: string[];
+	},
+): Promise<Post> => {
+	const response = await api.patch(`/posts/like/${postId}`, { likes });
 
 	return response.data;
 };

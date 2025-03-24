@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Post } from '@/models/post';
-import { deletePost, updatePost } from '@/services/posts';
+import { deletePost, likePost, updatePost } from '@/services/posts';
 import { useAuth } from '@/providers/AuthProvider';
 
 export function usePosts(fetchPosts: () => Promise<Post[]>) {
@@ -36,7 +36,7 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 			? post.likes.filter((id) => id !== user._id)
 			: [...post.likes, user._id];
 
-		const updatedPost = await updatePost(postId, { likes: updatedLikes });
+		const updatedPost = await likePost(postId, { likes: updatedLikes });
 
 		setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
 	};
