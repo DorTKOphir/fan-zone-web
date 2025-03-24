@@ -79,7 +79,7 @@ export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) 
 				user._id,
 				String(match.id),
 				new Date().toISOString(),
-				imageFile
+				imageFile,
 			);
 			reset();
 			setImageFile(null);
@@ -94,18 +94,8 @@ export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) 
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-			<Textarea {...register('content')} placeholder={contentPlaceHolder} />
+			<Textarea {...register('content')} className="min-h-[150px]" placeholder={contentPlaceHolder} />
 			{errors.content && <p className="text-red-500 text-sm">{errors.content.message}</p>}
-
-			<div className="space-y-2">
-				<Label htmlFor="image">Attach Image</Label>
-				<Input
-					id="image"
-					type="file"
-					accept="image/*"
-					onChange={handleImageChange}
-				/>
-			</div>
 
 			{imagePreview && (
 				<Card className="w-full max-w-sm overflow-hidden">
@@ -119,9 +109,16 @@ export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) 
 				</Card>
 			)}
 
-			<Button type="submit" disabled={loading} className="cursor-pointer w-full">
-				{loading ? 'Posting...' : 'Create Post'}
-			</Button>
+			<div className="flex items-end gap-4">
+				<div className="space-y-2">
+					<Label htmlFor="image">Attach Image</Label>
+					<Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
+				</div>
+
+				<Button type="submit" disabled={loading} className="bg-blue-600 text-white hover:bg-blue-700 w-fit px-4 py-2 text-sm">
+					{loading ? 'Posting...' : 'Create Post'}
+				</Button>
+			</div>
 		</form>
 	);
 }
