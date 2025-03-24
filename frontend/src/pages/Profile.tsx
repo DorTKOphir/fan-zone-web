@@ -1,23 +1,27 @@
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import PostItem from '@/components/PostItem';
-import { useCallback, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
+import { usePosts } from '@/hooks/usePosts';
+import User from '@/models/user';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
-import { updateUser, uploadProfilePicture } from '@/services/user';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { usePosts } from '@/hooks/usePosts';
+import { getUserById, updateUser, uploadProfilePicture } from '@/services/user';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaUserCircle } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import { z } from 'zod';
 
 const schema = z.object({
 	username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
 });
 
 const Profile = () => {
+	const { userId } = useParams<{ userId: string }>();
+
 	const {
 		register,
 		handleSubmit,
@@ -27,12 +31,29 @@ const Profile = () => {
 		resolver: zodResolver(schema),
 	});
 
-	const { user, reloadUser } = useAuth();
+	const { user: loggedInUser, reloadUser } = useAuth();
+	const [user, setUser] = useState<User | null>(null);
 	const [imageLoading, setImageLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [saving, setSaving] = useState(false);
 	const [editMode, setEditMode] = useState(false);
+	const signedInUser = userId === loggedInUser?._id;
+
+	const fetchUser = async () => {
+		if (userId) {
+			try {
+				const user = await getUserById(userId);
+				setUser(user);
+			} catch (err) {
+				setError('Failed to load profile or posts');
+			}
+		}
+	};
+
+	useEffect(() => {
+		fetchUser();
+	}, [userId]);
 
 	const fetchPosts = useCallback(async () => {
 		if (user) {
@@ -64,11 +85,14 @@ const Profile = () => {
 	const handleUpload = async (event?: React.MouseEvent<HTMLButtonElement>) => {
 		event?.preventDefault();
 
-		if (imageFile && user) {
+		if (imageFile) {
 			try {
 				setImageLoading(true);
 				await uploadProfilePicture(imageFile);
-				await reloadUser();
+				if (signedInUser) {
+					await reloadUser();
+				}
+				await fetchUser();
 				setImageFile(null);
 			} catch (error) {
 				setError('Failed to upload profile picture');
@@ -79,12 +103,15 @@ const Profile = () => {
 	};
 
 	const onSubmit = async (data: { username: string }) => {
-		if (!user) return;
+		if (!loggedInUser) return;
 
 		setSaving(true);
 		try {
-			await updateUser({ ...user, username: data.username });
-			await reloadUser();
+			await updateUser({ ...loggedInUser, username: data.username });
+			if (signedInUser) {
+				await reloadUser();
+			}
+			await fetchUser();
 			setEditMode(false);
 		} catch (error) {
 			setError('Failed to update profile');
@@ -153,48 +180,54 @@ const Profile = () => {
 									<h1 className="text-2xl font-bold text-blue-700">
 										{user?.username}
 									</h1>
-									<p className="text-gray-500 cursor-pointer text-sm">{user?.email}</p>
-									<Button className="mt-1" onClick={() => setEditMode(true)}>
-										Edit Profile
-									</Button>
+									<p className="text-gray-500 cursor-pointer text-sm">
+										{user?.email}
+									</p>
+									{signedInUser && (
+										<Button className="mt-1" onClick={() => setEditMode(true)}>
+											Edit Profile
+										</Button>
+									)}
 								</div>
 							)}
 						</div>
 
-						<div className="mt-6">
-							<Label htmlFor="fileInput" className="font-semibold">
-								Change Profile Picture
-							</Label>
-							<div className="flex items-center gap-4 mt-1">
-								<Input
-									id="fileInput"
-									type="file"
-									accept="image/*"
-									onChange={handleFileChange}
-								/>
-								<Button
-									className="cursor-pointer"
-									variant="secondary"
-									onClick={handleUpload}
-									disabled={!imageFile}
-								>
-									Upload
-								</Button>
-							</div>
-							{imageFile && (
-								<div className="flex items-center gap-4">
-									<img
-										src={URL.createObjectURL(imageFile)}
-										alt="Preview"
-										className="w-16 h-16 rounded-full object-cover border"
+						{signedInUser && (
+							<div className="mt-6">
+								<Label htmlFor="fileInput" className="font-semibold">
+									Change Profile Picture
+								</Label>
+								<div className="flex items-center gap-4 mt-1">
+									<Input
+										id="fileInput"
+										type="file"
+										accept="image/*"
+										onChange={handleFileChange}
 									/>
-									<p className="text-sm text-gray-500">
-										Selected file:{' '}
-										<span className="font-medium">{imageFile.name}</span>
-									</p>
+									<Button
+										className="cursor-pointer"
+										variant="secondary"
+										onClick={handleUpload}
+										disabled={!imageFile}
+									>
+										Upload
+									</Button>
 								</div>
-							)}
-						</div>
+								{imageFile && (
+									<div className="flex items-center gap-4">
+										<img
+											src={URL.createObjectURL(imageFile)}
+											alt="Preview"
+											className="w-16 h-16 rounded-full object-cover border"
+										/>
+										<p className="text-sm text-gray-500">
+											Selected file:{' '}
+											<span className="font-medium">{imageFile.name}</span>
+										</p>
+									</div>
+								)}
+							</div>
+						)}
 					</>
 				)}
 			</div>
