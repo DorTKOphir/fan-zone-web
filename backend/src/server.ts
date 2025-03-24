@@ -10,46 +10,46 @@ const PORT = process.env.PORT ?? 5000;
 const MONGO_URI = process.env.MONGO_URI;
 const INITIAL_DELAY_MS = 2000;
 
-const props = {
-  key: fs.readFileSync("./client-key.pem"),
-  cert: fs.readFileSync("./client-cert.pem"),
-};
-
 let server;
-if (process.env.NODE_ENV === "production") {
-  console.log('Using HTTPS');
-  server = https.createServer(props, app);
+if (process.env.NODE_ENV === 'production') {
+	const props = {
+		key: fs.readFileSync('./client-key.pem'),
+		cert: fs.readFileSync('./client-cert.pem'),
+	};
+
+	console.log('Using HTTPS');
+	server = https.createServer(props, app);
 } else {
-  console.log('Using HTTP');
-  server = http.createServer(app);
+	console.log('Using HTTP');
+	server = http.createServer(app);
 }
 
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { cors: { origin: '*' } });
 const chatGateway = new ChatGateway(io);
 
 if (!MONGO_URI) {
-  console.error('MONGO_URI is not defined in .env');
-  process.exit(1);
+	console.error('MONGO_URI is not defined in .env');
+	process.exit(1);
 }
 
 const connectWithRetry = async (delay = INITIAL_DELAY_MS) => {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log('MongoDB connected successfully');
+	try {
+		await mongoose.connect(MONGO_URI);
+		console.log('MongoDB connected successfully');
 
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  } catch (error) {
-    console.error(`MongoDB connection failed`, error);
+		server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+	} catch (error) {
+		console.error(`MongoDB connection failed`, error);
 
-    const nextDelay = Math.min(delay * 2, 30000);
-    console.log(`Retrying in ${nextDelay / 1000} seconds...`);
+		const nextDelay = Math.min(delay * 2, 30000);
+		console.log(`Retrying in ${nextDelay / 1000} seconds...`);
 
-    setTimeout(() => connectWithRetry(nextDelay), nextDelay);
-  }
+		setTimeout(() => connectWithRetry(nextDelay), nextDelay);
+	}
 };
 
 if (require.main === module) {
-  connectWithRetry();
+	connectWithRetry();
 }
 
 export { chatGateway };
