@@ -167,9 +167,7 @@ const Chat: React.FC = () => {
 						type="text"
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter') handleSearch();
-						}}
+						onKeyUp={() => handleSearch()}
 						placeholder="Search for users..."
 						disabled={!user}
 					/>
