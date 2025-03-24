@@ -5,6 +5,7 @@ import PostItem from '@/components/PostItem';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { getPostByAuthorId } from '@/services/posts';
+import { Post } from '@/models/post';
 import { updateUser, uploadProfilePicture } from '@/services/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
@@ -94,9 +95,9 @@ const Profile = () => {
 
 	return (
 		<div>
-			<div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-2xl space-y-4">
+			<div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
 				{imageLoading || loading ? (
-					<div className="space-y-2">
+					<div className="space-y-4">
 						<Skeleton className="h-8 w-32" />
 						<Skeleton className="h-20 w-20 rounded-full" />
 						<Skeleton className="h-10 w-full" />
