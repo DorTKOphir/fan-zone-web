@@ -2,15 +2,16 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import PostItem from '@/components/PostItem';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
-import { getPostByAuthorId, handleDelete, handleLike, handleUpdate } from '@/services/posts';
+import { getPostByAuthorId } from '@/services/posts';
 import { Post } from '@/models/post';
 import { updateUser, uploadProfilePicture } from '@/services/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { usePosts } from '@/hooks/usePosts';
 
 const schema = z.object({
 	username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
@@ -27,34 +28,30 @@ const Profile = () => {
 	});
 
 	const { user, reloadUser } = useAuth();
-	const [posts, setPosts] = useState<Post[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
+	const [imageLoading, setImageLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [saving, setSaving] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 
+	const fetchPosts = useCallback(async () => {
+		if (user) {
+			try {
+				return getPostByAuthorId(user._id);
+			} catch (err) {
+				setError('Failed to load profile or posts');
+				return [];
+			}
+		}
+		return [];
+	}, [user]);
+
+	const { posts, loading, onLike, onDelete, onUpdate } = usePosts(fetchPosts);
+
 	useEffect(() => {
-		const fetchProfileData = async () => {
-			if (user) {
-				try {
-					const userPosts = await getPostByAuthorId(user._id);
-					setPosts(userPosts);
-				} catch (err) {
-					setError('Failed to load profile or posts');
-				}
-			}
-			setLoading(false);
-		};
-
-		const initUpdtableFields = () => {
-			if (user) {
-				setValue('username', user.username);
-			}
-		};
-
-		fetchProfileData();
-		initUpdtableFields();
+		if (user) {
+			setValue('username', user.username);
+		}
 	}, [user, setValue]);
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,14 +66,14 @@ const Profile = () => {
 
 		if (imageFile && user) {
 			try {
-				setLoading(true);
+				setImageLoading(true);
 				await uploadProfilePicture(imageFile);
 				await reloadUser();
 				setImageFile(null);
 			} catch (error) {
 				setError('Failed to upload profile picture');
 			} finally {
-				setLoading(false);
+				setImageLoading(false);
 			}
 		}
 	};
@@ -96,19 +93,10 @@ const Profile = () => {
 		}
 	};
 
-	const onLike = async (postId: string) => handleLike(postId, posts, user, setPosts);
-	const onDelete = async (postId: string) => handleDelete(postId, setPosts);
-	const onUpdate = async (
-		postId: string,
-		newContent: string,
-		newImage: File | null,
-		imageDeleted: boolean,
-	) => handleUpdate(postId, newContent, newImage, imageDeleted, setPosts);
-
 	return (
 		<div>
 			<div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-				{loading ? (
+				{imageLoading || loading ? (
 					<div className="space-y-4">
 						<Skeleton className="h-8 w-32" />
 						<Skeleton className="h-24 w-24 rounded-full" />

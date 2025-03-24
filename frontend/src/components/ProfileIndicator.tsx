@@ -8,10 +8,19 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
 import UserAvatar from './UserAvatar';
+import { Skeleton } from './ui/skeleton';
 
 const ProfileIndicator: React.FC = () => {
-	const { user, logout } = useAuth();
+	const { user, logout, userLoading } = useAuth();
 	const navigate = useNavigate();
+
+	if (userLoading) {
+		return (
+			<div className="p-2">
+				<Skeleton className="h-10 w-10 rounded-full" />
+			</div>
+		);
+	}
 
 	if (!user) return null;
 
