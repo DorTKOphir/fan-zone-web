@@ -9,19 +9,19 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const loadPosts = async () => {
-			setLoading(true);
-			try {
-				const data = await fetchPosts();
-				setPosts(data);
-			} catch (err) {
-				setError('Failed to load posts');
-			} finally {
-				setLoading(false);
-			}
-		};
+	const loadPosts = async () => {
+		setLoading(true);
+		try {
+			const data = await fetchPosts();
+			setPosts(data);
+		} catch (err) {
+			setError('Failed to load posts');
+		} finally {
+			setLoading(false);
+		}
+	};
 
+	useEffect(() => {
 		loadPosts();
 	}, [fetchPosts]);
 
@@ -42,15 +42,7 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 	};
 
 	const onPostCreated = async () => {
-		setLoading(true);
-		try {
-			const data = await fetchPosts();
-			setPosts(data);
-		} catch (err) {
-			setError('Failed to load posts');
-		} finally {
-			setLoading(false);
-		}
+		loadPosts();
 	};
 
 	const onDelete = async (postId: string) => {
@@ -81,5 +73,6 @@ export function usePosts(fetchPosts: () => Promise<Post[]>) {
 		onPostCreated,
 		onDelete,
 		onUpdate,
+		loadPosts
 	};
 }
