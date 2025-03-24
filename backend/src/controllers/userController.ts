@@ -38,7 +38,6 @@ class UserController {
 
 			const users = await userModel
 				.find({ username: new RegExp(usernameQuery, 'i') })
-				.select('_id username profilePicture')
 				.limit(10);
 
 			console.log(`Users queried successfully by query: ${usernameQuery}`);

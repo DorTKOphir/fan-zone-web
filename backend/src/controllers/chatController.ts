@@ -75,16 +75,7 @@ class ChatController {
         );
     
         let users = await userModel.find(
-          { _id: { $in: userIds } },
-          "_id username profilePicture"
-        );
-
-        users.forEach((user) => {
-          if (user.profilePicture) {
-            user.profilePicture = `${process.env.BASE_URL}${user.profilePicture}`;
-          }
-          return user;
-        })
+          { _id: { $in: userIds } });
     
         console.log('Successfully fetched all chatted users');
         return res.status(200).json(users);

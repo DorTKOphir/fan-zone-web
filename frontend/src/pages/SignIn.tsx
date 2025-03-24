@@ -50,8 +50,11 @@ export default function SignIn() {
 	};
 
 	return (
-		<div className="p-6 max-w-sm mx-auto space-y-4 bg-white shadow-lg rounded-lg">
-			<h2 className="text-2xl font-bold text-center">Sign In</h2>
+		<div className="p-6 bg-gray-50 max-w-sm mx-auto space-y-4 bg-white shadow-lg rounded-lg">
+			<h2 className="text-3xl font-extrabold text-center text-blue-600">Welcome Back</h2>
+			<p className="text-sm text-gray-500 text-center mb-4">
+				Sign in to your FanZone account
+			</p>
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 				<div>
 					<Input {...register('username')} placeholder="Username" />

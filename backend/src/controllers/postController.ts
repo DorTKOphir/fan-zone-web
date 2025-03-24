@@ -98,6 +98,29 @@ class PostController {
 		}
 	}
 
+	async updateLikes(req: Request, res: Response) {
+		try {
+			const { likes } = req.body;
+
+			const updateBody = { likes: [...new Set(likes).values()] };
+
+			const updatedPost = await this.populatePost(
+				postModel.findByIdAndUpdate(req.params.id, updateBody, { new: true }),
+			);
+
+			if (!updatedPost) {
+				console.error('Post not found');
+				return res.status(404).json({ error: 'Post not found' });
+			}
+
+			console.log('Post updated successfully');
+			res.status(200).json(updatedPost);
+		} catch (error) {
+			console.error('Error updating post:', error);
+			res.status(500).json({ error: 'Error updating post' });
+		}
+	}
+
 	async delete(req: Request, res: Response) {
 		try {
 			const deletedPost = await postModel.findByIdAndDelete(req.params.id);
@@ -145,7 +168,9 @@ class PostController {
 				return res.status(400).json({ message: 'Author ID is required.' });
 			}
 
-			const posts = await this.populatePost(postModel.find({ author: authorId }));
+			const posts = await this.populatePost(
+				postModel.find({ author: authorId }).sort({ dateCreated: -1 }),
+			);
 
 			console.log(`Posts found for author ${authorId}`);
 			res.status(200).json(posts);

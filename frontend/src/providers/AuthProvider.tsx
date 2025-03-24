@@ -12,6 +12,7 @@ import User from '@/models/user';
 
 interface AuthContextType {
 	user: User | null;
+	userLoading: boolean;
 	accessToken: string | null;
 	login: (username: string, password: string) => Promise<void>;
 	loginWithGoogle: (credential: string) => void;
@@ -30,6 +31,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const [user, setUser] = useState<User | null>(null);
+	const [userLoading, setUserLoading] = useState<boolean>(false);
 	const [accessToken, setAccessToken] = useState<string | null>(
 		localStorage.getItem('accessToken'),
 	);
@@ -51,23 +53,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		initializeAuth();
 	}, []);
 
+	const loadUser = async (loadingUserCallback: () => Promise<void>) => {
+		setUserLoading(true);
+		try {
+			await loadingUserCallback();
+		} catch (error) {
+			console.error('Error loading user:', error);
+			throw error;
+		} finally {
+			setUserLoading(false);
+		}
+	};
+
 	const login = async (username: string, password: string) => {
-		const { accessToken, refreshToken, user } = await apiLogin(username, password);
-		setAuthProperties(accessToken, refreshToken, user);
+		await loadUser(async () => {
+			const { accessToken, refreshToken, user } = await apiLogin(username, password);
+			setAuthProperties(accessToken, refreshToken, user);
+		});
 	};
 
 	const signUp = async (username: string, email: string, password: string) => {
-		const { accessToken, refreshToken, user } = await apiRegister(username, email, password);
-		setAuthProperties(accessToken, refreshToken, user);
+		await loadUser(async () => {
+			const { accessToken, refreshToken, user } = await apiRegister(
+				username,
+				email,
+				password,
+			);
+			setAuthProperties(accessToken, refreshToken, user);
+		});
 	};
 
 	const loginWithGoogle = async (credential: string) => {
-		try {
-			const { accessToken, refreshToken, user } = await apiLoginWithGoogle(credential);
-			setAuthProperties(accessToken, refreshToken, user);
-		} catch (error) {
-			console.error('Google login failed:', error);
-		}
+		await loadUser(async () => {
+			try {
+				const { accessToken, refreshToken, user } = await apiLoginWithGoogle(credential);
+				setAuthProperties(accessToken, refreshToken, user);
+			} catch (error) {
+				console.error('Google login failed:', error);
+			}
+		});
 	};
 
 	const setAuthProperties = (accessToken: string, refreshToken: string, user: User) => {
@@ -81,23 +105,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	const reloadUser = async () => {
-		const userData = await getUser();
-		if (userData) {
-			setUser(userData);
-		}
+		await loadUser(async () => {
+			const userData = await getUser();
+			if (userData) {
+				setUser(userData);
+			}
+		});
 	};
 
 	const logout = async () => {
 		await apiLogout();
 		setUser(null);
 		setAccessToken('');
-		navigate('/sign-in')
-	}
+		navigate('/sign-in');
+	};
 
 	return (
 		<AuthContext.Provider
 			value={{
 				user,
+				userLoading,
 				accessToken,
 				login,
 				signUp,

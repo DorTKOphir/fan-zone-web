@@ -33,7 +33,9 @@ export default function SignUp() {
 
 	return (
 		<div className="p-6 max-w-sm mx-auto space-y-4 bg-white shadow-lg rounded-lg">
-			<h2 className="text-2xl font-bold text-center">Sign Up</h2>
+			<h2 className="text-3xl font-extrabold text-center text-blue-600">Welcome</h2>
+			<p className="text-sm text-gray-500 text-center mb-4">Create a new FanZone account</p>
+
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 				<div>
 					<Input {...register('username')} placeholder="Username" />

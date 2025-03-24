@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Post } from '@/models/post';
 import UserAvatar from '@/components/UserAvatar';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FaHeart, FaRegHeart, FaComment, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { Post } from '@/models/post';
 import { useAuth } from '@/providers/AuthProvider';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import { FaComment, FaEdit, FaHeart, FaRegHeart, FaTimes, FaTrash } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface PostItemProps {
@@ -20,9 +20,16 @@ interface PostItemProps {
 		newImage: File | null,
 		imageDeleted: boolean,
 	) => void;
+	showCommentsButton?: boolean;
 }
 
-export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemProps) {
+export default function PostItem({
+	post,
+	onLike,
+	onDelete,
+	onUpdate,
+	showCommentsButton = true,
+}: PostItemProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { user } = useAuth();
@@ -64,113 +71,140 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 
 	const enterEditMode = () => {
 		setEditMode(true);
+		setNewContent(post.content);
+		setImagePreview(post.image ?? null);		
+		setNewImageFile(null);
+		setImageDeleted(false);
 	};
 
 	const exitEditMode = () => {
 		setEditMode(false);
-		setNewContent(post.content);
-		setNewImageFile(null);
-		setImageDeleted(false);
-		setImagePreview(post.image ?? null);
 	};
 
 	return (
-		<Card key={post._id} className="p-4 space-y-4">
-			<div className="flex items-center justify-between">
-				<div className="flex items-center space-x-4">
-					<UserAvatar profilePicUrl={post.author.fullProfilePicture} />
-					<div>
-						<p className="font-semibold">{post.author.username}</p>
-						<p className="text-sm text-gray-500">{formattedDate}</p>
+		<div className="rounded-xl shadow bg-white p-4 hover:shadow-md transition">
+			<Card key={post._id} className="p-4 space-y-4">
+				<div className="flex items-center justify-between">
+					<div className="flex items-center space-x-4">
+						<UserAvatar profilePicUrl={post.author.fullProfilePicture} />
+						<div>
+							<p className="font-semibold">{post.author.username}</p>
+							<p className="text-sm text-gray-500">{formattedDate}</p>
+						</div>
 					</div>
-				</div>
 
-				{isAuthor && (
-					<div className="flex space-x-2">
-						{editMode ? (
-							<>
+					{isAuthor && (
+						<div className="flex space-x-2">
+							{editMode ? (
+								<>
+									<Button
+										className="cursor-pointer"
+										variant="ghost"
+										onClick={handleSave}
+										disabled={
+											post.content === newContent &&
+											!newImageFile &&
+											!imageDeleted
+										}
+									>
+										Save
+									</Button>
+									<Button
+										variant="ghost"
+										className="cursor-pointer"
+										onClick={exitEditMode}
+									>
+										<FaTimes className="text-gray-500" />
+									</Button>
+								</>
+							) : (
 								<Button
 									variant="ghost"
-									onClick={handleSave}
-									disabled={
-										post.content === newContent &&
-										!newImageFile &&
-										!imageDeleted
-									}
+									className="cursor-pointer"
+									onClick={enterEditMode}
 								>
-									Save
+									<FaEdit />
 								</Button>
-								<Button variant="ghost" onClick={exitEditMode}>
-									<FaTimes className="text-gray-500" />
+							)}
+							{!editMode && (
+								<Button
+									variant="ghost"
+									className="cursor-pointer"
+									onClick={handleDelete}
+								>
+									<FaTrash className="text-red-500" />
 								</Button>
-							</>
-						) : (
-							<Button variant="ghost" onClick={enterEditMode}>
-								<FaEdit />
-							</Button>
-						)}
-						{!editMode && (
-							<Button variant="ghost" onClick={handleDelete}>
-								<FaTrash className="text-red-500" />
-							</Button>
-						)}
-					</div>
-				)}
-			</div>
-
-			{editMode ? (
-				<div className="space-y-3">
-					<Input value={newContent} onChange={(e) => setNewContent(e.target.value)} />
-					<div className="space-y-1">
-						<Label htmlFor={`post-image-${post._id}`}>Change Image</Label>
-						<Input
-							id={`post-image-${post._id}`}
-							type="file"
-							accept="image/*"
-							onChange={handleImageChange}
-						/>
-					</div>
-					{editMode && !imageDeleted && (imagePreview || post.image) && (
-						<div className="w-full flex flex-col items-center gap-2 rounded border p-2 bg-muted">
-							<img
-								src={imagePreview ?? post.image!}
-								alt="Post Preview"
-								className="max-h-[300px] w-auto object-contain"
-							/>
-							<Button variant="destructive" size="sm" onClick={handleRemoveImage}>
-								Remove Image
-							</Button>
+							)}
 						</div>
 					)}
 				</div>
-			) : (
-				<>
-					<p>{post.content}</p>
-					{post.image && (
-						<div className="w-full max-h-[300px] flex justify-center items-center overflow-hidden rounded border">
-							<img
-								src={post.image}
-								alt="Post"
-								className="max-h-[300px] w-auto object-contain"
+
+				{editMode ? (
+					<div className="space-y-3">
+						<Input value={newContent} onChange={(e) => setNewContent(e.target.value)} />
+						<div className="space-y-1">
+							<Label htmlFor={`post-image-${post._id}`}>Change Image</Label>
+							<Input
+								id={`post-image-${post._id}`}
+								type="file"
+								accept="image/*"
+								onChange={handleImageChange}
 							/>
 						</div>
-					)}
-				</>
-			)}
+						{editMode && !imageDeleted && (imagePreview || post.image) && (
+							<div className="w-full flex flex-col items-center gap-2 rounded border p-2 bg-muted">
+								<img
+									src={imagePreview ?? post.image!}
+									alt="Post Preview"
+									className="max-h-[300px] w-auto object-contain"
+								/>
+								<Button
+									variant="destructive"
+									className="cursor-pointer"
+									size="sm"
+									onClick={handleRemoveImage}
+								>
+									Remove Image
+								</Button>
+							</div>
+						)}
+					</div>
+				) : (
+					<>
+						<p>{post.content}</p>
+						{post.image && (
+							<div className="w-full max-h-[300px] flex justify-center items-center overflow-hidden rounded border">
+								<img
+									src={post.image}
+									alt="Post"
+									className="max-h-[300px] w-auto object-contain"
+								/>
+							</div>
+						)}
+					</>
+				)}
 
-			<div className="flex items-center space-x-4">
-				<Button variant="ghost" onClick={() => onLike(post._id)}>
-					{isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
-					<span className="ml-1">{post.likes.length}</span>
-				</Button>
-				<Button
-					variant="ghost"
-					onClick={() => navigate(`${location.pathname}/${post._id}`)}
-				>
-					<FaComment />
-					<span className="ml-1">{post.comments.length}</span>
-				</Button>
-			</div>
-		</Card>
+				<div className="flex items-center space-x-4">
+					<Button
+						variant="ghost"
+						className="cursor-pointer"
+						onClick={() => onLike(post._id)}
+					>
+						{isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+						<span className="ml-1">{post.likes.length}</span>
+					</Button>
+					{showCommentsButton && (
+						<Button
+							variant="ghost"
+							className="cursor-pointer"
+							onClick={() => navigate(`${location.pathname}/${post._id}`)}
+						>
+							<FaComment />
+							<span className="ml-1">{post.comments.length}</span>
+						</Button>
+					)}
+				</div>
+			</Card>
+		</div>
 	);
 }

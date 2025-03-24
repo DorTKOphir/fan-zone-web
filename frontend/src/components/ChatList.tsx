@@ -26,7 +26,7 @@ const ChatList: React.FC<ChatListProps> = ({
             onClick={() => onSelectChat(chat)}
           >
             <img
-              src={chat.profilePicture || DEFAULT_PROFILE_PIC}
+              src={chat.fullProfilePicture || DEFAULT_PROFILE_PIC}
               alt={`${chat.username}'s profile`}
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -34,7 +34,7 @@ const ChatList: React.FC<ChatListProps> = ({
           </div>
         ))
       ) : (
-        <p className="text-center text-gray-500 mt-3">No chats available</p>
+				<p className="text-center text-gray-500 mt-3">No chats found. Start chatting!</p>
       )}
     </div>
   );

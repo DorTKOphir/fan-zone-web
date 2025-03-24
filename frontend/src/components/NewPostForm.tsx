@@ -119,7 +119,7 @@ export default function NewPostForm({ match, onPostCreated }: NewPostFormProps) 
 				</Card>
 			)}
 
-			<Button type="submit" disabled={loading} className="w-full">
+			<Button type="submit" disabled={loading} className="cursor-pointer w-full">
 				{loading ? 'Posting...' : 'Create Post'}
 			</Button>
 		</form>

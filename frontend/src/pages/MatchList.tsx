@@ -7,7 +7,10 @@ import MatchListItem from '../components/MatchListItem';
 
 export default function MatchList() {
 	const [matches, setMatches] = useState<Match[]>([]);
-	const [selectedDate, setSelectedDate] = useState<string>('');
+	const [selectedDate, setSelectedDate] = useState<string>(() => {
+		const today = new Date();
+		return today.toISOString().split('T')[0];
+	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -42,12 +45,12 @@ export default function MatchList() {
 					type="date"
 					value={selectedDate}
 					onChange={(e) => setSelectedDate(e.target.value)}
-					className="border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					className="cursor-pointer border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 				{selectedDate && (
 					<button
 						onClick={() => setSelectedDate('')}
-						className="ml-4 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+						className="ml-4 cursor-pointer px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
 					>
 						Clear
 					</button>
@@ -67,8 +70,12 @@ export default function MatchList() {
 							))}
 						</div>
 					) : (
-						<div className="text-center text-gray-500 mt-20">
-							No matches found for {format(new Date(selectedDate), 'MMMM dd, yyyy')}.
+						<div className="text-center text-gray-600 mt-24 text-xl font-semibold">
+							No matches found for{' '}
+							<span>
+								{format(new Date(selectedDate), 'MMMM dd, yyyy')}
+							</span>
+							! ⚽ 
 						</div>
 					)}
 				</ScrollArea>

@@ -34,7 +34,15 @@
  *         content:
  *           application/json:
  *             example:
- *               message: "User registered successfully"
+ *               accessToken: "your_access_token_here"
+ *               refreshToken: "your_refresh_token_here"
+ *               user:
+ *                 _id: "user_id_here"
+ *                 username: "johndoe"
+ *                 email: "johndoe@example.com"
+ *                 profilePicture: "/uploads/profile_pictures/default.png"
+ *                 fullProfilePicture: "https://yourdomain.com/uploads/profile_pictures/default.png"
+ *                 refreshTokens: []
  *       500:
  *         description: Registration failed
  *         content:
@@ -60,9 +68,14 @@
  *               username:
  *                 type: string
  *                 example: johndoe
+ *               email:
+ *                 type: string
+ *                 example: johndoe@example.com
  *               password:
  *                 type: string
  *                 example: securePassword123
+ *             required:
+ *               - password
  *     responses:
  *       200:
  *         description: Successfully logged in
@@ -71,6 +84,13 @@
  *             example:
  *               accessToken: "your_access_token_here"
  *               refreshToken: "your_refresh_token_here"
+ *               user:
+ *                 _id: "user_id_here"
+ *                 username: "johndoe"
+ *                 email: "johndoe@example.com"
+ *                 profilePicture: "/uploads/profile_pictures/default.png"
+ *                 fullProfilePicture: "https://yourdomain.com/uploads/profile_pictures/default.png"
+ *                 refreshTokens: []
  *       401:
  *         description: Invalid credentials
  *         content:
@@ -130,8 +150,6 @@
  * /api/auth/refresh:
  *   post:
  *     summary: Refresh access token
- *     security:
- *       - BearerAuth: []
  *     tags:
  *       - Auth
  *     requestBody:
@@ -152,11 +170,22 @@
  *             example:
  *               accessToken: "your_new_access_token_here"
  *       403:
- *         description: Invalid or missing refresh token
+ *         description: Token error
  *         content:
  *           application/json:
- *             example:
- *               error: "Invalid refresh token"
+ *             examples:
+ *               missing:
+ *                 summary: Missing refresh token
+ *                 value:
+ *                   error: "Refresh token required"
+ *               invalid:
+ *                 summary: Invalid JWT
+ *                 value:
+ *                   error: "Invalid refresh token"
+ *               mismatch:
+ *                 summary: Token does not match user
+ *                 value:
+ *                   error: "Token does not match"
  *       500:
  *         description: Token refresh failed
  *         content:
