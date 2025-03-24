@@ -35,13 +35,6 @@ export default function PostItem({ post, onLike, onDelete, onUpdate }: PostItemP
 	const [imagePreview, setImagePreview] = useState<string | null>(post.image ?? null);
 	const [newImageFile, setNewImageFile] = useState<File | null>(null);
 	const [imageDeleted, setImageDeleted] = useState(false);
-	
-	useEffect(() => {
-		if (!editMode) {
-			setNewContent(post.content);
-			setImagePreview(post.image ?? null);
-		}
-	}, [post.content, post.image, editMode]);
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
