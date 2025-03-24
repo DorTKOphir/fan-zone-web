@@ -45,12 +45,12 @@ export default function MatchList() {
 					type="date"
 					value={selectedDate}
 					onChange={(e) => setSelectedDate(e.target.value)}
-					className="border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					className="cursor-pointer border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 				{selectedDate && (
 					<button
 						onClick={() => setSelectedDate('')}
-						className="ml-4 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+						className="ml-4 cursor-pointer px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
 					>
 						Clear
 					</button>
