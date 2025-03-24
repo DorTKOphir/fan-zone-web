@@ -7,7 +7,10 @@ import MatchListItem from '../components/MatchListItem';
 
 export default function MatchList() {
 	const [matches, setMatches] = useState<Match[]>([]);
-	const [selectedDate, setSelectedDate] = useState<string>('');
+	const [selectedDate, setSelectedDate] = useState<string>(() => {
+		const today = new Date();
+		return today.toISOString().split('T')[0];
+	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -67,8 +70,12 @@ export default function MatchList() {
 							))}
 						</div>
 					) : (
-						<div className="text-center text-gray-500 mt-20">
-							No matches found for {format(new Date(selectedDate), 'MMMM dd, yyyy')}.
+						<div className="text-center text-gray-600 mt-24 text-xl font-semibold">
+							No matches found for{' '}
+							<span>
+								{format(new Date(selectedDate), 'MMMM dd, yyyy')}
+							</span>
+							! ⚽ 
 						</div>
 					)}
 				</ScrollArea>
