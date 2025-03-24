@@ -29,7 +29,7 @@
  *                 example: "This is my new post!"
  *               matchId:
  *                 type: string
- *                 example: "60d21b4667d0d8992e610c85"
+ *                 example: "497410"
  *               image:
  *                 type: string
  *                 format: binary
@@ -42,7 +42,7 @@
  *             example:
  *               _id: "60d21b4667d0d8992e610c85"
  *               content: "This is my new post!"
- *               matchId: "60d21b4667d0d8992e610c85"
+ *               matchId: "497410"
  *               image: "/uploads/post_images/myphoto.jpg"
  *               dateCreated: "2025-03-23T12:00:00.000Z"
  *               author:
@@ -162,9 +162,9 @@
  *             example:
  *               _id: "641d15f1e8b1f9c6a9a2a5e9"
  *               content: "Updated post content."
- *               likes: 10
+ *               likes: [USER_ID]
  *               image: "/uploads/post_images/updated.jpg"
- *               matchId: "65a123e4b5c678f9d0a1b234"
+ *               matchId: "497410"
  *               dateCreated: "2025-03-14T10:15:30.000Z"
  *               author:
  *                 _id: "641d134fe8b1f9c6a9a2a123"
@@ -244,7 +244,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         example: "65a123e4b5c678f9d0a1b234"
+ *         example: "497410"
  *     responses:
  *       200:
  *         description: Successfully retrieved posts for the given match ID
@@ -252,7 +252,7 @@
  *           application/json:
  *             example:
  *               - _id: "641d15f1e8b1f9c6a9a2a5e9"
- *                 matchId: "65a123e4b5c678f9d0a1b234"
+ *                 matchId: "497410"
  *                 content: "What a great match!"
  *                 image: "/uploads/post_images/match.jpg"
  *                 dateCreated: "2025-03-14T10:15:30.000Z"
@@ -307,7 +307,7 @@
  *               - _id: "641d15f1e8b1f9c6a9a2a5e9"
  *                 content: "Another day, another win!"
  *                 image: "/uploads/post_images/win.jpg"
- *                 matchId: "65a123e4b5c678f9d0a1b234"
+ *                 matchId: "497410"
  *                 dateCreated: "2025-03-24T14:10:00.000Z"
  *                 author:
  *                   _id: "641d134fe8b1f9c6a9a2a123"
@@ -385,4 +385,51 @@
  *           application/json:
  *             example:
  *               error: "Failed to generate suggestion"
+ */
+
+/**
+ * @swagger
+ * /api/posts/like/{id}:
+ *   patch:
+ *     summary: Update post likes by ID
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "641d15f1e8b1f9c6a9a2a5e9"
+ *         description: The ID of the post to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               likes:
+ *                 type: number
+ *                 example: [USER_ID]
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               _id: "641d15f1e8b1f9c6a9a2a5e9"
+ *               content: "Updated post content."
+ *               likes: [USER_ID]
+ *               author:
+ *                 _id: "641d134fe8b1f9c6a9a2a123"
+ *                 username: "john_doe"
+ *       500:
+ *         description: Error updating likes
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error updating likes"
  */

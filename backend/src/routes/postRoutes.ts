@@ -20,7 +20,7 @@ router.patch(
 	upload.single('image'),
 	PostController.update.bind(PostController),
 );
-router.patch('/like/:id', authMiddleware, PostController.likePost.bind(PostController));
+router.patch('/like/:id', authMiddleware, PostController.updateLikes.bind(PostController));
 router.delete('/:id', authMiddleware, postMiddleware, PostController.delete.bind(PostController));
 router.get('/match/:matchId', PostController.getPostsByMatchId.bind(PostController));
 router.get('/author/:authorId', PostController.getPostsByAuthorId.bind(PostController));
