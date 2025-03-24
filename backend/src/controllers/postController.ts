@@ -98,6 +98,29 @@ class PostController {
 		}
 	}
 
+	async likePost(req: Request, res: Response) {
+		try {
+			const { likes } = req.body;
+
+			const updateBody = { likes };
+
+			const updatedPost = await this.populatePost(
+				postModel.findByIdAndUpdate(req.params.id, updateBody, { new: true }),
+			);
+
+			if (!updatedPost) {
+				console.error('Post not found');
+				return res.status(404).json({ error: 'Post not found' });
+			}
+
+			console.log('Post updated successfully');
+			res.status(200).json(updatedPost);
+		} catch (error) {
+			console.error('Error updating post:', error);
+			res.status(500).json({ error: 'Error updating post' });
+		}
+	}
+
 	async delete(req: Request, res: Response) {
 		try {
 			const deletedPost = await postModel.findByIdAndDelete(req.params.id);
