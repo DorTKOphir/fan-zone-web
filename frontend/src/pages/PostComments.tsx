@@ -12,6 +12,7 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const commentSchema = z.object({
 	content: z.string().min(1, 'Comment cannot be empty'),
@@ -51,14 +52,24 @@ export default function PostComments() {
 		loadPosts,
 	} = usePosts(fetchPosts);
 
-	if (!posts || posts.length === 0) {
+	const post = posts?.[0];
+
+	if (postLoading) {
+		return (
+			<div className="w-[70%] mx-auto mt-10 p-4 space-y-4">
+				<Skeleton className="h-16 w-full" />
+				<Skeleton className="h-48 w-full" />
+				<Skeleton className="h-12 w-1/2" />
+			</div>
+		);
+	}
+
+	if (!post) {
 		return <div className="text-center text-red-500 mt-10">Cannot find post</div>;
 	}
 
-	const post = posts[0];
-
 	const onSubmit = async (data: CommentFormValues) => {
-		if (post && user) {
+		if (user) {
 			await addCommentOnPost(post._id, data.content);
 			loadPosts();
 			reset();
@@ -66,10 +77,8 @@ export default function PostComments() {
 	};
 
 	const handleDelete = async (comment: Comment) => {
-		if (post) {
-			await deleteComment(comment._id);
-			loadPosts();
-		}
+		await deleteComment(comment._id);
+		loadPosts();
 	};
 
 	const handlePostDelete = (postId: string) => {
