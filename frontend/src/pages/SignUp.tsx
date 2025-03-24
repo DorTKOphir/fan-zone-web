@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
 import useRedirectSignedInUser from '@/hooks/useRedirectSignedInUser';
+import { useState } from 'react';
 
 const signUpSchema = z.object({
 	username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -18,6 +19,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 export default function SignUp() {
 	useRedirectSignedInUser();
 	const { signUp } = useAuth();
+	const [serverError, setServerError] = useState<string | null>(null);
 
 	const {
 		register,
@@ -28,15 +30,22 @@ export default function SignUp() {
 	});
 
 	const onSubmit = async ({ username, email, password }: SignUpFormData) => {
-		signUp(username, email, password);
+		try {
+			setServerError(null);
+			await signUp(username, email, password);
+		} catch (error: any) {
+			const message =
+				error?.response?.data?.error || 'Something went wrong. Please try again.';
+			setServerError(message);
+		}
 	};
-
 	return (
 		<div className="p-6 max-w-sm mx-auto space-y-4 bg-white shadow-lg rounded-lg">
 			<h2 className="text-3xl font-extrabold text-center text-blue-600">Welcome</h2>
 			<p className="text-sm text-gray-500 text-center mb-4">Create a new FanZone account</p>
 
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+				{serverError && <p className="text-red-500 text-center">{serverError}</p>}
 				<div>
 					<Input {...register('username')} placeholder="Username" />
 					{errors.username && <p className="text-red-500">{errors.username.message}</p>}

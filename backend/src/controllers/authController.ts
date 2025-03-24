@@ -29,8 +29,16 @@ class AuthController {
 			console.log('User registered successfully');
 			res.status(201).json({ accessToken, refreshToken, user: newUser });
 		} catch (error) {
+			let errorMessage = 'Registration failed';
+
+			if (error.keyValue['email']) {
+				errorMessage = 'email already exist';
+			} else if (error.keyValue['username']) {
+				errorMessage = 'username already exist';
+			}
+
 			console.error('Registration failed', error);
-			res.status(500).json({ error: 'Registration failed' });
+			res.status(500).json({ error: errorMessage });
 		}
 	}
 

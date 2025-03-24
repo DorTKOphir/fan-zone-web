@@ -73,14 +73,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	const signUp = async (username: string, email: string, password: string) => {
-		await loadUser(async () => {
-			const { accessToken, refreshToken, user } = await apiRegister(
-				username,
-				email,
-				password,
-			);
-			setAuthProperties(accessToken, refreshToken, user);
-		});
+		try {
+			await loadUser(async () => {
+				const { accessToken, refreshToken, user } = await apiRegister(
+					username,
+					email,
+					password,
+				);
+				setAuthProperties(accessToken, refreshToken, user);
+			});
+		} catch (error) {
+			throw error;
+		}
 	};
 
 	const loginWithGoogle = async (credential: string) => {

@@ -35,8 +35,12 @@ export const login = async (username: string, password: string) => {
 };
 
 export const register = async (username: string, email: string, password: string) => {
-	const response = await api.post('/auth/register', { email, username, password });
-	return response.data;
+	try {
+		const response = await api.post('/auth/register', { email, username, password });
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const loginWithGoogle = async (credential: string) => {
