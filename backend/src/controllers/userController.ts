@@ -38,15 +38,7 @@ class UserController {
 
 			const users = await userModel
 				.find({ username: new RegExp(usernameQuery, 'i') })
-				.select('_id username profilePicture')
 				.limit(10);
-
-			users.forEach((user) => {
-				if (user.profilePicture) {
-					user.profilePicture = `${process.env.BASE_URL}${user.profilePicture}`;
-				}
-				return user;
-			});
 
 			console.log(`Users queried successfully by query: ${usernameQuery}`);
 			return res.json(users);
