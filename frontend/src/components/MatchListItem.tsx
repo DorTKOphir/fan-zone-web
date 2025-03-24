@@ -31,11 +31,13 @@ export default function MatchListItem({ match }: MatchListItemProps) {
 					alignItems: 'center',
 				}}
 			>
-				<img
-					src={match.homeTeamImage}
-					alt={`${match.homeTeam} logo`}
-					className="w-10 h-10 object-contain"
-				/>
+				<div className="flex justify-center items-center min-w-[6rem] min-h-[6rem]">
+					<img
+						src={match.homeTeamImage}
+						alt={`${match.homeTeam} logo`}
+						className="w-20 h-20 object-contain drop-shadow-lg"
+					/>
+				</div>
 
 				<p className="font-semibold text-lg flex gap-2 items-center">{match.homeTeam}</p>
 
@@ -54,11 +56,13 @@ export default function MatchListItem({ match }: MatchListItemProps) {
 
 				<p className="font-semibold text-lg flex gap-2 items-center">{match.awayTeam}</p>
 
-				<img
-					src={match.awayTeamImage}
-					alt={`${match.awayTeam} logo`}
-					className="w-10 h-10 object-contain"
-				/>
+				<div className="flex justify-center items-center min-w-[6rem] min-h-[6rem]">
+					<img
+						src={match.awayTeamImage}
+						alt={`${match.awayTeam} logo`}
+						className="w-20 h-20 object-contain drop-shadow-lg"
+					/>
+				</div>
 			</div>
 			<Button
 				onClick={handleViewPosts}
