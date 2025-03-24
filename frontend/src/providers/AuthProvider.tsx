@@ -55,19 +55,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const loadUser = async (loadingUserCallback: () => Promise<void>) => {
 		setUserLoading(true);
-		await loadingUserCallback();
-		setUserLoading(false);
+		try {
+			await loadingUserCallback();
+		} catch (error) {
+			console.error('Error loading user:', error);
+			throw error;
+		} finally {
+			setUserLoading(false);
+		}
 	};
 
 	const login = async (username: string, password: string) => {
-		loadUser(async () => {
+		await loadUser(async () => {
 			const { accessToken, refreshToken, user } = await apiLogin(username, password);
 			setAuthProperties(accessToken, refreshToken, user);
 		});
 	};
 
 	const signUp = async (username: string, email: string, password: string) => {
-		loadUser(async () => {
+		await loadUser(async () => {
 			const { accessToken, refreshToken, user } = await apiRegister(
 				username,
 				email,
@@ -78,7 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	const loginWithGoogle = async (credential: string) => {
-		loadUser(async () => {
+		await loadUser(async () => {
 			try {
 				const { accessToken, refreshToken, user } = await apiLoginWithGoogle(credential);
 				setAuthProperties(accessToken, refreshToken, user);
@@ -99,7 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	const reloadUser = async () => {
-		loadUser(async () => {
+		await loadUser(async () => {
 			const userData = await getUser();
 			if (userData) {
 				setUser(userData);
