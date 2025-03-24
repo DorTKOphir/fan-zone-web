@@ -21,8 +21,8 @@ const Navbar: React.FC = () => {
     >
       <div className="flex justify-between items-center max-w-6xl mx-auto">
         {/* Logo */}
-        <NavLink to="/" className="text-2xl font-bold hover:text-gray-300">
-          FanZone
+        <NavLink to="/" className="text-4xl font-bold hover:text-gray-300">
+          FanZone ⚽
         </NavLink>
 
         {/* Navigation Links */}
