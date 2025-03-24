@@ -98,11 +98,11 @@ class PostController {
 		}
 	}
 
-	async likePost(req: Request, res: Response) {
+	async updateLikes(req: Request, res: Response) {
 		try {
 			const { likes } = req.body;
 
-			const updateBody = { likes };
+			const updateBody = { likes: [...new Set(likes).values()] };
 
 			const updatedPost = await this.populatePost(
 				postModel.findByIdAndUpdate(req.params.id, updateBody, { new: true }),

@@ -37,7 +37,7 @@ export const updatePost = async (
 	return response.data;
 };
 
-export const likePost = async (
+export const updateLikes = async (
 	postId: string,
 	{
 		likes,
